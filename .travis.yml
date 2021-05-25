@@ -1,0 +1,10 @@
+language: java
+script: ./gradlew test
+
+deploy:
+  provider: heroku:git
+  api_key: <encrypted api_key>
+  # ⋮
+  on:
+    branch: release
+    condition: release
