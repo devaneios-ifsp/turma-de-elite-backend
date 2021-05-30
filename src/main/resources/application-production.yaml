@@ -1,0 +1,24 @@
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    username: ${MYSQL_USER}
+    password: ${MYSQL_PASSWORD}
+    url: ${DATABASE_URL}
+  jpa:
+    database-platform: org.hibernate.dialect.MySQLDialect
+security:
+  admin-password: ${ADMIN_PASSWORD}
+firebase:
+  credentials:
+    type: ${FIREBASE_CREDENTIALS_TYPE}
+    project-id: ${FIREBASE_CREDENTIALS_PROJECT_ID}
+    private-key-id: ${FIREBASE_CREDENTIAL_KEY_ID}
+    private-key: ${FIREBASE_CREDENTIAL_KEY}
+    client-email: ${FIREBASE_CLIENT_EMAIL}
+    client-id: ${FIREBASE_CLIENT_ID}
+    auth-uri: ${FIREBASE_AUTH_URI}
+    token-uri: ${FIREBASE_TOKEN_URI}
+    auth-provider-cert-url: ${FIREBASE_AUTH_PROVIDER_CERT_URL}
+    client-cert-url: ${FIREBASE_CLIENT_CERT_URL}
+
+
