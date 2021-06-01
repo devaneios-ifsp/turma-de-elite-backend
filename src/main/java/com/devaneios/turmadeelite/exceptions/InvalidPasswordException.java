@@ -1,4 +1,4 @@
-package com.devaneios.turmadeelite.domain.exceptions;
+package com.devaneios.turmadeelite.exceptions;
 
 public class InvalidPasswordException extends IllegalArgumentException{
 

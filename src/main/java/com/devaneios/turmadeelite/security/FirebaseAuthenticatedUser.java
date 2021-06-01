@@ -1,4 +1,4 @@
-package com.devaneios.turmadeelite.infrastructure.security;
+package com.devaneios.turmadeelite.security;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;

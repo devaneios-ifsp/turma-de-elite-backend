@@ -1,4 +1,4 @@
-package com.devaneios.turmadeelite.domain.services;
+package com.devaneios.turmadeelite.services;
 
 public interface PasswordHasher {
     String createHash(String rawValue);

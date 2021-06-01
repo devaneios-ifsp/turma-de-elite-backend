@@ -1,4 +1,4 @@
-package com.devaneios.turmadeelite.infrastructure.exceptions;
+package com.devaneios.turmadeelite.exceptions;
 
 
 import org.springframework.security.core.AuthenticationException;

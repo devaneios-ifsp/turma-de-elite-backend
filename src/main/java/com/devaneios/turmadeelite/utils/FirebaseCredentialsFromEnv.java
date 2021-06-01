@@ -1,4 +1,4 @@
-package com.devaneios.turmadeelite.infrastructure.utils;
+package com.devaneios.turmadeelite.utils;
 
 
 import lombok.extern.slf4j.Slf4j;

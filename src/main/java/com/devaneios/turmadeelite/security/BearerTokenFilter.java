@@ -1,16 +1,14 @@
-package com.devaneios.turmadeelite.infrastructure.security;
+package com.devaneios.turmadeelite.security;
 
-import com.devaneios.turmadeelite.infrastructure.exceptions.BearerTokenNotFoundException;
-import com.devaneios.turmadeelite.infrastructure.exceptions.UnexpectedAuthenticationException;
+import com.devaneios.turmadeelite.exceptions.BearerTokenNotFoundException;
+import com.devaneios.turmadeelite.exceptions.UnexpectedAuthenticationException;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseToken;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.AbstractAuthenticationProcessingFilter;
-import org.springframework.stereotype.Component;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
