@@ -6,5 +6,5 @@ import org.springframework.data.repository.CrudRepository;
 import java.util.Optional;
 
 public interface AdminRepository extends CrudRepository<AdminUser,Long> {
-    public Optional<AdminUser> findUserByEmail(String email);
+    public Optional<AdminUser> findUserByEmailAndFirstAccessToken(String email,String firstAccessToken);
 }

@@ -24,6 +24,9 @@ public class AdminUser {
     @Column(name = "firebase_uuid")
     private String firebaseUuid;
 
+    @Column(name = "first_access_token")
+    private String firstAccessToken;
+
     @Column(name = "name",nullable = false)
     private String name;
 

@@ -19,7 +19,7 @@ public class AuthenticationController {
     ResponseEntity<?> doAdminFistAccess(
             @RequestBody FirstAccessDTO accessDTO,
             Authentication authentication){
-        adminFirstAccessService.doFirstAccess(accessDTO.getEmail(), (String) authentication.getPrincipal());
+        adminFirstAccessService.doFirstAccess(accessDTO, (String) authentication.getPrincipal());
         return ResponseEntity.ok().build();
     }
 
