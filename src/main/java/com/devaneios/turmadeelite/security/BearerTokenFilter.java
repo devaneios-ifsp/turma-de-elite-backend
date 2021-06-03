@@ -1,7 +1,11 @@
 package com.devaneios.turmadeelite.security;
 
+import com.devaneios.turmadeelite.entities.UserCredentials;
 import com.devaneios.turmadeelite.exceptions.BearerTokenNotFoundException;
 import com.devaneios.turmadeelite.exceptions.UnexpectedAuthenticationException;
+import com.devaneios.turmadeelite.exceptions.UserNotFoundException;
+import com.devaneios.turmadeelite.repositories.AdminRepository;
+import com.devaneios.turmadeelite.services.AuthenticationService;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseToken;
@@ -19,7 +23,9 @@ import java.io.IOException;
 public class BearerTokenFilter extends AbstractAuthenticationProcessingFilter {
 
     @Autowired
-    FirebaseApp firebaseApp;
+    AuthenticationService authenticationService;
+    @Autowired
+    AdminRepository adminRepository;
 
     public BearerTokenFilter(){
         super("/**");
@@ -34,14 +40,15 @@ public class BearerTokenFilter extends AbstractAuthenticationProcessingFilter {
             try{
                 String bearerToken = authorizationHeader.split(" ")[1];
                 if(bearerToken != null){
-                    FirebaseToken firebaseToken = FirebaseAuth.getInstance().verifyIdToken(bearerToken);
-                    FirebaseAuthenticationInfo authenticationToken = new FirebaseAuthenticationInfo(firebaseToken.getUid(), firebaseToken.getEmail(), true);
+                    AuthenticationInfo authenticationToken = authenticationService.verifyTokenId(bearerToken);
+                    String authUuid = authenticationToken.getPrincipal();
+                    UserCredentials userCredentials = adminRepository.findByAuthUuid(authUuid).orElseThrow(UserNotFoundException::new);
+                    authenticationToken.setRole(userCredentials.getRole());
                     return getAuthenticationManager().authenticate(authenticationToken);
                 }
             }catch (Exception e){
                 throw new UnexpectedAuthenticationException();
             }
-
         }
         return null;
     }

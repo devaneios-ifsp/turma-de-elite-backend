@@ -9,5 +9,6 @@ import lombok.NoArgsConstructor;
 @Data
 public class FirstAccessDTO {
     String email;
+    String password;
     String firstAccessToken;
 }

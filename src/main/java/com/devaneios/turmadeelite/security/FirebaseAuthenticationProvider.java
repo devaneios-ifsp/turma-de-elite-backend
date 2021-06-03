@@ -10,12 +10,12 @@ public class FirebaseAuthenticationProvider implements AuthenticationProvider {
 
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
-        FirebaseAuthenticationInfo authenticationInfo = (FirebaseAuthenticationInfo) authentication;
+        AuthenticationInfo authenticationInfo = (AuthenticationInfo) authentication;
         return authenticationInfo;
     }
 
     @Override
     public boolean supports(Class<?> authentication) {
-        return (FirebaseAuthenticationInfo.class.isAssignableFrom(authentication));
+        return (AuthenticationInfo.class.isAssignableFrom(authentication));
     }
 }

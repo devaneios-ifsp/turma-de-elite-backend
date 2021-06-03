@@ -7,11 +7,11 @@ import lombok.NoArgsConstructor;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "admin_user")
+@Table(name = "user_credentials")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class AdminUser {
+public class UserCredentials {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -21,8 +21,8 @@ public class AdminUser {
     @Column(name = "email",unique = true)
     private String email;
 
-    @Column(name = "firebase_uuid")
-    private String firebaseUuid;
+    @Column(name = "auth_uuid")
+    private String authUuid;
 
     @Column(name = "first_access_token")
     private String firstAccessToken;
@@ -30,4 +30,7 @@ public class AdminUser {
     @Column(name = "name",nullable = false)
     private String name;
 
+    @Column(name = "role")
+    @Enumerated(EnumType.STRING)
+    private Role role;
 }

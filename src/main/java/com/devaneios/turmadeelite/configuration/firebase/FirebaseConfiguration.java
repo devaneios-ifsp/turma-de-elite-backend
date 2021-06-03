@@ -1,4 +1,4 @@
-package com.devaneios.turmadeelite.firebase;
+package com.devaneios.turmadeelite.configuration.firebase;
 
 import com.devaneios.turmadeelite.utils.FirebaseCredentialsFromEnv;
 import com.google.auth.oauth2.GoogleCredentials;

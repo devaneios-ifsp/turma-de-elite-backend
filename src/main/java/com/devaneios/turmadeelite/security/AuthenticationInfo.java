@@ -1,27 +1,33 @@
 package com.devaneios.turmadeelite.security;
 
+import com.devaneios.turmadeelite.entities.Role;
+import lombok.Data;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
 import javax.security.auth.Subject;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 
-public class FirebaseAuthenticationInfo implements Authentication {
+@Data
+public class AuthenticationInfo implements Authentication {
 
     private final String userUuid;
     private final String userEmail;
     private final boolean isAuthenticated;
+    private Role role;
 
-    public FirebaseAuthenticationInfo(String userUuid, String userEmail, boolean isAuthenticated) {
+    public AuthenticationInfo(String userUuid, String userEmail, boolean isAuthenticated) {
         this.userUuid = userUuid;
         this.userEmail = userEmail;
         this.isAuthenticated = isAuthenticated;
     }
 
-
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return null;
+        return Collections.singleton(new SimpleGrantedAuthority(this.role.name()));
     }
 
     @Override
@@ -41,7 +47,7 @@ public class FirebaseAuthenticationInfo implements Authentication {
 
     @Override
     public boolean isAuthenticated() {
-        return false;
+        return this.isAuthenticated;
     }
 
     @Override
@@ -51,7 +57,7 @@ public class FirebaseAuthenticationInfo implements Authentication {
 
     @Override
     public String getName() {
-        return null;
+        return this.getName();
     }
 
     @Override

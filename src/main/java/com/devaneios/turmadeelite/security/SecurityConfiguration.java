@@ -31,7 +31,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     FirebaseAuthenticationProvider firebaseAuthenticationProvider;
 
     private static final RequestMatcher PROTECTED_URLS = new OrRequestMatcher(
-            new AntPathRequestMatcher("/auth/**")
+            new AntPathRequestMatcher("/api/**")
     );
 
     @Bean
@@ -66,15 +66,14 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .cors()
                 .and()
                 .csrf().disable()
-//                .authorizeRequests().requestMatchers(PROTECTED_URLS).authenticated()
-//                .and()
-                .authorizeRequests().requestMatchers(PROTECTED_URLS).permitAll()
-                .and()
                 .exceptionHandling().authenticationEntryPoint((request, response, authException) -> response.sendError(HttpServletResponse.SC_UNAUTHORIZED,"Não autorizado"))
                 .and()
-                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+        http
+                .antMatcher("/api/**").authorizeRequests()
+                .anyRequest().authenticated()
                 .and()
-                .addFilterBefore(authenticationFilter(), UsernamePasswordAuthenticationFilter.class);
+                .addFilterBefore(authenticationFilter(),UsernamePasswordAuthenticationFilter.class);
     }
 
     @Bean
