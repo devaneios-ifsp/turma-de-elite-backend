@@ -1,9 +1,11 @@
 spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    username: root
-    password: password
-    url: jdbc:mysql://localhost:3306/turma_de_elite_test?allowPublicKeyRetrieval=true
+    username: ${MYSQL_USER}
+    password: ${MYSQL_PASSWORD}
+    url: ${TEST_DATABASE_URL}
+  jpa:
+    database-platform: org.hibernate.dialect.MySQLDialect
     jpa:
       properties:
         hibernate:
