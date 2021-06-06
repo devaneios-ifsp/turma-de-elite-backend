@@ -12,7 +12,6 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
-@Component
 @Slf4j
 public class FirebaseConfiguration {
 

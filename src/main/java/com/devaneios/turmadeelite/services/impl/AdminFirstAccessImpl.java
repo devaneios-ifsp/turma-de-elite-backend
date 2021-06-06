@@ -26,7 +26,7 @@ public class AdminFirstAccessImpl implements AdminFirstAccessService {
                 firstAccessDTO.getEmail(),
                 firstAccessDTO.getFirstAccessToken()
         ).orElseThrow(UserNotFoundException::new);
-        if(userCredentials.getAuthUuid() == null){
+        if(userCredentials.getAuthUuid() != null){
             throw new UserAlreadyDoFirstAccess();
         }
         String uid = authenticationService.createUser(firstAccessDTO.getEmail(), firstAccessDTO.getPassword());
@@ -36,6 +36,11 @@ public class AdminFirstAccessImpl implements AdminFirstAccessService {
 
     @Override
     public void verifyToken(String verifyToken) {
-        this.adminRepository.findByFirstAccessToken(verifyToken).orElseThrow(UserNotFoundException::new);
+        UserCredentials userCredentials = this.adminRepository
+                .findByFirstAccessToken(verifyToken)
+                .orElseThrow(UserNotFoundException::new);
+        if(userCredentials.getAuthUuid() != null){
+            throw new UserAlreadyDoFirstAccess();
+        }
     }
 }
