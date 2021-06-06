@@ -1,7 +1,9 @@
 package com.devaneios.turmadeelite.authentication;
 
 import com.devaneios.turmadeelite.configuration.TestConfiguration;
+import com.devaneios.turmadeelite.dto.FirstAccessDTO;
 import com.devaneios.turmadeelite.utils.FirebaseCredentialsFromEnv;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.firebase.FirebaseApp;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
@@ -33,13 +35,21 @@ public class AdminAuthentication {
     @MockBean
     FirebaseCredentialsFromEnv env;
 
+    static ObjectMapper mapper = new ObjectMapper();
+
     @DisplayName("Verificar token e realizar primeiro acesso, criando um usuário no sistema de autenticação exteno")
     @Test
     void firstAccessFlow() throws Exception {
+        FirstAccessDTO firstAccessDTO = new FirstAccessDTO("andre.montero702@gmail.com", "123456", "exemplo_token");
         mvc.perform(post("/first-access/verify-token")
                 .content("exemplo_token")
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNoContent());
+
+        mvc.perform(post("/first-access")
+        .content(mapper.writeValueAsString(firstAccessDTO))
+        .contentType(MediaType.APPLICATION_JSON))
+        .andExpect(status().isCreated());
 
     }
 }
