@@ -1,14 +1,11 @@
 package com.devaneios.turmadeelite.configuration.firebase;
 
-import com.devaneios.turmadeelite.utils.FirebaseCredentialsFromEnv;
 import com.google.auth.oauth2.GoogleCredentials;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
-import org.springframework.stereotype.Component;
-
-import java.io.ByteArrayInputStream;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -17,12 +14,10 @@ public class FirebaseConfiguration {
 
     private FirebaseApp firebaseApp;
 
-    public FirebaseConfiguration(FirebaseCredentialsFromEnv firebaseCredentialsFromEnv) throws IOException {
-        String jsonCredentials = firebaseCredentialsFromEnv.FirebaseAdminJsonFromEnv();
-        InputStream credentialsStream = new ByteArrayInputStream(jsonCredentials.getBytes());
-        FirebaseOptions options = FirebaseOptions
-                .builder()
-                .setCredentials(GoogleCredentials.fromStream(credentialsStream))
+    public FirebaseConfiguration() throws IOException {
+        FileInputStream serviceAccount = new FileInputStream("./firebase-sdk-key.json");
+        FirebaseOptions options = new FirebaseOptions.Builder()
+                .setCredentials(GoogleCredentials.fromStream(serviceAccount))
                 .build();
         this.firebaseApp = FirebaseApp.initializeApp(options);
         log.info("Firebase SDK Admin has initialized with success!");

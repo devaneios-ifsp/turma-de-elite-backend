@@ -3,6 +3,11 @@ spring:
     driver-class-name: com.mysql.cj.jdbc.Driver
     username: ${MYSQL_USER}
     password: ${MYSQL_PASSWORD}
-    url: ${DATABASE_URL}
+    url: ${INTEGRATION_DATABASE_URL}
   jpa:
     database-platform: org.hibernate.dialect.MySQLDialect
+    jpa:
+      properties:
+        hibernate:
+          dialect: org.hibernate.dialect.MySQLDialect
+      show-sql: true
