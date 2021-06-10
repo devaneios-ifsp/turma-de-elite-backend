@@ -2,7 +2,9 @@ language: java
 jdk: openjdk8
 before_install:
   - openssl aes-256-cbc -K $encrypted_7d07226627da_key -iv $encrypted_7d07226627da_iv
-    -in firebase-sdk-key.json.enc -out firebase-sdk-key.json -d
+    -in src/main/resources/firebase-sdk-key.json.enc -out src/main/resources/firebase-sdk-key.json -d
+  - openssl aes-256-cbc -K $encrypted_7d07226627da_key -iv $encrypted_7d07226627da_iv
+    -in src/test/resources/firebase-sdk-key.json.enc -out src/test/resources/firebase-sdk-key.json -d
   - curl -sL https://firebase.tools | bash
 script: firebase emulators:exec --only auth --project turma-de-elite-app './gradlew test'
 deploy:

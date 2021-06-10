@@ -14,7 +14,8 @@ src/main/resources/application-local.yaml
 .springBeans
 .sts4-cache
 bin/
-firebase-sdk-key.json
+src/test/resources/firebase-sdk-key.json
+src/main/resources/firebase-sdk-key.json
 !**/src/main/**/bin/
 !**/src/test/**/bin/
 
