@@ -20,7 +20,7 @@ public class FirebaseConfiguration {
     private FirebaseApp firebaseApp;
 
     public FirebaseConfiguration() throws IOException {
-        File file = ResourceUtils.getFile("classpath:firebase-sdk-key.json");
+        File file = ResourceUtils.getFile("firebase/firebase-sdk-key.json");
 
         FileInputStream serviceAccount = new FileInputStream(file);
         FirebaseOptions options = new FirebaseOptions.Builder()
