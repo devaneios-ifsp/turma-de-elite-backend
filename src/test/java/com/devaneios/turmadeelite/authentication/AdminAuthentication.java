@@ -1,8 +1,6 @@
 package com.devaneios.turmadeelite.authentication;
 
-import com.devaneios.turmadeelite.configuration.TestConfiguration;
 import com.devaneios.turmadeelite.dto.FirstAccessDTO;
-import com.devaneios.turmadeelite.utils.FirebaseCredentialsFromEnv;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.firebase.FirebaseApp;
 import org.junit.jupiter.api.BeforeAll;
@@ -24,7 +22,6 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@Import({TestConfiguration.class})
 @AutoConfigureMockMvc
 @SpringBootTest
 public class AdminAuthentication {
@@ -32,12 +29,9 @@ public class AdminAuthentication {
     @Autowired
     private MockMvc mvc;
 
-    @MockBean
-    FirebaseCredentialsFromEnv env;
-
     static ObjectMapper mapper = new ObjectMapper();
 
-    @DisplayName("Verificar token e realizar primeiro acesso, criando um usuário no sistema de autenticação exteno")
+    @DisplayName("Verificar token e realizar primeiro acesso, criando um usuário no sistema de autenticação externo")
     @Test
     void firstAccessFlow() throws Exception {
         FirstAccessDTO firstAccessDTO = new FirstAccessDTO("andre.montero702@gmail.com", "123456", "exemplo_token");

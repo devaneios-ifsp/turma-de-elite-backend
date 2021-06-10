@@ -5,11 +5,14 @@ import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
+import org.springframework.stereotype.Service;
+
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
 @Slf4j
+@Service
 public class FirebaseConfiguration {
 
     private FirebaseApp firebaseApp;
