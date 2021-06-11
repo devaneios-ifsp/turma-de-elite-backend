@@ -11,3 +11,15 @@ spring:
         hibernate:
           dialect: org.hibernate.dialect.MySQLDialect
       show-sql: true
+firebase:
+  credentials:
+    type: null
+    project-id: null
+    private-key-id: null
+    private-key: null
+    client-email: null
+    client-id: null
+    auth-uri: null
+    token-uri: null
+    auth-provider-cert-url: null
+    client-cert-url: null
