@@ -65,7 +65,7 @@ public class FirebaseConfiguration {
     private FirebaseApp firebaseApp;
 
     public FirebaseConfiguration() throws IOException {
-        if(type != null && type.equals("null") || type == null){
+        try{
             File file = ResourceUtils.getFile("firebase/firebase-sdk-key.json");
 
             FileInputStream serviceAccount = new FileInputStream(file);
@@ -73,7 +73,7 @@ public class FirebaseConfiguration {
                     .setCredentials(GoogleCredentials.fromStream(serviceAccount))
                     .build();
             this.firebaseApp = FirebaseApp.initializeApp(options);
-        }else{
+        }catch (Exception e){
             String jsonCredentials = this.firebaseAdminJsonFromEnv();
             InputStream credentialsStream = new ByteArrayInputStream(jsonCredentials.getBytes());
             FirebaseOptions options = FirebaseOptions
@@ -83,8 +83,6 @@ public class FirebaseConfiguration {
             this.firebaseApp = FirebaseApp.initializeApp(options);
         }
         log.info("Firebase SDK Admin has initialized with success!");
-
-
     }
 
     @Bean
