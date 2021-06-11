@@ -6,15 +6,3 @@ spring:
     url: ${DATABASE_URL}
   jpa:
     database-platform: org.hibernate.dialect.MySQLDialect
-firebase:
-  credentials:
-    type: ${f_type}
-    project-id: ${f_project_id}
-    private-key-id: ${f_private_key_id}
-    private-key: ${f_private_key}
-    client-email: ${f_client_email}
-    client-id: ${f_client_id}
-    auth-uri: ${f_auth_uri}
-    token-uri: ${f_token_uri}
-    auth-provider-cert-url: ${f_auth_provider_x509_cert_url}
-    client-cert-url: ${f_client_x509_cert_url}
