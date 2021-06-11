@@ -4,6 +4,7 @@ spring:
     username: ${MYSQL_USER}
     password: ${MYSQL_PASSWORD}
     url: ${TEST_DATABASE_URL}
+    initialization-mode: always
   jpa:
     database-platform: org.hibernate.dialect.MySQLDialect
     jpa:
