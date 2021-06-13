@@ -41,7 +41,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
             public void addCorsMappings(CorsRegistry registry) {
                 registry
                         .addMapping("/**")
-                        .allowedOrigins("http://localhost:4200")
+                        .allowedOrigins("http://localhost:4200","https://turma-de-elite-app.web.app")
                         .allowedMethods("HEAD", "GET", "PUT", "POST", "DELETE", "PATCH");
             }
         };
