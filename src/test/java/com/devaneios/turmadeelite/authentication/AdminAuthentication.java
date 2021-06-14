@@ -34,7 +34,11 @@ public class AdminAuthentication {
     @DisplayName("Verificar token e realizar primeiro acesso, criando um usuário no sistema de autenticação externo")
     @Test
     void firstAccessFlow() throws Exception {
-        FirstAccessDTO firstAccessDTO = new FirstAccessDTO("andre.montero702@gmail.com", "123456", "exemplo_token");
+        FirstAccessDTO firstAccessDTO = new FirstAccessDTO(
+                "andre.montero702@gmail.com",
+                "123456",
+                "exemplo_token");
+
         mvc.perform(post("/first-access/verify-token")
                 .content("exemplo_token")
                 .contentType(MediaType.APPLICATION_JSON))
@@ -44,6 +48,51 @@ public class AdminAuthentication {
         .content(mapper.writeValueAsString(firstAccessDTO))
         .contentType(MediaType.APPLICATION_JSON))
         .andExpect(status().isCreated());
+    }
+
+    @DisplayName("Não é possível realizar primeiro acesso duas vezes")
+    @Test
+    void conflictFailFirstAccess() throws Exception{
+
+        FirstAccessDTO firstAccessDTO = new FirstAccessDTO(
+                "natan.lisboa@aluno.ifsp.edu.br",
+                "123456",
+                "token_repetido");
+
+        mvc.perform(post("/first-access")
+                .content(mapper.writeValueAsString(firstAccessDTO))
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isCreated());
+
+        mvc.perform(post("/first-access/verify-token")
+                .content("token_repetido")
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isConflict());
+
+        mvc.perform(post("/first-access")
+                .content(mapper.writeValueAsString(firstAccessDTO))
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isConflict());
+
+    }
+
+    @DisplayName("Não é possível realizar primeiro acesso de alguém que nunca se cadastrou")
+    @Test
+    void notFoundFail() throws Exception{
+        FirstAccessDTO firstAccessDTO = new FirstAccessDTO(
+                "natan.lisboa@gmail.com.br",
+                "123456",
+                "um_token_inexistente");
+
+        mvc.perform(post("/first-access/verify-token")
+                .content("um_token_inexistente")
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound());
+
+        mvc.perform(post("/first-access")
+                .content(mapper.writeValueAsString(firstAccessDTO))
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound());
 
     }
 }
