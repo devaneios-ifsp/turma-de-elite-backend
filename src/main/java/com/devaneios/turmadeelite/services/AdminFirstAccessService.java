@@ -5,5 +5,5 @@ import com.devaneios.turmadeelite.exceptions.UserNotFoundException;
 
 public interface AdminFirstAccessService {
     void doFirstAccess(FirstAccessDTO firstAccessDTO) throws Exception;
-    void verifyToken(String verifyToken);
+    String verifyToken(String verifyToken);
 }

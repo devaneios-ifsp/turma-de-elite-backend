@@ -6,3 +6,14 @@ spring:
     url: ${DATABASE_URL}
   jpa:
     database-platform: org.hibernate.dialect.MySQLDialect
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: <login user to smtp server>
+    password: <login password to smtp server>
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true

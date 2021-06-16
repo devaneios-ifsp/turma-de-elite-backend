@@ -1,10 +1,13 @@
 package com.devaneios.turmadeelite.security;
 
+import com.devaneios.turmadeelite.repositories.AdminRepository;
+import com.devaneios.turmadeelite.services.AuthenticationService;
 import com.google.common.collect.ImmutableList;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.ProviderManager;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
@@ -25,10 +28,20 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.Arrays;
 
 @EnableWebSecurity
+@EnableGlobalMethodSecurity(
+        securedEnabled = true,
+        jsr250Enabled = true
+)
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     @Autowired
     FirebaseAuthenticationProvider firebaseAuthenticationProvider;
+
+    @Autowired
+    AuthenticationService authenticationService;
+
+    @Autowired
+    AdminRepository adminRepository;
 
     private static final RequestMatcher PROTECTED_URLS = new OrRequestMatcher(
             new AntPathRequestMatcher("/api/**")
@@ -83,7 +96,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     }
 
     public BearerTokenFilter authenticationFilter(){
-        BearerTokenFilter bearerTokenFilter = new BearerTokenFilter();
+        BearerTokenFilter bearerTokenFilter = new BearerTokenFilter(authenticationService, adminRepository);
         bearerTokenFilter.setAuthenticationManager(authenticationManager());
         bearerTokenFilter.setAuthenticationSuccessHandler((request, response, authentication) -> {});
         return bearerTokenFilter;

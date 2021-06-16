@@ -35,12 +35,14 @@ public class AdminFirstAccessImpl implements AdminFirstAccessService {
     }
 
     @Override
-    public void verifyToken(String verifyToken) {
+    public String verifyToken(String verifyToken) {
         UserCredentials userCredentials = this.adminRepository
                 .findByFirstAccessToken(verifyToken)
                 .orElseThrow(UserNotFoundException::new);
         if(userCredentials.getAuthUuid() != null){
             throw new UserAlreadyDoFirstAccess();
+        }else{
+            return userCredentials.getEmail();
         }
     }
 }

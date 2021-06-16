@@ -6,10 +6,6 @@ import com.devaneios.turmadeelite.exceptions.UnexpectedAuthenticationException;
 import com.devaneios.turmadeelite.exceptions.UserNotFoundException;
 import com.devaneios.turmadeelite.repositories.AdminRepository;
 import com.devaneios.turmadeelite.services.AuthenticationService;
-import com.google.firebase.FirebaseApp;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseToken;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.AbstractAuthenticationProcessingFilter;
@@ -22,13 +18,13 @@ import java.io.IOException;
 
 public class BearerTokenFilter extends AbstractAuthenticationProcessingFilter {
 
-    @Autowired
-    AuthenticationService authenticationService;
-    @Autowired
-    AdminRepository adminRepository;
+    private final AuthenticationService authenticationService;
+    private final AdminRepository adminRepository;
 
-    public BearerTokenFilter(){
+    public BearerTokenFilter(AuthenticationService authenticationService, AdminRepository adminRepository){
         super("/**");
+        this.authenticationService = authenticationService;
+        this.adminRepository = adminRepository;
     }
 
     @Override
@@ -47,7 +43,9 @@ public class BearerTokenFilter extends AbstractAuthenticationProcessingFilter {
                     return getAuthenticationManager().authenticate(authenticationToken);
                 }
             }catch (Exception e){
-                throw new UnexpectedAuthenticationException();
+//                throw new UnexpectedAuthenticationException();
+                e.printStackTrace();
+                return null;
             }
         }
         return null;

@@ -57,7 +57,7 @@ public class AuthenticationInfo implements Authentication {
 
     @Override
     public String getName() {
-        return this.getName();
+        return this.userEmail;
     }
 
     @Override

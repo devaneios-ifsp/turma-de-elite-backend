@@ -1,6 +1,7 @@
 package com.devaneios.turmadeelite.repositories;
 
 import com.devaneios.turmadeelite.entities.UserCredentials;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 
 import java.util.Optional;

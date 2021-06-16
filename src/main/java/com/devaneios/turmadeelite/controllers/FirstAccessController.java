@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.validation.Valid;
+
 @RestController
 @RequestMapping("first-access")
 @AllArgsConstructor
@@ -35,9 +37,9 @@ public class FirstAccessController {
             )
     })
     @PostMapping("/verify-token")
-    ResponseEntity<Object> verifyFirstAccessToken(@RequestBody String firstAccessToken){
-        service.verifyToken(firstAccessToken);
-        return ResponseEntity.noContent().build();
+    ResponseEntity<Object> verifyFirstAccessToken(@Valid @RequestBody String firstAccessToken){
+        String email = service.verifyToken(firstAccessToken);
+        return ResponseEntity.ok(email);
     }
 
     @Operation(summary = "Realizar primeiro acesso, cadastrando credenciais no serviço de autenticação externo")
@@ -56,7 +58,7 @@ public class FirstAccessController {
             )
     })
     @PostMapping
-    ResponseEntity<Object> doFirstAccess(@RequestBody FirstAccessDTO firstAccessDTO) throws Exception {
+    ResponseEntity<Object> doFirstAccess(@Valid @RequestBody FirstAccessDTO firstAccessDTO) throws Exception {
         service.doFirstAccess(firstAccessDTO);
         return ResponseEntity.status(201).build();
     }
