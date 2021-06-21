@@ -15,6 +15,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.argon2.Argon2PasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.header.writers.ReferrerPolicyHeaderWriter;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.security.web.util.matcher.OrRequestMatcher;
 import org.springframework.security.web.util.matcher.RequestMatcher;
@@ -58,6 +59,8 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                         .allowedMethods("HEAD", "GET", "PUT", "POST", "DELETE", "PATCH");
             }
         };
+
+
     }
 
     @Bean
@@ -77,6 +80,19 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
         http
                 .anonymous().disable()
                 .cors()
+                .and()
+                .headers()
+                    .httpStrictTransportSecurity()
+                        .includeSubDomains(true)
+                        .maxAgeInSeconds(31536000)
+                    .and()
+                    .contentSecurityPolicy("script-src 'self'")
+                    .and()
+                    .frameOptions().deny()
+                    .contentTypeOptions()
+                    .and()
+                    .referrerPolicy().policy(ReferrerPolicyHeaderWriter.ReferrerPolicy.NO_REFERRER)
+                    .and()
                 .and()
                 .csrf().disable()
                 .exceptionHandling().authenticationEntryPoint((request, response, authException) -> response.sendError(HttpServletResponse.SC_UNAUTHORIZED,"Não autorizado"))

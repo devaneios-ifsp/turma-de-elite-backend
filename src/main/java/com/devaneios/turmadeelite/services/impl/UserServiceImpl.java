@@ -5,7 +5,7 @@ import com.devaneios.turmadeelite.entities.UserCredentials;
 import com.devaneios.turmadeelite.events.UserCreated;
 import com.devaneios.turmadeelite.exceptions.EmailAlreadyRegistered;
 import com.devaneios.turmadeelite.repositories.AdminRepository;
-import com.devaneios.turmadeelite.services.AdminService;
+import com.devaneios.turmadeelite.services.UserService;
 import lombok.AllArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
@@ -15,7 +15,7 @@ import java.util.UUID;
 
 @Service
 @AllArgsConstructor
-public class AdminServiceImpl implements AdminService {
+public class UserServiceImpl implements UserService {
 
     private final AdminRepository adminRepository;
     private final ApplicationEventPublisher eventPublisher;
@@ -23,6 +23,9 @@ public class AdminServiceImpl implements AdminService {
     @Override
     @Transactional
     public void createAdminUser(String email, String name, String language) throws EmailAlreadyRegistered {
+        if(this.adminRepository.existsByEmail(email)){
+            throw new EmailAlreadyRegistered();
+        }
         UserCredentials userCredentials = UserCredentials
                 .builder()
                 .email(email)

@@ -12,4 +12,6 @@ public interface AdminRepository extends CrudRepository<UserCredentials,Long> {
     Optional<UserCredentials> findByFirstAccessToken(String firstAccessToken);
 
     Optional<UserCredentials> findByAuthUuid(String authUuid);
+
+    boolean existsByEmail(String email);
 }
