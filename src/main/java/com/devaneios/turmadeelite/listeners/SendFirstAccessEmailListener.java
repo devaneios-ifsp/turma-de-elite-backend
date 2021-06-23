@@ -20,7 +20,11 @@ public class SendFirstAccessEmailListener {
     @TransactionalEventListener
     public void sendEmailWhenUserCreated(UserCreated userCreated) throws MessagingException {
         UserCredentials credentials = userCreated.getUserCredentials();
-        String link = "https://turma-de-elite-app.web.app/first-access?token"  + credentials.getFirstAccessToken();
+        String link = new StringBuilder()
+                .append("https://turma-de-elite-app.web.app/first-access?")
+                .append("token=").append(credentials.getFirstAccessToken())
+                .append("&email=").append(credentials.getEmail())
+                .toString();
         FirstAccessEmailDTO email = FirstAccessEmailHelper.createEmail(
                 credentials.getEmail(),
                 credentials.getName(),

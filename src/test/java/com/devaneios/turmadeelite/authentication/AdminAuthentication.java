@@ -69,7 +69,7 @@ public class AdminAuthentication {
                 .andExpect(status().isUnauthorized());
     }
 
-    @DisplayName("Criar um usuário admin estando autenticado com a Role correta")
+    @DisplayName("Criar um usuário admin estando autenticado com a Role correta e verificar se ele é retornado corretamente")
     @Test
     void creatingAdminWithRightRole() throws Exception {
         UserCredentials saved = this.adminRepository.save(new UserCredentials(null, "bianca@aluno.ifsp.edu.br", null, "outro_token", "Patrícia Paschoal", Role.ADMIN));

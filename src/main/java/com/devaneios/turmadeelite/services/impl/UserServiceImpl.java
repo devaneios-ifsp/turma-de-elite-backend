@@ -8,6 +8,8 @@ import com.devaneios.turmadeelite.repositories.AdminRepository;
 import com.devaneios.turmadeelite.services.UserService;
 import lombok.AllArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -35,5 +37,12 @@ public class UserServiceImpl implements UserService {
                 .build();
         UserCredentials userSaved = adminRepository.save(userCredentials);
         eventPublisher.publishEvent(new UserCreated(this,userSaved,language));
+    }
+
+    @Override
+    public Page<UserCredentials> getPaginatedAdminUsers(int size, int pageNumber){
+        PageRequest pageRequest = PageRequest.of(pageNumber, size);
+        Page<UserCredentials> allAdmins = this.adminRepository.findAllAdmins(pageRequest);
+        return allAdmins;
     }
 }

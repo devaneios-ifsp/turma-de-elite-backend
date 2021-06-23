@@ -34,7 +34,7 @@ public class FirstAccessController {
             )
     })
     @PostMapping("/verify-token")
-    ResponseEntity<Object> verifyFirstAccessToken(@Valid @RequestBody String firstAccessToken){
+    ResponseEntity<String> verifyFirstAccessToken(@Valid @RequestBody String firstAccessToken){
         String email = service.verifyToken(firstAccessToken);
         return ResponseEntity.ok(email);
     }
