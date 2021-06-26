@@ -40,7 +40,7 @@ public class FirebaseAuthenticationService implements AuthenticationService {
         UserRecord.CreateRequest createRequest = new UserRecord.CreateRequest();
         createRequest.setEmail(email);
         createRequest.setPassword(password);
-        UserRecord user = FirebaseAuth.getInstance(firebaseApp).createUser(createRequest);
+        UserRecord user = FirebaseAuth.getInstance().createUser(createRequest);
         return user.getUid();
     }
 
