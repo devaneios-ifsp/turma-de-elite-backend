@@ -22,7 +22,7 @@ public class RoleController {
                 .getAuthorities()
                 .stream()
                 .findFirst()
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED))
+                .get()
                 .getAuthority();
     }
 }

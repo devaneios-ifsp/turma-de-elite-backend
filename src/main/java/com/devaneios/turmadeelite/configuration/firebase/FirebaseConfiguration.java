@@ -41,13 +41,7 @@ public class FirebaseConfiguration {
 
     public FirebaseConfiguration() throws IOException {
         try{
-            File file = ResourceUtils.getFile("firebase/firebase-sdk-key.json");
-            FileInputStream serviceAccount = new FileInputStream(file);
-            FirebaseOptions options = new FirebaseOptions.Builder()
-                    .setCredentials(GoogleCredentials.fromStream(serviceAccount))
-                    .build();
-            this.firebaseApp = FirebaseApp.initializeApp(options);
-        }catch (Exception e){
+            log.info("Initializing Firebase SDK Admin with Env Variables");
             String jsonCredentials = this.firebaseAdminJsonFromEnv();
             InputStream credentialsStream = new ByteArrayInputStream(jsonCredentials.getBytes());
             FirebaseOptions options = FirebaseOptions
@@ -55,8 +49,20 @@ public class FirebaseConfiguration {
                     .setCredentials(GoogleCredentials.fromStream(credentialsStream))
                     .build();
             this.firebaseApp = FirebaseApp.initializeApp(options);
+            log.info("Firebase SDK Admin has initialized with success!");
+
+        }catch (Exception e){
+            log.info("Initializing Firebase SDK Admin with Env Variables failed");
+            log.info("Initializing Firebase SDK Admin with File");
+            File file = ResourceUtils.getFile("firebase/firebase-sdk-key.json");
+            FileInputStream serviceAccount = new FileInputStream(file);
+            FirebaseOptions options = new FirebaseOptions.Builder()
+                    .setCredentials(GoogleCredentials.fromStream(serviceAccount))
+                    .build();
+            this.firebaseApp = FirebaseApp.initializeApp(options);
+            log.info("Firebase SDK Admin has initialized with success!");
         }
-        log.info("Firebase SDK Admin has initialized with success!");
+
     }
 
     @Bean

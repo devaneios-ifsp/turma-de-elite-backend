@@ -1,6 +1,7 @@
 package com.devaneios.turmadeelite.authentication;
 
 import com.devaneios.turmadeelite.dto.AdminCreateDTO;
+import com.devaneios.turmadeelite.dto.AdminViewDTO;
 import com.devaneios.turmadeelite.dto.FirstAccessDTO;
 import com.devaneios.turmadeelite.entities.Role;
 import com.devaneios.turmadeelite.entities.UserCredentials;
@@ -9,9 +10,11 @@ import com.devaneios.turmadeelite.security.AuthenticationInfo;
 import com.devaneios.turmadeelite.security.SecurityConfiguration;
 import com.devaneios.turmadeelite.services.impl.FirebaseAuthenticationService;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.auth.FirebaseAuth;
+import org.assertj.core.util.Arrays;
 import org.junit.Before;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
@@ -26,7 +29,10 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.Primary;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers;
 import org.springframework.security.web.FilterChainProxy;
@@ -36,6 +42,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
 import java.nio.charset.StandardCharsets;
+import java.util.List;
 import java.util.Optional;
 
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.authentication;
@@ -69,7 +76,15 @@ public class AdminAuthentication {
                 .andExpect(status().isUnauthorized());
     }
 
-    @DisplayName("Criar um usuário admin estando autenticado com a Role correta e verificar se ele é retornado corretamente")
+    @DisplayName("Recuperar role sem estar autenticado")
+    @Test
+    void recoverRoleUnauthorized() throws Exception {
+        mvc.perform(get("/api/roles")
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isUnauthorized());
+    }
+
+    @DisplayName("Fluxo completo da criação de um usuário")
     @Test
     void creatingAdminWithRightRole() throws Exception {
         UserCredentials saved = this.adminRepository.save(new UserCredentials(null, "bianca@aluno.ifsp.edu.br", null, "outro_token", "Patrícia Paschoal", Role.ADMIN));
@@ -92,14 +107,29 @@ public class AdminAuthentication {
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isCreated());
 
-        UserCredentials byId = this.adminRepository.findById(saved.getId()).get();
         String token = this.authenticationService.createTokenFrom("bianca@aluno.ifsp.edu.br","123456");
+
+        mvc.perform(get("/api/roles")
+                .header("Authorization","Bearer " + token)
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(result -> {
+                    MockHttpServletResponse response = result.getResponse();
+                    String role = response.getContentAsString();
+                    Assertions.assertEquals("ADMIN",role);
+                });
+
         AdminCreateDTO dto = new AdminCreateDTO("luis@aluno.ifsp.edu.br", "Luis ", "pt");
         mvc.perform(post("/api/admin")
                 .content(mapper.writeValueAsString(dto))
                 .header("Authorization","Bearer " + token)
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isCreated());
+
+        mvc.perform(get("/api/admin?size=5&pageNumber=0")
+                .header("Authorization","Bearer " + token)
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
     }
 
     @DisplayName("Verificar token e realizar primeiro acesso, criando um usuário no sistema de autenticação externo")

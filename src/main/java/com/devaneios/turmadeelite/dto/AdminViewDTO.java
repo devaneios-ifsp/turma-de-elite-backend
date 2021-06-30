@@ -1,11 +1,10 @@
 package com.devaneios.turmadeelite.dto;
 
 import com.devaneios.turmadeelite.entities.UserCredentials;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
-@Data
+@Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 public class AdminViewDTO {
