@@ -6,10 +6,12 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.PagingAndSortingRepository;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
 
+@Repository
 public interface AdminRepository extends PagingAndSortingRepository<UserCredentials,Long> {
     public Optional<UserCredentials> findUserByEmailAndFirstAccessToken(String email, String firstAccessToken);
 

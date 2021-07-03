@@ -11,9 +11,11 @@ import javax.validation.constraints.NotBlank;
 @Getter
 @Setter
 public class FirstAccessDTO {
+
     @NotBlank
     @Email(message = "E-mail inválido")
     String email;
+
     @NotBlank
     @Length(min = 6,message = "Senha deve ter no mínimo 6 caracteres")
     String password;
