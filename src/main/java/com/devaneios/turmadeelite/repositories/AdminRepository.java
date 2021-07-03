@@ -21,6 +21,8 @@ public interface AdminRepository extends PagingAndSortingRepository<UserCredenti
 
     boolean existsByEmail(String email);
 
+    Optional<UserCredentials> findByEmail(String email);
+
     @Query("FROM UserCredentials u WHERE u.role='ADMIN'")
     Page<UserCredentials> findAllAdmins(Pageable pageable);
 }

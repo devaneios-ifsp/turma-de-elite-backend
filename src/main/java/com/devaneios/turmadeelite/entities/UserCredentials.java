@@ -33,4 +33,8 @@ public class UserCredentials {
     @Column(name = "role")
     @Enumerated(EnumType.STRING)
     private Role role;
+//
+//    @OneToOne(mappedBy = "credentials",cascade = CascadeType.ALL)
+//    @PrimaryKeyJoinColumn
+//    private Manager manager;
 }

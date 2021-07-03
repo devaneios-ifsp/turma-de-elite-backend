@@ -1,5 +1,6 @@
 package com.devaneios.turmadeelite.dto;
 
+import com.devaneios.turmadeelite.entities.UserCredentials;
 import lombok.*;
 
 import javax.validation.constraints.Email;

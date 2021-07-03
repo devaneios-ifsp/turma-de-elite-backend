@@ -8,7 +8,8 @@ CREATE TABLE user_credentials (
     auth_uuid VARCHAR(255),
     name VARCHAR(255) NOT NULL,
     first_access_token VARCHAR(255) UNIQUE,
-    role ENUM('ADMIN')
+    is_active BOOLEAN DEFAULT TRUE,
+    role ENUM('ADMIN','MANAGER')
 );
 
 CREATE TABLE school (
@@ -16,4 +17,10 @@ CREATE TABLE school (
     name VARCHAR(100) NOT NULL,
     identifier CHAR(20) UNIQUE NOT NULL,
     is_active BOOLEAN DEFAULT TRUE
+);
+
+CREATE TABLE manager (
+    manager_id BIGINT,
+    school_id BIGINT,
+    FOREIGN KEY(manager_id) REFERENCES user_credentials(id)
 );

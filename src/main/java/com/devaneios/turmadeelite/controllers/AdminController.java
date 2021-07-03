@@ -2,6 +2,8 @@ package com.devaneios.turmadeelite.controllers;
 
 import com.devaneios.turmadeelite.dto.AdminCreateDTO;
 import com.devaneios.turmadeelite.dto.AdminViewDTO;
+import com.devaneios.turmadeelite.entities.UserCredentials;
+import com.devaneios.turmadeelite.events.UserCreated;
 import com.devaneios.turmadeelite.services.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -51,5 +53,28 @@ public class AdminController {
     ResponseEntity<?> createAdminUser(@Valid @RequestBody AdminCreateDTO dto){
         this.userService.createAdminUser(dto.getEmail(), dto.getName(), dto.getLanguage());
         return new ResponseEntity<>(HttpStatus.CREATED);
+    }
+
+    @Operation(summary = "Visualizar um administrador pelo Id")
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Usuário Administrador encontrado com sucesso"
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "Não foi encontrado um usuário administrador com esse Id"
+            )
+    })
+    @GetMapping("/{userId}")
+    @ResponseBody AdminViewDTO findAdminById(@PathVariable Long userId){
+        UserCredentials adminById = this.userService.findAdminById(userId);
+        return new AdminViewDTO(adminById);
+    }
+
+    @PutMapping("/{userId}")
+    ResponseEntity<?> updateAdminUserInfo(@RequestBody AdminCreateDTO admin,@PathVariable Long userId){
+        this.userService.updateAdminUser(userId,admin);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 }
