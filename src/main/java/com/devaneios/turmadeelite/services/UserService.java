@@ -7,6 +7,7 @@ import org.springframework.data.domain.Page;
 import java.util.List;
 
 public interface UserService {
-    void createAdminUser(String email, String name, String language) throws EmailAlreadyRegistered;
+    void createAdminUser(String email, String name, Boolean isActive, String language) throws EmailAlreadyRegistered;
     Page<UserCredentials> getPaginatedAdminUsers(int size, int pageNumber);
+
 }

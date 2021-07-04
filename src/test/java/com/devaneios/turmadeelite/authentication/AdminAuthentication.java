@@ -69,7 +69,7 @@ public class AdminAuthentication {
     @DisplayName("Criar um usuário admin sem estar autenticado")
     @Test
     void creatingAdminUnauthenticated() throws Exception {
-        AdminCreateDTO dto = new AdminCreateDTO("patricia.paschoal@aluno.ifsp.edu.br", "Patrícia Paschoal", "pt");
+        AdminCreateDTO dto = new AdminCreateDTO("patricia.paschoal@aluno.ifsp.edu.br", "Patrícia Paschoal",true, "pt");
         mvc.perform(post("/api/admin")
                 .content(mapper.writeValueAsString(dto))
                 .contentType(MediaType.APPLICATION_JSON))
@@ -87,7 +87,7 @@ public class AdminAuthentication {
     @DisplayName("Fluxo completo da criação de um usuário")
     @Test
     void creatingAdminWithRightRole() throws Exception {
-        UserCredentials saved = this.adminRepository.save(new UserCredentials(null, "bianca@aluno.ifsp.edu.br", null, "outro_token", "Patrícia Paschoal", Role.ADMIN));
+        UserCredentials saved = this.adminRepository.save(new UserCredentials(null, "bianca@aluno.ifsp.edu.br", null, "outro_token", "Patrícia Paschoal",true, Role.ADMIN));
         FirstAccessDTO firstAccessDTO = new FirstAccessDTO(
                 "bianca@aluno.ifsp.edu.br",
                 "123456",
@@ -119,7 +119,7 @@ public class AdminAuthentication {
                     Assertions.assertEquals("ADMIN",role);
                 });
 
-        AdminCreateDTO dto = new AdminCreateDTO("luis@aluno.ifsp.edu.br", "Luis ", "pt");
+        AdminCreateDTO dto = new AdminCreateDTO("luis@aluno.ifsp.edu.br", "Luis ",true, "pt");
         mvc.perform(post("/api/admin")
                 .content(mapper.writeValueAsString(dto))
                 .header("Authorization","Bearer " + token)

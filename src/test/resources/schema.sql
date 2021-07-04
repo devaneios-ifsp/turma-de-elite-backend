@@ -7,6 +7,7 @@ CREATE TABLE user_credentials (
     email VARCHAR(100) NOT NULL UNIQUE,
     auth_uuid VARCHAR(255),
     name VARCHAR(255) NOT NULL,
+    is_active BOOLEAN DEFAULT TRUE,
     first_access_token VARCHAR(255) UNIQUE,
     role ENUM('ADMIN')
 );

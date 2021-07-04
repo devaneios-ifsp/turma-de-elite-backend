@@ -49,7 +49,7 @@ public class AdminController {
     })
     @PostMapping
     ResponseEntity<?> createAdminUser(@Valid @RequestBody AdminCreateDTO dto){
-        this.userService.createAdminUser(dto.getEmail(), dto.getName(), dto.getLanguage());
+        this.userService.createAdminUser(dto.getEmail(), dto.getName(), dto.getIsActive(), dto.getLanguage());
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 }
