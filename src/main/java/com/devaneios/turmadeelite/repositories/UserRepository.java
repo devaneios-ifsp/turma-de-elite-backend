@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface AdminRepository extends PagingAndSortingRepository<UserCredentials,Long> {
+public interface UserRepository extends PagingAndSortingRepository<UserCredentials,Long> {
     public Optional<UserCredentials> findUserByEmailAndFirstAccessToken(String email, String firstAccessToken);
 
     Optional<UserCredentials> findByFirstAccessToken(String firstAccessToken);

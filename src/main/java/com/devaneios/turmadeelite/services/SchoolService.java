@@ -6,4 +6,5 @@ import org.springframework.data.domain.Page;
 public interface SchoolService {
     void createSchool(School school);
     Page<School> getPaginatedSchools(int size, int pageNumber);
+    School getSchoolById(Long schoolId);
 }

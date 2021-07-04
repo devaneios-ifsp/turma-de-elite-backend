@@ -2,9 +2,8 @@ package com.devaneios.turmadeelite.security;
 
 import com.devaneios.turmadeelite.entities.UserCredentials;
 import com.devaneios.turmadeelite.exceptions.BearerTokenNotFoundException;
-import com.devaneios.turmadeelite.exceptions.UnexpectedAuthenticationException;
 import com.devaneios.turmadeelite.exceptions.UserNotFoundException;
-import com.devaneios.turmadeelite.repositories.AdminRepository;
+import com.devaneios.turmadeelite.repositories.UserRepository;
 import com.devaneios.turmadeelite.services.AuthenticationService;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
@@ -19,12 +18,12 @@ import java.io.IOException;
 public class BearerTokenFilter extends AbstractAuthenticationProcessingFilter {
 
     private final AuthenticationService authenticationService;
-    private final AdminRepository adminRepository;
+    private final UserRepository userRepository;
 
-    public BearerTokenFilter(AuthenticationService authenticationService, AdminRepository adminRepository){
+    public BearerTokenFilter(AuthenticationService authenticationService, UserRepository userRepository){
         super("/**");
         this.authenticationService = authenticationService;
-        this.adminRepository = adminRepository;
+        this.userRepository = userRepository;
     }
 
     @Override
@@ -38,7 +37,7 @@ public class BearerTokenFilter extends AbstractAuthenticationProcessingFilter {
                 if(bearerToken != null){
                     AuthenticationInfo authenticationToken = authenticationService.verifyTokenId(bearerToken);
                     String authUuid = authenticationToken.getPrincipal();
-                    UserCredentials userCredentials = adminRepository.findByAuthUuid(authUuid).orElseThrow(UserNotFoundException::new);
+                    UserCredentials userCredentials = userRepository.findByAuthUuid(authUuid).orElseThrow(UserNotFoundException::new);
                     authenticationToken.setRole(userCredentials.getRole());
                     return getAuthenticationManager().authenticate(authenticationToken);
                 }

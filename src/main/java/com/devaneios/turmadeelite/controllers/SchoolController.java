@@ -56,4 +56,17 @@ public class SchoolController {
         Page<SchoolViewDTO> response = paginatedSchools.map(SchoolViewDTO::new);
         return ResponseEntity.ok(response);
     }
+
+    @Operation(summary = "Recuper uma escola pelo Id")
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Retorna a escola"
+            )
+    })
+    @GetMapping("/{schoolId}")
+    ResponseEntity<SchoolViewDTO> getSchoolById(@PathVariable Long schoolId){
+        School school = this.schoolService.getSchoolById(schoolId);
+        return ResponseEntity.ok(new SchoolViewDTO(school));
+    }
 }

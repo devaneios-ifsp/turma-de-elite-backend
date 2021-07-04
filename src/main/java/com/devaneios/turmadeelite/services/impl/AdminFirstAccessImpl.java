@@ -4,7 +4,7 @@ import com.devaneios.turmadeelite.dto.FirstAccessDTO;
 import com.devaneios.turmadeelite.entities.UserCredentials;
 import com.devaneios.turmadeelite.exceptions.UserAlreadyDoFirstAccess;
 import com.devaneios.turmadeelite.exceptions.UserNotFoundException;
-import com.devaneios.turmadeelite.repositories.AdminRepository;
+import com.devaneios.turmadeelite.repositories.UserRepository;
 import com.devaneios.turmadeelite.services.AdminFirstAccessService;
 import com.devaneios.turmadeelite.services.AuthenticationService;
 import lombok.AllArgsConstructor;
@@ -16,13 +16,13 @@ import javax.transaction.Transactional;
 @AllArgsConstructor
 public class AdminFirstAccessImpl implements AdminFirstAccessService {
 
-    private final AdminRepository adminRepository;
+    private final UserRepository userRepository;
     private final AuthenticationService authenticationService;
 
     @Override
     @Transactional
     public void doFirstAccess(FirstAccessDTO firstAccessDTO) throws Exception {
-        UserCredentials userCredentials = this.adminRepository.findUserByEmailAndFirstAccessToken(
+        UserCredentials userCredentials = this.userRepository.findUserByEmailAndFirstAccessToken(
                 firstAccessDTO.getEmail(),
                 firstAccessDTO.getFirstAccessToken()
         ).orElseThrow(UserNotFoundException::new);
@@ -31,12 +31,12 @@ public class AdminFirstAccessImpl implements AdminFirstAccessService {
         }
         String uid = authenticationService.createUser(firstAccessDTO.getEmail(), firstAccessDTO.getPassword());
         userCredentials.setAuthUuid(uid);
-        adminRepository.save(userCredentials);
+        userRepository.save(userCredentials);
     }
 
     @Override
     public String verifyToken(String verifyToken) {
-        UserCredentials userCredentials = this.adminRepository
+        UserCredentials userCredentials = this.userRepository
                 .findByFirstAccessToken(verifyToken)
                 .orElseThrow(UserNotFoundException::new);
         if(userCredentials.getAuthUuid() != null){

@@ -1,6 +1,6 @@
 package com.devaneios.turmadeelite.security;
 
-import com.devaneios.turmadeelite.repositories.AdminRepository;
+import com.devaneios.turmadeelite.repositories.UserRepository;
 import com.devaneios.turmadeelite.services.AuthenticationService;
 import com.google.common.collect.ImmutableList;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,7 +42,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     AuthenticationService authenticationService;
 
     @Autowired
-    AdminRepository adminRepository;
+    UserRepository userRepository;
 
     private static final RequestMatcher PROTECTED_URLS = new OrRequestMatcher(
             new AntPathRequestMatcher("/api/**")
@@ -112,7 +112,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     }
 
     public BearerTokenFilter authenticationFilter(){
-        BearerTokenFilter bearerTokenFilter = new BearerTokenFilter(authenticationService, adminRepository);
+        BearerTokenFilter bearerTokenFilter = new BearerTokenFilter(authenticationService, userRepository);
         bearerTokenFilter.setAuthenticationManager(authenticationManager());
         bearerTokenFilter.setAuthenticationSuccessHandler((request, response, authentication) -> {});
         return bearerTokenFilter;

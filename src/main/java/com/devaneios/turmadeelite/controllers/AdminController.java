@@ -1,9 +1,8 @@
 package com.devaneios.turmadeelite.controllers;
 
-import com.devaneios.turmadeelite.dto.AdminCreateDTO;
+import com.devaneios.turmadeelite.dto.UserCredentialsCreateDTO;
 import com.devaneios.turmadeelite.dto.AdminViewDTO;
 import com.devaneios.turmadeelite.entities.UserCredentials;
-import com.devaneios.turmadeelite.events.UserCreated;
 import com.devaneios.turmadeelite.services.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -50,7 +49,7 @@ public class AdminController {
             )
     })
     @PostMapping
-    ResponseEntity<?> createAdminUser(@Valid @RequestBody AdminCreateDTO dto){
+    ResponseEntity<?> createAdminUser(@Valid @RequestBody UserCredentialsCreateDTO dto){
         this.userService.createAdminUser(dto.getEmail(), dto.getName(), dto.getLanguage());
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
@@ -73,7 +72,7 @@ public class AdminController {
     }
 
     @PutMapping("/{userId}")
-    ResponseEntity<?> updateAdminUserInfo(@RequestBody AdminCreateDTO admin,@PathVariable Long userId){
+    ResponseEntity<?> updateAdminUserInfo(@RequestBody UserCredentialsCreateDTO admin, @PathVariable Long userId){
         this.userService.updateAdminUser(userId,admin);
         return new ResponseEntity<>(HttpStatus.OK);
     }

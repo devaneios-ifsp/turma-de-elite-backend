@@ -4,10 +4,8 @@ import com.devaneios.turmadeelite.dto.FirstAccessDTO;
 import com.devaneios.turmadeelite.dto.SchoolCreateDTO;
 import com.devaneios.turmadeelite.entities.Role;
 import com.devaneios.turmadeelite.entities.UserCredentials;
-import com.devaneios.turmadeelite.repositories.AdminRepository;
-import com.devaneios.turmadeelite.services.AuthenticationService;
+import com.devaneios.turmadeelite.repositories.UserRepository;
 import com.devaneios.turmadeelite.services.impl.FirebaseAuthenticationService;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
@@ -40,7 +38,7 @@ public class SchoolCreation {
     static void setup(
             @Autowired MockMvc mvc,
             @Autowired FirebaseAuthenticationService authenticationService,
-            @Autowired AdminRepository adminRepository) throws Exception {
+            @Autowired UserRepository userRepository) throws Exception {
         if(bearerToken == null){
             String firstAccessToken = "esse_token";
             String email = "andre@aluno.ifsp.edu.br";
@@ -52,7 +50,7 @@ public class SchoolCreation {
                     .name("André")
                     .role(Role.ADMIN)
                     .build();
-            UserCredentials saved = adminRepository.save(credentials);
+            UserCredentials saved = userRepository.save(credentials);
             FirstAccessDTO firstAccessDTO = new FirstAccessDTO(email, password, firstAccessToken);
 
             mvc.perform(post("/first-access/verify-token")

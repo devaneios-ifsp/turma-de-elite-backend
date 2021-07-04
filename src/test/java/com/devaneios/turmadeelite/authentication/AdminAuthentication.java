@@ -1,51 +1,24 @@
 package com.devaneios.turmadeelite.authentication;
 
-import com.devaneios.turmadeelite.dto.AdminCreateDTO;
-import com.devaneios.turmadeelite.dto.AdminViewDTO;
+import com.devaneios.turmadeelite.dto.UserCredentialsCreateDTO;
 import com.devaneios.turmadeelite.dto.FirstAccessDTO;
 import com.devaneios.turmadeelite.entities.Role;
 import com.devaneios.turmadeelite.entities.UserCredentials;
-import com.devaneios.turmadeelite.repositories.AdminRepository;
-import com.devaneios.turmadeelite.security.AuthenticationInfo;
-import com.devaneios.turmadeelite.security.SecurityConfiguration;
+import com.devaneios.turmadeelite.repositories.UserRepository;
 import com.devaneios.turmadeelite.services.impl.FirebaseAuthenticationService;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.firebase.FirebaseApp;
-import com.google.firebase.auth.FirebaseAuth;
-import org.assertj.core.util.Arrays;
-import org.junit.Before;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Import;
-import org.springframework.context.annotation.Primary;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletResponse;
-import org.springframework.security.test.context.support.WithMockUser;
-import org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers;
-import org.springframework.security.web.FilterChainProxy;
-import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import org.springframework.web.context.WebApplicationContext;
 
 import java.nio.charset.StandardCharsets;
-import java.util.List;
-import java.util.Optional;
 
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.authentication;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -59,7 +32,7 @@ public class AdminAuthentication {
     private MockMvc mvc;
 
     @Autowired
-    private AdminRepository adminRepository;
+    private UserRepository userRepository;
 
     @Autowired
     private FirebaseAuthenticationService authenticationService;
@@ -69,7 +42,7 @@ public class AdminAuthentication {
     @DisplayName("Criar um usuário admin sem estar autenticado")
     @Test
     void creatingAdminUnauthenticated() throws Exception {
-        AdminCreateDTO dto = new AdminCreateDTO("patricia.paschoal@aluno.ifsp.edu.br", "Patrícia Paschoal", "pt");
+        UserCredentialsCreateDTO dto = new UserCredentialsCreateDTO("patricia.paschoal@aluno.ifsp.edu.br", "Patrícia Paschoal", "pt");
         mvc.perform(post("/api/admin")
                 .content(mapper.writeValueAsString(dto))
                 .contentType(MediaType.APPLICATION_JSON))
@@ -87,7 +60,7 @@ public class AdminAuthentication {
     @DisplayName("Fluxo completo da criação de um usuário")
     @Test
     void creatingAdminWithRightRole() throws Exception {
-        UserCredentials saved = this.adminRepository.save(new UserCredentials(null, "bianca@aluno.ifsp.edu.br", null, "outro_token", "Patrícia Paschoal", Role.ADMIN));
+        UserCredentials saved = this.userRepository.save(new UserCredentials(null, "bianca@aluno.ifsp.edu.br", null, "outro_token", "Patrícia Paschoal", Role.ADMIN));
         FirstAccessDTO firstAccessDTO = new FirstAccessDTO(
                 "bianca@aluno.ifsp.edu.br",
                 "123456",
@@ -119,7 +92,7 @@ public class AdminAuthentication {
                     Assertions.assertEquals("ADMIN",role);
                 });
 
-        AdminCreateDTO dto = new AdminCreateDTO("luis@aluno.ifsp.edu.br", "Luis ", "pt");
+        UserCredentialsCreateDTO dto = new UserCredentialsCreateDTO("luis@aluno.ifsp.edu.br", "Luis ", "pt");
         mvc.perform(post("/api/admin")
                 .content(mapper.writeValueAsString(dto))
                 .header("Authorization","Bearer " + token)

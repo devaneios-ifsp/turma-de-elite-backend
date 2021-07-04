@@ -8,7 +8,9 @@ import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import javax.transaction.Transactional;
 
@@ -33,5 +35,10 @@ public class SchoolServiceImpl implements SchoolService {
         Pageable pageable = PageRequest.of(pageNumber, size);
         Page<School> schoolPage = this.repository.findAll(pageable);
         return schoolPage;
+    }
+
+    @Override
+    public School getSchoolById(Long schoolId) {
+        return this.repository.findById(schoolId).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
     }
 }
