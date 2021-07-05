@@ -69,4 +69,17 @@ public class SchoolController {
         School school = this.schoolService.getSchoolById(schoolId);
         return ResponseEntity.ok(new SchoolViewDTO(school));
     }
+
+    @Operation(summary = "Atualizar uma escola pelo Id")
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Escola atualizada com sucesso"
+            )
+    })
+    @PutMapping("/{schoolId}")
+    ResponseEntity<?> updateSchoolById(@PathVariable Long schoolId,@RequestBody SchoolCreateDTO schoolCreateDTO){
+        this.schoolService.updateSchoolById(schoolId,schoolCreateDTO);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
 }

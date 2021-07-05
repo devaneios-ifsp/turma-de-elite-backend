@@ -1,6 +1,8 @@
 package com.devaneios.turmadeelite.services.impl;
 
+import com.devaneios.turmadeelite.dto.SchoolCreateDTO;
 import com.devaneios.turmadeelite.entities.School;
+import com.devaneios.turmadeelite.entities.UserCredentials;
 import com.devaneios.turmadeelite.exceptions.AlreadyRegisteredSchool;
 import com.devaneios.turmadeelite.repositories.SchoolRepository;
 import com.devaneios.turmadeelite.services.SchoolService;
@@ -13,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import javax.transaction.Transactional;
+import java.util.Optional;
 
 @Service
 @AllArgsConstructor
@@ -40,5 +43,20 @@ public class SchoolServiceImpl implements SchoolService {
     @Override
     public School getSchoolById(Long schoolId) {
         return this.repository.findById(schoolId).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+    }
+
+    @Override
+    public void updateSchoolById(Long schoolId, SchoolCreateDTO schoolCreateDTO) {
+        Optional<School> byIdentifier = this.repository.findByIdentifier(schoolCreateDTO.getIdentifier());
+        byIdentifier.ifPresent(userCredentials -> {
+            if(userCredentials.getId() != schoolId){
+                throw new ResponseStatusException(HttpStatus.CONFLICT);
+            }
+        });
+        School school = this.repository.findById(schoolId).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+        school.setIdentifier(schoolCreateDTO.getIdentifier());
+        school.setName(schoolCreateDTO.getName());
+        school.setIsActive(schoolCreateDTO.getIsActive());
+        this.repository.save(school);
     }
 }
