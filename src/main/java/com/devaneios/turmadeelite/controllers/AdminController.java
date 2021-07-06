@@ -50,7 +50,7 @@ public class AdminController {
     })
     @PostMapping
     ResponseEntity<?> createAdminUser(@Valid @RequestBody UserCredentialsCreateDTO dto){
-        this.userService.createAdminUser(dto.getEmail(), dto.getName(), dto.getLanguage());
+        this.userService.createAdminUser(dto.getEmail(), dto.getName(), dto.getIsActive(), dto.getLanguage());
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 

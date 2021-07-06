@@ -30,6 +30,9 @@ public class UserCredentials {
     @Column(name = "name",nullable = false)
     private String name;
 
+    @Column(columnDefinition = "boolean default true")
+    private Boolean isActive;
+
     @Column(name = "role")
     @Enumerated(EnumType.STRING)
     private Role role;

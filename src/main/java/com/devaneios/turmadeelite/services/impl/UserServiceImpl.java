@@ -28,7 +28,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public void createAdminUser(String email, String name, String language) throws EmailAlreadyRegistered {
+    public void createAdminUser(String email, String name, Boolean isActive, String language) throws EmailAlreadyRegistered {
         if(this.userRepository.existsByEmail(email)){
             throw new EmailAlreadyRegistered();
         }
@@ -37,6 +37,7 @@ public class UserServiceImpl implements UserService {
                 .email(email)
                 .firstAccessToken(UUID.randomUUID().toString())
                 .name(name)
+                .isActive(isActive)
                 .role(Role.ADMIN)
                 .build();
         UserCredentials userSaved = userRepository.save(userCredentials);
