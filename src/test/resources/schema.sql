@@ -20,7 +20,8 @@ CREATE TABLE school (
 );
 
 CREATE TABLE manager (
-    manager_id BIGINT,
+    manager_id BIGINT PRIMARY KEY,
     school_id BIGINT,
-    FOREIGN KEY(manager_id) REFERENCES user_credentials(id)
+    FOREIGN KEY(manager_id) REFERENCES user_credentials(id),
+    FOREIGN KEY(school_id) REFERENCES school(id)
 );

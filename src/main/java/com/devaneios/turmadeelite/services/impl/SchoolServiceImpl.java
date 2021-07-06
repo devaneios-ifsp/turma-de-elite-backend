@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import javax.transaction.Transactional;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -58,5 +59,10 @@ public class SchoolServiceImpl implements SchoolService {
         school.setName(schoolCreateDTO.getName());
         school.setIsActive(schoolCreateDTO.getIsActive());
         this.repository.save(school);
+    }
+
+    @Override
+    public List<School> getSchoolsByNameSimilarity(String name) {
+        return this.repository.findByNameContainingIgnoreCase(name);
     }
 }

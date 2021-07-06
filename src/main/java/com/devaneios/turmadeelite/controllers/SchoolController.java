@@ -14,6 +14,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @RestController
 @RequestMapping("/api/schools")
 @AllArgsConstructor
@@ -54,6 +57,20 @@ public class SchoolController {
     ResponseEntity<Page<SchoolViewDTO>> getSchools(@RequestParam int size, @RequestParam int pageNumber){
         Page<School> paginatedSchools = this.schoolService.getPaginatedSchools(size, pageNumber);
         Page<SchoolViewDTO> response = paginatedSchools.map(SchoolViewDTO::new);
+        return ResponseEntity.ok(response);
+    }
+
+    @Operation(summary = "Lista as escolas cadastradas por similaridade do nome")
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Retorna uma lista de escolas"
+            )
+    })
+    @GetMapping("/name/{name}")
+    ResponseEntity<List<SchoolViewDTO>> getSchoolsByNameSimilarity(@PathVariable String name){
+        List<School> paginatedSchools = this.schoolService.getSchoolsByNameSimilarity(name);
+        List<SchoolViewDTO> response = paginatedSchools.stream().map(SchoolViewDTO::new).collect(Collectors.toList());
         return ResponseEntity.ok(response);
     }
 
