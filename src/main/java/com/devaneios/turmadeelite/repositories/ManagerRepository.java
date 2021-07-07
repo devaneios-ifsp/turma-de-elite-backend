@@ -15,4 +15,6 @@ public interface ManagerRepository extends CrudRepository<Manager,Long> {
     @Query("SELECT m FROM Manager m JOIN m.credentials c JOIN m.school s WHERE m.id=:id")
     Optional<Manager> findManagerByIdWithSchoolAndCredentials(Long id);
 
+    @Query("SELECT m FROM Manager m JOIN m.credentials c JOIN m.school s WHERE c.authUuid=:principal")
+    Optional<Manager> findManagerByAuthUuidWithSchoolAndCredentials(String principal);
 }

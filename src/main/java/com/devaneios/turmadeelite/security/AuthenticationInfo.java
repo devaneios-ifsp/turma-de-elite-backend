@@ -56,6 +56,10 @@ public class AuthenticationInfo implements Authentication {
 
     }
 
+    public Role getRole(){
+        return this.role;
+    }
+
     @Override
     public String getName() {
         return this.userEmail;
