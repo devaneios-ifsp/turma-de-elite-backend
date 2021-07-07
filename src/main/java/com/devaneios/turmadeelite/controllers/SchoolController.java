@@ -53,6 +53,7 @@ public class SchoolController {
                     description = "Retorna uma página de escolas"
             )
     })
+    @IsAdmin
     @GetMapping
     ResponseEntity<Page<SchoolViewDTO>> getSchools(@RequestParam int size, @RequestParam int pageNumber){
         Page<School> paginatedSchools = this.schoolService.getPaginatedSchools(size, pageNumber);
@@ -67,6 +68,7 @@ public class SchoolController {
                     description = "Retorna uma lista de escolas"
             )
     })
+    @IsAdmin
     @GetMapping("/name/{name}")
     ResponseEntity<List<SchoolViewDTO>> getSchoolsByNameSimilarity(@PathVariable String name){
         List<School> paginatedSchools = this.schoolService.getSchoolsByNameSimilarity(name);
@@ -81,6 +83,7 @@ public class SchoolController {
                     description = "Retorna a escola"
             )
     })
+    @IsAdmin
     @GetMapping("/{schoolId}")
     ResponseEntity<SchoolViewDTO> getSchoolById(@PathVariable Long schoolId){
         School school = this.schoolService.getSchoolById(schoolId);
@@ -94,6 +97,7 @@ public class SchoolController {
                     description = "Escola atualizada com sucesso"
             )
     })
+    @IsAdmin
     @PutMapping("/{schoolId}")
     ResponseEntity<?> updateSchoolById(@PathVariable Long schoolId,@RequestBody SchoolCreateDTO schoolCreateDTO){
         this.schoolService.updateSchoolById(schoolId,schoolCreateDTO);

@@ -6,6 +6,7 @@ import com.devaneios.turmadeelite.dto.SchoolViewDTO;
 import com.devaneios.turmadeelite.dto.UserCredentialsCreateDTO;
 import com.devaneios.turmadeelite.entities.Manager;
 import com.devaneios.turmadeelite.entities.School;
+import com.devaneios.turmadeelite.security.guards.IsAdmin;
 import com.devaneios.turmadeelite.services.ManagerService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -34,6 +35,7 @@ public class ManagerController {
                     description = "E-mail já foi cadastrado"
             )
     })
+    @IsAdmin
     @PostMapping
     ResponseEntity<?> registerManagerUser(@RequestBody ManagerCreateDTO managerCreateDTO){
         this.managerService.createManagerUser(
@@ -52,6 +54,7 @@ public class ManagerController {
                     description = "Página de gestores retornada com sucesso"
             )
     })
+    @IsAdmin
     @GetMapping
     ResponseEntity<Page<ManagerViewDTO>> getSchools(@RequestParam int size, @RequestParam int pageNumber){
         Page<Manager> paginatedManagers = this.managerService.getPaginatedSchools(size, pageNumber);
@@ -70,6 +73,7 @@ public class ManagerController {
                     description = "Gestor com id especificado não encontrado"
             ),
     })
+    @IsAdmin
     @GetMapping("/{id}")
     ResponseEntity<ManagerViewDTO> getManagers(@PathVariable Long id){
         Manager manager = this.managerService.findManagerById(id);
@@ -87,6 +91,7 @@ public class ManagerController {
                     description = "E-mail já foi cadastrado"
             )
     })
+    @IsAdmin
     @PutMapping("/{id}")
     ResponseEntity<?> updateManager(@RequestBody ManagerCreateDTO managerCreateDTO,@PathVariable Long id){
         this.managerService.updateManagerUser(

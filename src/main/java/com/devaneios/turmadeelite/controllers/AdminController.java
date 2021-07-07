@@ -3,6 +3,7 @@ package com.devaneios.turmadeelite.controllers;
 import com.devaneios.turmadeelite.dto.UserCredentialsCreateDTO;
 import com.devaneios.turmadeelite.dto.AdminViewDTO;
 import com.devaneios.turmadeelite.entities.UserCredentials;
+import com.devaneios.turmadeelite.security.guards.IsAdmin;
 import com.devaneios.turmadeelite.services.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -29,6 +30,7 @@ public class AdminController {
                     description = "Lista retornada com sucesso"
             )
     })
+    @IsAdmin
     @GetMapping
     ResponseEntity<Page<AdminViewDTO>> getPaginatedAdminUser(@RequestParam int size, @RequestParam int pageNumber){
         Page<AdminViewDTO> response = this.userService
@@ -48,6 +50,7 @@ public class AdminController {
                     description = "E-mail já foi cadastrado"
             )
     })
+    @IsAdmin
     @PostMapping
     ResponseEntity<?> createAdminUser(@Valid @RequestBody UserCredentialsCreateDTO dto){
         this.userService.createAdminUser(dto.getEmail(), dto.getName(), dto.getIsActive(), dto.getLanguage());
@@ -65,12 +68,14 @@ public class AdminController {
                     description = "Não foi encontrado um usuário administrador com esse Id"
             )
     })
+    @IsAdmin
     @GetMapping("/{userId}")
     @ResponseBody AdminViewDTO findAdminById(@PathVariable Long userId){
         UserCredentials adminById = this.userService.findAdminById(userId);
         return new AdminViewDTO(adminById);
     }
 
+    @IsAdmin
     @PutMapping("/{userId}")
     ResponseEntity<?> updateAdminUserInfo(@RequestBody UserCredentialsCreateDTO admin, @PathVariable Long userId){
         this.userService.updateAdminUser(userId,admin);
