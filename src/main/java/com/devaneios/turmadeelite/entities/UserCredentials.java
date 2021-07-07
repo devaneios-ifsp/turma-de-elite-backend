@@ -40,4 +40,8 @@ public class UserCredentials {
     @OneToOne(mappedBy = "credentials",cascade = CascadeType.ALL)
     @PrimaryKeyJoinColumn
     private Manager manager;
+
+    @OneToOne(mappedBy = "credentials",cascade = CascadeType.ALL)
+    @PrimaryKeyJoinColumn
+    private Student student;
 }
