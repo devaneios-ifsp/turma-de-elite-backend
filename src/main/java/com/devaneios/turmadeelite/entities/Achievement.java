@@ -29,9 +29,11 @@ public class Achievement {
 
     private Integer bestOf;
 
-    private Integer averageGradeGreaterOrEqualsThan;
+    private Double averageGradeGreaterOrEqualsThan;
 
     private Long classId;
+
+    private Long activityId;
 }
 /*
 * SELECT count(d) FROM ActivityDelivery d

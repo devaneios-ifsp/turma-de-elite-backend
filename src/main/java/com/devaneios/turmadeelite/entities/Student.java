@@ -24,6 +24,6 @@ public class Student {
     private UserCredentials credentials;
 
     @OneToMany(cascade = CascadeType.ALL,orphanRemoval = true)
-    @JoinColumn(name = "activity_delivery_id")
+    @JoinColumn(name = "student_delivery_id")
     private List<ActivityDelivery> deliveries = new ArrayList<>();
 }

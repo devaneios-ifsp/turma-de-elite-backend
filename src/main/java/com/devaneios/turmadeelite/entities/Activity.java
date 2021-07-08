@@ -27,7 +27,7 @@ public class Activity {
 
     private LocalDateTime expireDate;
 
-    private Float value;
+    private Float maxValue;
 
     @OneToMany(cascade = CascadeType.ALL,orphanRemoval = true)
     @JoinColumn(name = "activity_id")
