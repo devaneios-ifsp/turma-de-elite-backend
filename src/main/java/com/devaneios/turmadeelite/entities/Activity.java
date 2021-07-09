@@ -29,7 +29,6 @@ public class Activity {
 
     private Float maxValue;
 
-    @OneToMany(cascade = CascadeType.ALL,orphanRemoval = true)
-    @JoinColumn(name = "activity_id")
+    @OneToMany(cascade = CascadeType.ALL,orphanRemoval = true, mappedBy = "activity")
     private List<ActivityDelivery> deliveries = new ArrayList<>();
 }

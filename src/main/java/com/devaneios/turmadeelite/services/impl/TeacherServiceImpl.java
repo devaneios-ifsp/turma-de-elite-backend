@@ -48,12 +48,7 @@ public class TeacherServiceImpl implements TeacherService {
                 .build();
 
         UserCredentials userSaved = userRepository.save(userCredentials);
-        Teacher  teacher = Teacher.builder().school(school).credentials(userSaved).build();
-
-        school.addTeacher(teacher);
-
-        this.teacherRepository.save(teacher);
-        this.schoolRepository.save(school);
+        this.teacherRepository.insertUserAsTeacher(userSaved.getId(),schoolId);
         eventPublisher.publishEvent(new UserCreated(this,userSaved,language));
     }
 
@@ -93,11 +88,9 @@ public class TeacherServiceImpl implements TeacherService {
         userRepository.save(userCredentials);
 
         Teacher teacher = this.teacherRepository.findById(managerId).orElseThrow(()->new ResponseStatusException(HttpStatus.NOT_FOUND));
-        school.removeTeacher(teacher);
-        school.addTeacher(teacher);
+        teacher.setSchool(school);
 
         this.teacherRepository.save(teacher);
-        this.schoolRepository.save(school);
     }
 
     private School findSchoolById(Long schoolId){

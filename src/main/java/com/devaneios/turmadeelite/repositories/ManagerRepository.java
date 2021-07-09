@@ -9,7 +9,7 @@ import org.springframework.data.repository.CrudRepository;
 import java.util.Optional;
 
 public interface ManagerRepository extends CrudRepository<Manager,Long> {
-    @Query("SELECT m FROM Manager m JOIN m.credentials c")
+    @Query("SELECT m FROM Manager m INNER JOIN m.credentials c WHERE role='MANAGER'")
     Page<Manager> findAllManagers(PageRequest pageRequest);
 
     @Query("SELECT m FROM Manager m JOIN m.credentials c JOIN m.school s WHERE m.id=:id")

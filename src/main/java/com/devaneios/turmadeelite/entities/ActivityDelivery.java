@@ -25,8 +25,10 @@ public class ActivityDelivery {
     private Float gradeReceived;
 
     @ManyToOne
+    @JoinColumn(name = "student_delivery_id")
     private Student student;
 
     @ManyToOne
+    @JoinColumn(name = "activity_id")
     private Activity activity;
 }

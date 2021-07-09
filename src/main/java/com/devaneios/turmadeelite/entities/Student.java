@@ -23,7 +23,6 @@ public class Student {
     @JoinColumn(name = "student_id")
     private UserCredentials credentials;
 
-    @OneToMany(cascade = CascadeType.ALL,orphanRemoval = true)
-    @JoinColumn(name = "student_delivery_id")
+    @OneToMany(cascade = CascadeType.ALL,orphanRemoval = true,mappedBy = "student")
     private List<ActivityDelivery> deliveries = new ArrayList<>();
 }
