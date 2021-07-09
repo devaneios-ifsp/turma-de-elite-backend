@@ -32,6 +32,10 @@ public class School {
     @JoinColumn(name = "school_id")
     private List<Manager> managers = new ArrayList<>();
 
+    @OneToMany(cascade = CascadeType.ALL,orphanRemoval = true)
+    @JoinColumn(name = "teacher_id")
+    private List<Teacher> teachers = new ArrayList<>();
+
     public void addManager(Manager manager){
         this.managers.add(manager);
         manager.setSchool(this);
@@ -40,5 +44,15 @@ public class School {
     public void removeManager(Manager manager){
         this.managers.remove(manager);
         manager.setSchool(null);
+    }
+
+    public void addTeacher(Teacher teacher){
+        this.teachers.add(teacher);
+        teacher.setSchool(this);
+    }
+
+    public void removeTeacher(Teacher teacher){
+        this.teachers.remove(teacher);
+        teacher.setSchool(null);
     }
 }

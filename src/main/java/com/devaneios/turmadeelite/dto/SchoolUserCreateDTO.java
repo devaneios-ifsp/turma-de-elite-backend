@@ -14,7 +14,7 @@ import javax.validation.constraints.Size;
 @NoArgsConstructor
 @Getter
 @Setter
-public class ManagerCreateDTO {
+public class SchoolUserCreateDTO {
     @NotBlank
     @Email
     String email;

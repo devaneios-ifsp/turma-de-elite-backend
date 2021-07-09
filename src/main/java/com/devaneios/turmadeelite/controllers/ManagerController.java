@@ -1,11 +1,8 @@
 package com.devaneios.turmadeelite.controllers;
 
-import com.devaneios.turmadeelite.dto.ManagerCreateDTO;
-import com.devaneios.turmadeelite.dto.ManagerViewDTO;
-import com.devaneios.turmadeelite.dto.SchoolViewDTO;
-import com.devaneios.turmadeelite.dto.UserCredentialsCreateDTO;
+import com.devaneios.turmadeelite.dto.SchoolUserCreateDTO;
+import com.devaneios.turmadeelite.dto.SchoolUserViewDTO;
 import com.devaneios.turmadeelite.entities.Manager;
-import com.devaneios.turmadeelite.entities.School;
 import com.devaneios.turmadeelite.security.guards.IsAdmin;
 import com.devaneios.turmadeelite.services.ManagerService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -37,13 +34,13 @@ public class ManagerController {
     })
     @IsAdmin
     @PostMapping
-    ResponseEntity<?> registerManagerUser(@RequestBody ManagerCreateDTO managerCreateDTO){
+    ResponseEntity<?> registerManagerUser(@RequestBody SchoolUserCreateDTO schoolUserCreateDTO){
         this.managerService.createManagerUser(
-                managerCreateDTO.getEmail(),
-                managerCreateDTO.getName(),
-                managerCreateDTO.getLanguage(),
-                managerCreateDTO.getSchoolId(),
-                managerCreateDTO.getIsActive());
+                schoolUserCreateDTO.getEmail(),
+                schoolUserCreateDTO.getName(),
+                schoolUserCreateDTO.getLanguage(),
+                schoolUserCreateDTO.getSchoolId(),
+                schoolUserCreateDTO.getIsActive());
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
@@ -56,9 +53,9 @@ public class ManagerController {
     })
     @IsAdmin
     @GetMapping
-    ResponseEntity<Page<ManagerViewDTO>> getSchools(@RequestParam int size, @RequestParam int pageNumber){
+    ResponseEntity<Page<SchoolUserViewDTO>> getSchools(@RequestParam int size, @RequestParam int pageNumber){
         Page<Manager> paginatedManagers = this.managerService.getPaginatedSchools(size, pageNumber);
-        Page<ManagerViewDTO> response = paginatedManagers.map(ManagerViewDTO::new);
+        Page<SchoolUserViewDTO> response = paginatedManagers.map(SchoolUserViewDTO::new);
         return ResponseEntity.ok(response);
     }
 
@@ -75,9 +72,9 @@ public class ManagerController {
     })
     @IsAdmin
     @GetMapping("/{id}")
-    ResponseEntity<ManagerViewDTO> getManagers(@PathVariable Long id){
+    ResponseEntity<SchoolUserViewDTO> getManagers(@PathVariable Long id){
         Manager manager = this.managerService.findManagerById(id);
-        return ResponseEntity.ok(new ManagerViewDTO(manager));
+        return ResponseEntity.ok(new SchoolUserViewDTO(manager));
     }
 
     @Operation(summary = "Cadastrar um gestor e enviar instruções para realizar o primeiro acesso do mesmo")
@@ -93,13 +90,13 @@ public class ManagerController {
     })
     @IsAdmin
     @PutMapping("/{id}")
-    ResponseEntity<?> updateManager(@RequestBody ManagerCreateDTO managerCreateDTO,@PathVariable Long id){
+    ResponseEntity<?> updateManager(@RequestBody SchoolUserCreateDTO schoolUserCreateDTO, @PathVariable Long id){
         this.managerService.updateManagerUser(
-                managerCreateDTO.getEmail(),
-                managerCreateDTO.getName(),
-                managerCreateDTO.getLanguage(),
-                managerCreateDTO.getSchoolId(),
-                managerCreateDTO.getIsActive(),
+                schoolUserCreateDTO.getEmail(),
+                schoolUserCreateDTO.getName(),
+                schoolUserCreateDTO.getLanguage(),
+                schoolUserCreateDTO.getSchoolId(),
+                schoolUserCreateDTO.getIsActive(),
                 id);
         return new ResponseEntity<>(HttpStatus.CREATED);
     }

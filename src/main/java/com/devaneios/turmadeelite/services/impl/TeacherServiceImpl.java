@@ -1,19 +1,17 @@
 package com.devaneios.turmadeelite.services.impl;
 
-import com.devaneios.turmadeelite.entities.Manager;
-import com.devaneios.turmadeelite.entities.Role;
-import com.devaneios.turmadeelite.entities.School;
-import com.devaneios.turmadeelite.entities.UserCredentials;
+import com.devaneios.turmadeelite.entities.*;
 import com.devaneios.turmadeelite.events.UserCreated;
 import com.devaneios.turmadeelite.exceptions.EmailAlreadyRegistered;
-import com.devaneios.turmadeelite.repositories.ManagerRepository;
 import com.devaneios.turmadeelite.repositories.SchoolRepository;
+import com.devaneios.turmadeelite.repositories.TeacherRepository;
 import com.devaneios.turmadeelite.repositories.UserRepository;
-import com.devaneios.turmadeelite.services.ManagerService;
+import com.devaneios.turmadeelite.services.TeacherService;
 import lombok.AllArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -22,18 +20,18 @@ import javax.transaction.Transactional;
 import java.util.Optional;
 import java.util.UUID;
 
-@Service
 @AllArgsConstructor
-public class ManagerServiceImpl implements ManagerService {
+@Service
+public class TeacherServiceImpl implements TeacherService {
 
-    private final ManagerRepository managerRepository;
-    private final SchoolRepository schoolRepository;
     private final UserRepository userRepository;
+    private final SchoolRepository schoolRepository;
+    private final TeacherRepository teacherRepository;
     private final ApplicationEventPublisher eventPublisher;
 
     @Transactional
     @Override
-    public void createManagerUser(String email, String name, String language, Long schoolId, Boolean isActive) throws EmailAlreadyRegistered {
+    public void createTeacherUser(String email, String name, String language, Long schoolId, Boolean isActive) throws EmailAlreadyRegistered {
         if(this.userRepository.existsByEmail(email)){
             throw new EmailAlreadyRegistered();
         }
@@ -46,33 +44,34 @@ public class ManagerServiceImpl implements ManagerService {
                 .firstAccessToken(UUID.randomUUID().toString())
                 .name(name)
                 .isActive(isActive)
-                .role(Role.MANAGER)
+                .role(Role.TEACHER)
                 .build();
 
         UserCredentials userSaved = userRepository.save(userCredentials);
-        Manager manager = Manager.builder().school(school).credentials(userSaved).build();
-        school.addManager(manager);
-        this.managerRepository.save(manager);
+        Teacher  teacher = Teacher.builder().school(school).credentials(userSaved).build();
+
+        school.addTeacher(teacher);
+
+        this.teacherRepository.save(teacher);
         this.schoolRepository.save(school);
         eventPublisher.publishEvent(new UserCreated(this,userSaved,language));
     }
 
     @Override
-    public Page<Manager> getPaginatedSchools(int size, int pageNumber) {
-        PageRequest pageRequest = PageRequest.of(pageNumber, size);
-        return this.managerRepository.findAllManagers(pageRequest);
+    public Page<Teacher> getPaginatedTeachers(int size, int pageNumber) {
+        Pageable pageable = PageRequest.of(pageNumber, size);
+        return this.teacherRepository.findAll(pageable);
     }
 
     @Override
-    public Manager findManagerById(Long id) {
-        return this.managerRepository
-                .findManagerByIdWithSchoolAndCredentials(id)
+    public Teacher findTeacherById(Long id) {
+        return this.teacherRepository
+                .findTeacherByIdWithSchoolAndCredentials(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
     }
 
-    @Transactional
     @Override
-    public void updateManagerUser(String email, String name, String language, Long schoolId, Boolean isActive,Long managerId) throws EmailAlreadyRegistered {
+    public void updateTeacherUser(String email, String name, String language, Long schoolId, Boolean isActive, Long managerId) throws EmailAlreadyRegistered {
         Optional<UserCredentials> userCredentialsOptional = this.userRepository.findByEmail(email);
 
         UserCredentials userCredentials = null;
@@ -93,11 +92,11 @@ public class ManagerServiceImpl implements ManagerService {
         userCredentials.setIsActive(isActive);
         userRepository.save(userCredentials);
 
-        Manager manager = this.managerRepository.findById(managerId).orElseThrow(()->new ResponseStatusException(HttpStatus.NOT_FOUND));
-        school.removeManager(manager);
-        school.addManager(manager);
+        Teacher teacher = this.teacherRepository.findById(managerId).orElseThrow(()->new ResponseStatusException(HttpStatus.NOT_FOUND));
+        school.removeTeacher(teacher);
+        school.addTeacher(teacher);
 
-        this.managerRepository.save(manager);
+        this.teacherRepository.save(teacher);
         this.schoolRepository.save(school);
     }
 
