@@ -19,8 +19,7 @@ public class ActivityDelivery {
     private Long id;
 
     @Basic(optional = false)
-    @Column(name = "delivery_timestamp", insertable = false, updatable = false)
-    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "delivery_timestamp", insertable = false, updatable = false,columnDefinition = "delivery_timestamp DATETIME DEFAULT CURRENT_TIMESTAMP")
     private LocalDateTime deliveryTimestamp;
 
     private Float gradeReceived;

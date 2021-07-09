@@ -31,14 +31,9 @@ public class Achievement {
 
     private Double averageGradeGreaterOrEqualsThan;
 
+    private Boolean isActive;
+
     private Long classId;
 
     private Long activityId;
 }
-/*
-* SELECT count(d) FROM ActivityDelivery d
-* WHERE :beforeAt IS NULL OR d.deliveryTimestamp <:beforeAt
-* AND earlierOf IS NULL OR (d.earlierOf - 1) =< ( SELECT count(d) FROM ActivityDelivery d  WHERE d.deliveryTimestamp > :me.deliveryTimestamp ORDER BY d.deliveryTimestamp DESC )
-* AND bestOf IS NULL OR (d.bestOf - 1) =< ( SELECT count(d) FROM ActivityDelivery d  WHERE d.gradeReceived > :me.gradeReceived ORDER BY d.gradeReceived DESC )
-* AND averageGradeGreaterThan IS NULL OR averageGradeGreaterOrEqualsThan < (SELECT average(d.gradeReceived) FROM ActivityDelivery d WHERE d.classId = :classId GROUP BY d.gradeReceived)
-* */
