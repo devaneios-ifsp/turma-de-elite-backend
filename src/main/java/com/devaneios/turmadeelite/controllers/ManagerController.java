@@ -53,7 +53,7 @@ public class ManagerController {
     })
     @IsAdmin
     @GetMapping
-    ResponseEntity<Page<SchoolUserViewDTO>> getSchools(@RequestParam int size, @RequestParam int pageNumber){
+    ResponseEntity<Page<SchoolUserViewDTO>> getPaginatedManagers(@RequestParam int size, @RequestParam int pageNumber){
         Page<Manager> paginatedManagers = this.managerService.getPaginatedSchools(size, pageNumber);
         Page<SchoolUserViewDTO> response = paginatedManagers.map(SchoolUserViewDTO::new);
         return ResponseEntity.ok(response);
@@ -72,7 +72,7 @@ public class ManagerController {
     })
     @IsAdmin
     @GetMapping("/{id}")
-    ResponseEntity<SchoolUserViewDTO> getManagers(@PathVariable Long id){
+    ResponseEntity<SchoolUserViewDTO> getManager(@PathVariable Long id){
         Manager manager = this.managerService.findManagerById(id);
         return ResponseEntity.ok(new SchoolUserViewDTO(manager));
     }
@@ -98,7 +98,7 @@ public class ManagerController {
                 schoolUserCreateDTO.getSchoolId(),
                 schoolUserCreateDTO.getIsActive(),
                 id);
-        return new ResponseEntity<>(HttpStatus.CREATED);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
 }

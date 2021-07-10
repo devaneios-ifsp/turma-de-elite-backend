@@ -6,23 +6,23 @@ import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
-@Entity
-@Table(name = "student")
-@NoArgsConstructor
-@AllArgsConstructor
-@Getter
-@Setter
-@Builder
+//@Entity
+//@Table(name = "student")
+//@NoArgsConstructor
+//@AllArgsConstructor
+//@Getter
+//@Setter
+//@Builder
 public class Student {
-    @Id
-    @Column(name = "student_id")
-    private Long id;
-
-    @OneToOne
-    @MapsId
-    @JoinColumn(name = "student_id")
-    private UserCredentials credentials;
-
-    @OneToMany(cascade = CascadeType.ALL,orphanRemoval = true,mappedBy = "student")
-    private List<ActivityDelivery> deliveries = new ArrayList<>();
+//    @Id
+//    @Column(name = "student_id")
+//    private Long id;
+//
+//    @OneToOne
+//    @MapsId
+//    @JoinColumn(name = "student_id")
+//    private UserCredentials credentials;
+//
+//    @OneToMany(cascade = CascadeType.ALL,orphanRemoval = true,mappedBy = "student")
+//    private List<ActivityDelivery> deliveries = new ArrayList<>();
 }

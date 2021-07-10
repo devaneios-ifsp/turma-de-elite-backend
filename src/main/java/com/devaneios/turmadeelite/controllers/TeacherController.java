@@ -33,7 +33,6 @@ public class TeacherController {
                     description = "E-mail já foi cadastrado"
             )
     })
-    @IsManager
     @PostMapping
     ResponseEntity<?> registerTeacher(@RequestBody SchoolUserCreateDTO schoolUserCreateDTO){
         this.teacherService.createTeacherUser(
@@ -81,7 +80,7 @@ public class TeacherController {
                 teacherCreateDTO.getSchoolId(),
                 teacherCreateDTO.getIsActive(),
                 id);
-        return new ResponseEntity<>(HttpStatus.CREATED);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @Operation(summary = "Encontrar um professor pelo seu id e a escola na qual está associado")

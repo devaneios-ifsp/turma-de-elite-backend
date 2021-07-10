@@ -1,7 +1,6 @@
 package com.devaneios.turmadeelite.controllers;
 
 import com.devaneios.turmadeelite.dto.SchoolCreateDTO;
-import com.devaneios.turmadeelite.dto.SchoolViewDTO;
 import com.devaneios.turmadeelite.entities.School;
 import com.devaneios.turmadeelite.security.guards.IsAdmin;
 import com.devaneios.turmadeelite.services.SchoolService;
@@ -40,10 +39,10 @@ public class SchoolController {
             )
     })
     @PostMapping
-    @ResponseStatus(code = HttpStatus.CREATED)
-    void createSchool(@RequestBody SchoolCreateDTO schoolCreateDTO){
+    ResponseEntity<?> createSchool(@RequestBody SchoolCreateDTO schoolCreateDTO){
         School school = schoolCreateDTO.toEntity();
         this.schoolService.createSchool(school);
+        return new ResponseEntity(HttpStatus.CREATED);
     }
 
     @Operation(summary = "Lista as escolas cadastradas")
@@ -55,9 +54,9 @@ public class SchoolController {
     })
     @IsAdmin
     @GetMapping
-    ResponseEntity<Page<SchoolViewDTO>> getSchools(@RequestParam int size, @RequestParam int pageNumber){
+    ResponseEntity<Page<com.devaneios.turmadeelite.dto.SchoolViewDTO>> getSchools(@RequestParam int size, @RequestParam int pageNumber){
         Page<School> paginatedSchools = this.schoolService.getPaginatedSchools(size, pageNumber);
-        Page<SchoolViewDTO> response = paginatedSchools.map(SchoolViewDTO::new);
+        Page<com.devaneios.turmadeelite.dto.SchoolViewDTO> response = paginatedSchools.map(com.devaneios.turmadeelite.dto.SchoolViewDTO::new);
         return ResponseEntity.ok(response);
     }
 
@@ -70,9 +69,9 @@ public class SchoolController {
     })
     @IsAdmin
     @GetMapping("/name/{name}")
-    ResponseEntity<List<SchoolViewDTO>> getSchoolsByNameSimilarity(@PathVariable String name){
+    ResponseEntity<List<com.devaneios.turmadeelite.dto.SchoolViewDTO>> getSchoolsByNameSimilarity(@PathVariable String name){
         List<School> paginatedSchools = this.schoolService.getSchoolsByNameSimilarity(name);
-        List<SchoolViewDTO> response = paginatedSchools.stream().map(SchoolViewDTO::new).collect(Collectors.toList());
+        List<com.devaneios.turmadeelite.dto.SchoolViewDTO> response = paginatedSchools.stream().map(com.devaneios.turmadeelite.dto.SchoolViewDTO::new).collect(Collectors.toList());
         return ResponseEntity.ok(response);
     }
 
@@ -85,9 +84,9 @@ public class SchoolController {
     })
     @IsAdmin
     @GetMapping("/{schoolId}")
-    ResponseEntity<SchoolViewDTO> getSchoolById(@PathVariable Long schoolId){
+    ResponseEntity<com.devaneios.turmadeelite.dto.SchoolViewDTO> getSchoolById(@PathVariable Long schoolId){
         School school = this.schoolService.getSchoolById(schoolId);
-        return ResponseEntity.ok(new SchoolViewDTO(school));
+        return ResponseEntity.ok(new com.devaneios.turmadeelite.dto.SchoolViewDTO(school));
     }
 
     @Operation(summary = "Atualizar uma escola pelo Id")

@@ -1,56 +1,30 @@
 package com.devaneios.turmadeelite.authentication;
 
-import com.devaneios.turmadeelite.dto.UserCredentialsCreateDTO;
-import com.devaneios.turmadeelite.dto.FirstAccessDTO;
+import com.devaneios.turmadeelite.dto.*;
 import com.devaneios.turmadeelite.entities.Role;
 import com.devaneios.turmadeelite.entities.UserCredentials;
 import com.devaneios.turmadeelite.repositories.UserRepository;
 import com.devaneios.turmadeelite.services.impl.FirebaseAuthenticationService;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.firebase.FirebaseApp;
-import com.google.firebase.auth.FirebaseAuth;
-import org.assertj.core.util.Arrays;
-import org.junit.Before;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Import;
-import org.springframework.context.annotation.Primary;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletResponse;
-import org.springframework.security.test.context.support.WithMockUser;
-import org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers;
-import org.springframework.security.web.FilterChainProxy;
-import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import org.springframework.web.context.WebApplicationContext;
 
 import java.nio.charset.StandardCharsets;
 import java.util.List;
-import java.util.Optional;
 
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.authentication;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureMockMvc()
-public class AdminAuthentication {
+public class IntegrationTests {
 
     @Autowired
     private MockMvc mvc;
@@ -62,6 +36,45 @@ public class AdminAuthentication {
     private FirebaseAuthenticationService authenticationService;
 
     static ObjectMapper mapper = new ObjectMapper();
+
+    static String token = "";
+
+    @BeforeAll
+    static void setup(
+            @Autowired MockMvc mvc,
+            @Autowired UserRepository userRepository,
+            @Autowired FirebaseAuthenticationService authenticationService) throws Exception{
+        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        UserCredentials user = UserCredentials
+                .builder()
+                .email("bianca@aluno.ifsp.edu.br")
+                .firstAccessToken("outro_token")
+                .name("Bianca")
+                .isActive(true)
+                .role(Role.ADMIN)
+                .build();
+        UserCredentials saved = userRepository.save(user);
+        FirstAccessDTO firstAccessDTO = new FirstAccessDTO(
+                "bianca@aluno.ifsp.edu.br",
+                "123456",
+                "outro_token");
+
+        mvc.perform(post("/first-access/verify-token")
+                .content("outro_token")
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(result -> {
+                    String responseBody = result.getResponse().getContentAsString(StandardCharsets.UTF_8);
+                    Assertions.assertEquals(responseBody,"bianca@aluno.ifsp.edu.br");
+                });
+
+        mvc.perform(post("/first-access")
+                .content(mapper.writeValueAsString(firstAccessDTO))
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isCreated());
+
+        token = authenticationService.createTokenFrom("bianca@aluno.ifsp.edu.br","123456");
+    }
 
     @DisplayName("Criar um usuário admin sem estar autenticado")
     @Test
@@ -84,28 +97,6 @@ public class AdminAuthentication {
     @DisplayName("Fluxo completo da criação de um usuário")
     @Test
     void creatingAdminWithRightRole() throws Exception {
-        UserCredentials saved = this.userRepository.save(new UserCredentials(null, "bianca@aluno.ifsp.edu.br", null, "outro_token", "Patrícia Paschoal",true ,Role.ADMIN,null));
-        FirstAccessDTO firstAccessDTO = new FirstAccessDTO(
-                "bianca@aluno.ifsp.edu.br",
-                "123456",
-                "outro_token");
-
-        mvc.perform(post("/first-access/verify-token")
-                .content("outro_token")
-                .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andExpect(result -> {
-                    String responseBody = result.getResponse().getContentAsString(StandardCharsets.UTF_8);
-                    Assertions.assertEquals(responseBody,"bianca@aluno.ifsp.edu.br");
-                });
-
-        mvc.perform(post("/first-access")
-                .content(mapper.writeValueAsString(firstAccessDTO))
-                .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isCreated());
-
-        String token = this.authenticationService.createTokenFrom("bianca@aluno.ifsp.edu.br","123456");
-
         mvc.perform(get("/api/roles")
                 .header("Authorization","Bearer " + token)
                 .contentType(MediaType.APPLICATION_JSON))
@@ -195,6 +186,74 @@ public class AdminAuthentication {
                 .content(mapper.writeValueAsString(firstAccessDTO))
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound());
+    }
+
+    @DisplayName("Recuperar administradores pelo Id e atualizá-los")
+    @Test
+    void listAndUpdateAdmin() throws Exception{
+        AdminCRUDTestHelper adminTestHelper = new AdminCRUDTestHelper(mvc, mapper, token);
+        adminTestHelper.createSomeEntities();
+        List<AdminViewDTO> admins = adminTestHelper.listEntities();
+        for(AdminViewDTO admin: admins){
+            adminTestHelper.getById(admin.getId());
+            adminTestHelper.updateEntity(admin.getId(),admin);
+        }
+    }
+
+    @DisplayName("Criar,Atualizar e listar escolas\nCadastrar,listar e atualizar gestores nestas escolas\nUtilizar estes gestores para cadastrar,listar e atualizar professores")
+    @Test
+    void createSchool() throws Exception{
+        SchoolCRUDTestHelper schoolHelper = new SchoolCRUDTestHelper(mvc, mapper, token);
+        ManagerCRUDTestHelper managerTestHelper = new ManagerCRUDTestHelper(mvc, mapper, token);
+        schoolHelper.createSomeEntities();
+        schoolHelper.getByNameSimilarity();
+        List<SchoolViewDTO> schools = schoolHelper.listEntities();
+        SchoolViewDTO firstSchool = null;
+        for(SchoolViewDTO school: schools){
+            schoolHelper.getById(school.id);
+            schoolHelper.updateEntity(school.id,school);
+
+            if(firstSchool == null){
+                firstSchool = school;
+            }
+        }
+        List<SchoolUserCreateDTO> managers = managerTestHelper.buildCreateDTOs();
+        for(SchoolUserCreateDTO manager: managers){
+            manager.setSchoolId(firstSchool.id);
+            managerTestHelper.postEntity(manager);
+        }
+
+        List<SchoolUserViewDTO> registeredManagers = managerTestHelper.listEntities();
+        SchoolUserViewDTO firstManager = null;
+        for(SchoolUserViewDTO manager: registeredManagers){
+            if(firstManager==null) firstManager=manager;
+            managerTestHelper.getById(manager.getId());
+            managerTestHelper.updateEntity(manager.id,manager);
+        }
+        UserCredentials credentials = this.userRepository.findByEmail(firstManager.getEmail()).orElseThrow(() -> new Exception());
+        FirstAccessDTO firstAccessDTO = new FirstAccessDTO(
+                firstManager.getEmail(),
+                "123456",
+                credentials.getFirstAccessToken());
+
+        mvc.perform(post("/first-access")
+                .content(mapper.writeValueAsString(firstAccessDTO))
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isCreated());
+
+        String managerToken = authenticationService.createTokenFrom(firstAccessDTO.getEmail(), "123456");
+
+        TeacherCRUDTestHelper teacherTestHelper = new TeacherCRUDTestHelper(mvc, mapper, token);
+        List<SchoolUserCreateDTO> teachers = teacherTestHelper.buildCreateDTOs();
+        for(SchoolUserCreateDTO teacher: teachers){
+            teacher.setSchoolId(firstSchool.id);
+            teacherTestHelper.postEntity(teacher);
+        }
+        List<SchoolUserViewDTO> registeredTeachers = teacherTestHelper.listEntities();
+        for(SchoolUserViewDTO teacher: registeredTeachers){
+            teacherTestHelper.getById(teacher.getId());
+            teacherTestHelper.updateEntity(teacher.getId(),teacher);
+        }
 
     }
 }

@@ -2,7 +2,6 @@ package com.devaneios.turmadeelite.services.impl;
 
 import com.devaneios.turmadeelite.dto.SchoolCreateDTO;
 import com.devaneios.turmadeelite.entities.School;
-import com.devaneios.turmadeelite.entities.UserCredentials;
 import com.devaneios.turmadeelite.exceptions.AlreadyRegisteredSchool;
 import com.devaneios.turmadeelite.repositories.SchoolRepository;
 import com.devaneios.turmadeelite.services.SchoolService;

@@ -9,8 +9,6 @@ import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.util.Optional;
-
 @AllArgsConstructor
 public class ManagerVerifier implements ValidityVerifier{
 

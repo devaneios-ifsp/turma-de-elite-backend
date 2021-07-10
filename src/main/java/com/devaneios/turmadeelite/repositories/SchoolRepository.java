@@ -1,7 +1,6 @@
 package com.devaneios.turmadeelite.repositories;
 
 import com.devaneios.turmadeelite.entities.School;
-import com.devaneios.turmadeelite.entities.UserCredentials;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.repository.CrudRepository;

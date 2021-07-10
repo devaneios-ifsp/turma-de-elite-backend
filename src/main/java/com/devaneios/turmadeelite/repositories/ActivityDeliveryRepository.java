@@ -7,10 +7,10 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
-@Repository
-public interface ActivityDeliveryRepository extends CrudRepository<ActivityDelivery,Long> {
-    List<ActivityDelivery> findAll();
-
-    @Query("FROM ActivityDelivery a")
-    List<ActivityDelivery> findByStudentAndClass(Long studentId, Long classId);
-}
+//@Repository
+//public interface ActivityDeliveryRepository extends CrudRepository<ActivityDelivery,Long> {
+//    List<ActivityDelivery> findAll();
+//
+//    @Query("FROM ActivityDelivery a")
+//    List<ActivityDelivery> findByStudentAndClass(Long studentId, Long classId);
+//}
