@@ -24,6 +24,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureMockMvc()
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class IntegrationTests {
 
     @Autowired
@@ -38,6 +39,10 @@ public class IntegrationTests {
     static ObjectMapper mapper = new ObjectMapper();
 
     static String token = "";
+
+    static SchoolViewDTO firstSchool = null;
+
+    static SchoolUserViewDTO firstManager = null;
 
     @BeforeAll
     static void setup(
@@ -200,23 +205,28 @@ public class IntegrationTests {
         }
     }
 
-    @DisplayName("Criar,Atualizar e listar escolas\nCadastrar,listar e atualizar gestores nestas escolas\nUtilizar estes gestores para cadastrar,listar e atualizar professores")
+    @DisplayName("Criar,Atualizar e listar escolas\nUtilizar estes gestores para cadastrar,listar e atualizar professores")
     @Test
+    @Order(1)
     void createSchool() throws Exception{
         SchoolCRUDTestHelper schoolHelper = new SchoolCRUDTestHelper(mvc, mapper, token);
-        ManagerCRUDTestHelper managerTestHelper = new ManagerCRUDTestHelper(mvc, mapper, token);
         schoolHelper.createSomeEntities();
         schoolHelper.getByNameSimilarity();
         List<SchoolViewDTO> schools = schoolHelper.listEntities();
-        SchoolViewDTO firstSchool = null;
         for(SchoolViewDTO school: schools){
             schoolHelper.getById(school.id);
             schoolHelper.updateEntity(school.id,school);
-
             if(firstSchool == null){
                 firstSchool = school;
             }
         }
+    }
+
+    @DisplayName("Cadastrar,listar e atualizar gestores em uma escola")
+    @Test
+    @Order(2)
+    void createManager() throws Exception{
+        ManagerCRUDTestHelper managerTestHelper = new ManagerCRUDTestHelper(mvc, mapper, token);
         List<SchoolUserCreateDTO> managers = managerTestHelper.buildCreateDTOs();
         for(SchoolUserCreateDTO manager: managers){
             manager.setSchoolId(firstSchool.id);
@@ -224,25 +234,17 @@ public class IntegrationTests {
         }
 
         List<SchoolUserViewDTO> registeredManagers = managerTestHelper.listEntities();
-        SchoolUserViewDTO firstManager = null;
         for(SchoolUserViewDTO manager: registeredManagers){
             if(firstManager==null) firstManager=manager;
             managerTestHelper.getById(manager.getId());
             managerTestHelper.updateEntity(manager.id,manager);
         }
-        UserCredentials credentials = this.userRepository.findByEmail(firstManager.getEmail()).orElseThrow(() -> new Exception());
-        FirstAccessDTO firstAccessDTO = new FirstAccessDTO(
-                firstManager.getEmail(),
-                "123456",
-                credentials.getFirstAccessToken());
+    }
 
-        mvc.perform(post("/first-access")
-                .content(mapper.writeValueAsString(firstAccessDTO))
-                .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isCreated());
-
-        String managerToken = authenticationService.createTokenFrom(firstAccessDTO.getEmail(), "123456");
-
+    @DisplayName("Cadastrar,listar e atualizar professores em uma escola")
+    @Test
+    @Order(3)
+    void createTeacher() throws Exception{
         TeacherCRUDTestHelper teacherTestHelper = new TeacherCRUDTestHelper(mvc, mapper, token);
         List<SchoolUserCreateDTO> teachers = teacherTestHelper.buildCreateDTOs();
         for(SchoolUserCreateDTO teacher: teachers){
@@ -254,6 +256,5 @@ public class IntegrationTests {
             teacherTestHelper.getById(teacher.getId());
             teacherTestHelper.updateEntity(teacher.getId(),teacher);
         }
-
     }
 }

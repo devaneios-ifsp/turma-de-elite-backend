@@ -47,11 +47,13 @@ public class SchoolCRUDTestHelper extends CRUDTestHelper<SchoolCreateDTO,SchoolV
         SchoolCreateDTO batistaRenzi = SchoolCreateDTO.builder()
                 .name("Batista Renzi")
                 .identifier("Suzano - BR")
+                .isActive(true)
                 .build();
 
         SchoolCreateDTO luizaHidaka = SchoolCreateDTO.builder()
                 .name("Luíza Hidaka")
                 .identifier("Suzano - LH")
+                .isActive(true)
                 .build();
 
         return Arrays.asList(batistaRenzi,luizaHidaka);

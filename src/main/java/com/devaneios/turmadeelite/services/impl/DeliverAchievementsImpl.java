@@ -3,9 +3,7 @@ package com.devaneios.turmadeelite.services.impl;
 import com.devaneios.turmadeelite.entities.Achievement;
 import com.devaneios.turmadeelite.entities.ActivityDelivery;
 import com.devaneios.turmadeelite.entities.Student;
-import com.devaneios.turmadeelite.repositories.AchievementRepository;
-import com.devaneios.turmadeelite.repositories.ActivityDeliveryRepository;
-import com.devaneios.turmadeelite.repositories.StudentRepository;
+
 import com.devaneios.turmadeelite.services.DeliverAchievements;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
