@@ -1,6 +1,6 @@
 package com.devaneios.turmadeelite.controllers;
 
-import com.devaneios.turmadeelite.dto.SchoolUserCreateDTO;
+import com.devaneios.turmadeelite.dto.ManagerCreateDTO;
 import com.devaneios.turmadeelite.dto.SchoolUserViewDTO;
 import com.devaneios.turmadeelite.entities.Manager;
 import com.devaneios.turmadeelite.security.guards.IsAdmin;
@@ -34,7 +34,7 @@ public class ManagerController {
     })
     @IsAdmin
     @PostMapping
-    ResponseEntity<?> registerManagerUser(@RequestBody SchoolUserCreateDTO schoolUserCreateDTO){
+    ResponseEntity<?> registerManagerUser(@RequestBody ManagerCreateDTO schoolUserCreateDTO){
         this.managerService.createManagerUser(
                 schoolUserCreateDTO.getEmail(),
                 schoolUserCreateDTO.getName(),
@@ -90,7 +90,7 @@ public class ManagerController {
     })
     @IsAdmin
     @PutMapping("/{id}")
-    ResponseEntity<?> updateManager(@RequestBody SchoolUserCreateDTO schoolUserCreateDTO, @PathVariable Long id){
+    ResponseEntity<?> updateManager(@RequestBody ManagerCreateDTO schoolUserCreateDTO, @PathVariable Long id){
         this.managerService.updateManagerUser(
                 schoolUserCreateDTO.getEmail(),
                 schoolUserCreateDTO.getName(),

@@ -12,7 +12,7 @@ import javax.validation.constraints.Size;
 @Getter
 @Setter
 @Builder
-public class SchoolUserCreateDTO {
+public class ManagerCreateDTO {
     @NotBlank
     @Email
     String email;
@@ -20,7 +20,6 @@ public class SchoolUserCreateDTO {
     @Size(min = 3)
     private String name;
 
-    @NotNull
     private Long schoolId;
 
     @NotNull

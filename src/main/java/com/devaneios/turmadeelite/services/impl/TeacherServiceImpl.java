@@ -3,9 +3,11 @@ package com.devaneios.turmadeelite.services.impl;
 import com.devaneios.turmadeelite.entities.*;
 import com.devaneios.turmadeelite.events.UserCreated;
 import com.devaneios.turmadeelite.exceptions.EmailAlreadyRegistered;
+import com.devaneios.turmadeelite.repositories.ManagerRepository;
 import com.devaneios.turmadeelite.repositories.SchoolRepository;
 import com.devaneios.turmadeelite.repositories.TeacherRepository;
 import com.devaneios.turmadeelite.repositories.UserRepository;
+import com.devaneios.turmadeelite.services.SchoolService;
 import com.devaneios.turmadeelite.services.TeacherService;
 import lombok.AllArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
@@ -17,6 +19,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import javax.transaction.Transactional;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -25,18 +28,18 @@ import java.util.UUID;
 public class TeacherServiceImpl implements TeacherService {
 
     private final UserRepository userRepository;
-    private final SchoolRepository schoolRepository;
     private final TeacherRepository teacherRepository;
     private final ApplicationEventPublisher eventPublisher;
+    private final SchoolService schoolService;
 
     @Transactional
     @Override
-    public void createTeacherUser(String email, String name, String language, Long schoolId, Boolean isActive) throws EmailAlreadyRegistered {
+    public void createTeacherUser(String email, String name, String language, Boolean isActive, String managerAuthUuid) throws EmailAlreadyRegistered {
         if(this.userRepository.existsByEmail(email)){
             throw new EmailAlreadyRegistered();
         }
 
-        School school = this.findSchoolById(schoolId);
+        School school = this.schoolService.findSchoolByManagerAuthUuid(managerAuthUuid);
 
         UserCredentials userCredentials = UserCredentials
                 .builder()
@@ -48,25 +51,33 @@ public class TeacherServiceImpl implements TeacherService {
                 .build();
 
         UserCredentials userSaved = userRepository.save(userCredentials);
-        this.teacherRepository.insertUserAsTeacher(userSaved.getId(),schoolId);
+        this.teacherRepository.insertUserAsTeacher(userSaved.getId(),school.getId());
         eventPublisher.publishEvent(new UserCreated(this,userSaved,language));
     }
 
     @Override
-    public Page<Teacher> getPaginatedTeachers(int size, int pageNumber) {
+    public Page<Teacher> getPaginatedTeachers(int size, int pageNumber, String authUuid) {
         Pageable pageable = PageRequest.of(pageNumber, size);
-        return this.teacherRepository.findAll(pageable);
+        School school = this.schoolService.findSchoolByManagerAuthUuid(authUuid);;
+        return this.teacherRepository.findAllBySchoolId(school.getId(),pageable);
     }
 
     @Override
-    public Teacher findTeacherById(Long id) {
+    public Teacher findTeacherById(Long id, String authUuid) {
+        School school = this.schoolService.findSchoolByManagerAuthUuid(authUuid);
         return this.teacherRepository
-                .findTeacherByIdWithSchoolAndCredentials(id)
+                .findTeacherByIdWithSchoolAndCredentials(id,school.getId())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
     }
 
     @Override
-    public void updateTeacherUser(String email, String name, String language, Long schoolId, Boolean isActive, Long managerId) throws EmailAlreadyRegistered {
+    public void updateTeacherUser(
+            String email,
+            String name,
+            String language,
+            Boolean isActive,
+            Long managerId,
+            String managerAuthUuid) throws EmailAlreadyRegistered {
         Optional<UserCredentials> userCredentialsOptional = this.userRepository.findByEmail(email);
 
         UserCredentials userCredentials = null;
@@ -80,7 +91,7 @@ public class TeacherServiceImpl implements TeacherService {
                     .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
         }
 
-        School school = this.findSchoolById(schoolId);
+        School school = this.schoolService.findSchoolByManagerAuthUuid(managerAuthUuid);
 
         userCredentials.setEmail(email);
         userCredentials.setName(name);
@@ -93,12 +104,4 @@ public class TeacherServiceImpl implements TeacherService {
         this.teacherRepository.save(teacher);
     }
 
-    private School findSchoolById(Long schoolId){
-        return this.schoolRepository
-                .findById(schoolId)
-                .orElseThrow(() -> new ResponseStatusException(
-                        HttpStatus.NOT_FOUND,
-                        "Não foi encontrada uma escola com este Id")
-                );
-    }
 }

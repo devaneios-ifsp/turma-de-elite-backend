@@ -12,4 +12,5 @@ public interface SchoolService {
     School getSchoolById(Long schoolId);
     void updateSchoolById(Long schoolId, SchoolCreateDTO schoolCreateDTO);
     List<School> getSchoolsByNameSimilarity(String name);
+    School findSchoolByManagerAuthUuid(String managerAuthUuid);
 }

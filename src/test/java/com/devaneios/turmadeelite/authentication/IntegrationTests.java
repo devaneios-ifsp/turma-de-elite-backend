@@ -227,8 +227,8 @@ public class IntegrationTests {
     @Order(2)
     void createManager() throws Exception{
         ManagerCRUDTestHelper managerTestHelper = new ManagerCRUDTestHelper(mvc, mapper, token);
-        List<SchoolUserCreateDTO> managers = managerTestHelper.buildCreateDTOs();
-        for(SchoolUserCreateDTO manager: managers){
+        List<TeacherCreateDTO> managers = managerTestHelper.buildCreateDTOs();
+        for(TeacherCreateDTO manager: managers){
             manager.setSchoolId(firstSchool.id);
             managerTestHelper.postEntity(manager);
         }
@@ -246,8 +246,8 @@ public class IntegrationTests {
     @Order(3)
     void createTeacher() throws Exception{
         TeacherCRUDTestHelper teacherTestHelper = new TeacherCRUDTestHelper(mvc, mapper, token);
-        List<SchoolUserCreateDTO> teachers = teacherTestHelper.buildCreateDTOs();
-        for(SchoolUserCreateDTO teacher: teachers){
+        List<TeacherCreateDTO> teachers = teacherTestHelper.buildCreateDTOs();
+        for(TeacherCreateDTO teacher: teachers){
             teacher.setSchoolId(firstSchool.id);
             teacherTestHelper.postEntity(teacher);
         }
