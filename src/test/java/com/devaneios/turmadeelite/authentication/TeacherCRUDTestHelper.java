@@ -47,7 +47,6 @@ public class TeacherCRUDTestHelper extends CRUDTestHelper<TeacherCreateDTO, Scho
         return TeacherCreateDTO
                 .builder()
                 .name(viewDTO.name.toUpperCase(Locale.ROOT))
-                .schoolId(viewDTO.getSchool().id)
                 .email(viewDTO.email)
                 .language("pt")
                 .isActive(true)

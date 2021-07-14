@@ -1,11 +1,9 @@
 spring:
   datasource:
-    driver-class-name: com.mysql.cj.jdbc.Driver
-    username: ${MYSQL_USER}
-    password: ${MYSQL_PASSWORD}
-    url: ${DATABASE_URL}
+    driver-class-name: org.postgresql.Driver
+    url: ${HEROKU_POSTGRESQL_ONYX_URL}
   jpa:
-    database-platform: org.hibernate.dialect.MySQLDialect
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
   mail:
     host: smtp.gmail.com
     port: 587
