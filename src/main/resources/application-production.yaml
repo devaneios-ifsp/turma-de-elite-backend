@@ -1,7 +1,7 @@
 spring:
   datasource:
     driver-class-name: org.postgresql.Driver
-    url: #{'jdbc:postgres://${HEROKU_POSTGRESQL_ONYX_URL}'.split('@')[1]}
+    url: #{'jdbc:postgres://'+'${HEROKU_POSTGRESQL_ONYX_URL}'.split('@')[1]}
     username: #{'${HEROKU_POSTGRESQL_ONYX_URL}'.split('@')[0].split(':')[0].split('/')[1]}
     password: #{'${HEROKU_POSTGRESQL_ONYX_URL}'.split('@')[0].split(':')[1]}
   jpa:
