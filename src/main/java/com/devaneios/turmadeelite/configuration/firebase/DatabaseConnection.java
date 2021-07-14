@@ -36,6 +36,7 @@ public class DatabaseConnection {
         builder.url(dbUrl);
         builder.username(username);
         builder.password(password);
+        builder.driverClassName("org.postgresql.Driver");
         return builder.build();
     }
 }
