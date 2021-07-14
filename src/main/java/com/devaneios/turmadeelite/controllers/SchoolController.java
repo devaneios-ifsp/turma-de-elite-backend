@@ -60,12 +60,12 @@ public class SchoolController {
         return ResponseEntity.ok(response);
     }
 
-    @Operation(summary = "Lista as escolas cadastradas por similaridade do nome")
+    @Operation(summary = "Visualizar uma lista de escolas buscando pelo nome")
     @ApiResponses(value = {
             @ApiResponse(
                     responseCode = "200",
-                    description = "Retorna uma lista de escolas"
-            )
+                    description = "Escolas encontradas com sucesso"
+            ),
     })
     @IsAdmin
     @GetMapping("/name/{name}")

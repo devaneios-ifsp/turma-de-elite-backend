@@ -12,4 +12,5 @@ public interface UserService {
     Page<UserCredentials> getPaginatedAdminUsers(int size, int pageNumber);
     UserCredentials findAdminById(Long userId);
     void updateAdminUser(Long userId, UserCredentialsCreateDTO admin);
+    List<UserCredentials> getUsersByNameSimilarity(String name);
 }

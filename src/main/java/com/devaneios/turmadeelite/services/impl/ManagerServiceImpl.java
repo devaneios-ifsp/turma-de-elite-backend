@@ -19,6 +19,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import javax.transaction.Transactional;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -99,6 +100,11 @@ public class ManagerServiceImpl implements ManagerService {
 
         this.managerRepository.save(manager);
         this.schoolRepository.save(school);
+    }
+
+    @Override
+    public Optional<List<Manager>> getManagersByNameSimilarity(String name) {
+        return this.managerRepository.findByNameContainingIgnoreCase(name);
     }
 
     private School findSchoolById(Long schoolId){
