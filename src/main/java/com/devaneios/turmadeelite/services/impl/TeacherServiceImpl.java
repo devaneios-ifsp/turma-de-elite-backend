@@ -19,6 +19,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import javax.transaction.Transactional;
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
@@ -68,6 +69,13 @@ public class TeacherServiceImpl implements TeacherService {
         return this.teacherRepository
                 .findTeacherByIdWithSchoolAndCredentials(id,school.getId())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+    }
+
+
+    @Override
+    public List<Teacher> findTeachersByEmailSubstring(String email, String managerAuthUuid) {
+        School school = this.schoolService.findSchoolByManagerAuthUuid(managerAuthUuid);
+        return this.teacherRepository.findTeacherByEmailLikeAndSchoolId("%" + email + "%",school.getId());
     }
 
     @Override

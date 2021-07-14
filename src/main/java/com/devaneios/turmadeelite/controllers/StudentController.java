@@ -15,6 +15,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @RestController
 @RequestMapping("/api/students")
 @AllArgsConstructor
@@ -103,6 +106,26 @@ public class StudentController {
     ResponseEntity<StudentViewDTO> getStudentById(@PathVariable Long id,Authentication authentication){
         Student student = this.studentService.findStudentById(id,(String) authentication.getPrincipal());
         return ResponseEntity.ok(new StudentViewDTO(student));
+    }
+
+    @Operation(summary = "Buscar alunos por similaridade de matrícula")
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Alunos encontrados e retornados com sucesso"
+            )
+    })
+    @IsManager
+    @GetMapping("/registry/{registry}")
+    @ResponseBody
+    List<StudentViewDTO> getStudentByEmailSimilarity(@PathVariable String registry, Authentication authentication){
+        return this.studentService
+                .findByStudentRegistrySimilarity(
+                        registry,
+                        (String) authentication.getPrincipal())
+                .stream()
+                .map(StudentViewDTO::new)
+                .collect(Collectors.toList());
     }
 
 }

@@ -16,6 +16,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @RestController
 @RequestMapping("/api/teachers")
 @AllArgsConstructor
@@ -113,4 +116,25 @@ public class TeacherController {
         Teacher teacher = this.teacherService.findTeacherById(id,(String) authentication.getPrincipal());
         return ResponseEntity.ok(new SchoolUserViewDTO(teacher));
     }
+
+    @Operation(summary = "Encontrar professores da escola através do email ou de parte do email")
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Professores encontrados e retornados com sucesso"
+            ),
+    })
+    @IsManager
+    @GetMapping("/email/{email}")
+    @ResponseBody List<SchoolUserViewDTO> getTeachersByEmail(@PathVariable String email, Authentication authentication){
+        return this.teacherService
+                .findTeachersByEmailSubstring(
+                        email,
+                        (String) authentication.getPrincipal())
+                .stream()
+                .map(SchoolUserViewDTO::new)
+                .collect(Collectors.toList());
+    }
+
+
 }

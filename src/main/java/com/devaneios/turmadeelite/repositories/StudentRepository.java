@@ -23,4 +23,7 @@ public interface StudentRepository extends CrudRepository<Student,Long> {
 
     @Query(value = "SELECT s FROM Student s JOIN s.school sc  WHERE sc.id=:schoolId AND s.id=:id")
     Optional<Student> findByIdAndSchoolId(Long schoolId, Long id);
+
+    @Query(value = "SELECT s FROM Student s JOIN s.school sc JOIN s.credentials c WHERE sc.id=:schoolId AND c.role='STUDENT' AND s.registry LIKE :registry")
+    List<Student> findStudentsByRegistrySimilarity(String registry, Long schoolId);
 }
