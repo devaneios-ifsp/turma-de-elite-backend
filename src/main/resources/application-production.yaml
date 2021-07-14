@@ -1,7 +1,9 @@
 spring:
   datasource:
     driver-class-name: org.postgresql.Driver
-    url: jdbc:${HEROKU_POSTGRESQL_ONYX_URL}
+    url: #{'jdbc:postgres://${HEROKU_POSTGRESQL_ONYX_URL}'.split('@')[1]}
+    username: #{'${HEROKU_POSTGRESQL_ONYX_URL}'.split('@')[0].split(':')[0].split('/')[1]}
+    password: #{'${HEROKU_POSTGRESQL_ONYX_URL}'.split('@')[0].split(':')[1]}
   jpa:
     database-platform: org.hibernate.dialect.PostgreSQLDialect
   mail:
