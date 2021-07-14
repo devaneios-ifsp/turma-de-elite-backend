@@ -1,7 +1,7 @@
 spring:
   datasource:
     driver-class-name: org.postgresql.Driver
-    url: ${HEROKU_POSTGRESQL_ONYX_URL}
+    url: jdbc:${HEROKU_POSTGRESQL_ONYX_URL}
   jpa:
     database-platform: org.hibernate.dialect.PostgreSQLDialect
   mail:
