@@ -45,6 +45,8 @@ CREATE TABLE activity(
 CREATE TABLE student(
     student_id BIGINT PRIMARY KEY,
     registry TEXT(10) NOT NULL,
+    school_id BIGINT,
+    FOREIGN KEY(school_id) REFERENCES school(id),
     FOREIGN KEY(student_id) REFERENCES user_credentials(id)
 );
 
@@ -69,4 +71,31 @@ CREATE TABLE achievement(
     class_id BIGINT,
     activity_id BIGINT,
     FOREIGN KEY(activity_id) REFERENCES activity(id)
+);
+
+CREATE TABLE class(
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(50),
+    school_id BIGINT,
+    FOREIGN KEY(school_id) REFERENCES school(id),
+    is_active BOOLEAN DEFAULT TRUE,
+    is_done BOOLEAN DEFAULT TRUE
+);
+
+CREATE TABLE student_class_membership(
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    student_id BIGINT,
+    class_id BIGINT,
+    FOREIGN KEY(student_id) REFERENCES student(student_id),
+    FOREIGN KEY(class_id) REFERENCES class(id),
+    is_active BOOLEAN DEFAULT TRUE
+);
+
+CREATE TABLE teacher_class_membership(
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    teacher_id BIGINT,
+    class_id BIGINT,
+    FOREIGN KEY(teacher_id) REFERENCES teacher(teacher_id),
+    FOREIGN KEY(class_id) REFERENCES class(id),
+    is_active BOOLEAN DEFAULT TRUE
 );

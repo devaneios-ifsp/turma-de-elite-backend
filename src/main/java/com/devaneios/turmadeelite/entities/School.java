@@ -33,12 +33,16 @@ public class School {
     private List<Manager> managers = new ArrayList<>();
 
     @OneToMany(cascade = CascadeType.ALL,orphanRemoval = true)
-    @JoinColumn(name = "teacher_id")
+    @JoinColumn(name = "school_id")
     private List<Teacher> teachers = new ArrayList<>();
 
     @OneToMany(cascade = CascadeType.ALL,orphanRemoval = true)
-    @JoinColumn(name = "student_id")
+    @JoinColumn(name = "school_id")
     private List<Teacher> students = new ArrayList<>();
+
+    @OneToMany(cascade = CascadeType.ALL,orphanRemoval = true)
+    @JoinColumn(name = "school_id")
+    private List<SchoolClass> classes = new ArrayList<>();
 
     public void addManager(Manager manager){
         this.managers.add(manager);

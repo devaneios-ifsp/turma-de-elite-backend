@@ -3,6 +3,8 @@ package com.devaneios.turmadeelite.entities;
 import lombok.*;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "teacher")
@@ -29,6 +31,10 @@ public class Teacher {
     @MapsId
     @JoinColumn(name = "teacher_id")
     private UserCredentials credentials;
+
+    @OneToMany(cascade = CascadeType.ALL,orphanRemoval = true)
+    @JoinColumn(name = "teacher_id")
+    private List<StudentClassMembership> classMembership = new ArrayList<>();
 
     @ManyToOne
     public School school;

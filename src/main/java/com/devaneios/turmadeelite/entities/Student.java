@@ -23,6 +23,10 @@ public class Student {
     @JoinColumn(name = "student_id")
     private UserCredentials credentials;
 
+    @OneToMany(cascade = CascadeType.ALL,orphanRemoval = true)
+    @JoinColumn(name = "student_id")
+    private List<StudentClassMembership> classMembership = new ArrayList<>();
+
     @ManyToOne
     public School school;
 
