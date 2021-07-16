@@ -26,5 +26,6 @@ public interface UserRepository extends PagingAndSortingRepository<UserCredentia
     @Query("FROM UserCredentials u WHERE u.role='ADMIN'")
     Page<UserCredentials> findAllAdmins(Pageable pageable);
 
+    @Query("SELECT u FROM UserCredentials u WHERE u.name LIKE :name% AND u.role='ADMIN'")
     List<UserCredentials> findByNameContainingIgnoreCase(String name);
 }
