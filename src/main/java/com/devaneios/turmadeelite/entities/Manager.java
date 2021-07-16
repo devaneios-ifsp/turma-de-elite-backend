@@ -24,6 +24,7 @@ public class Manager {
     private UserCredentials credentials;
 
     @ManyToOne
+    @JoinColumn(name ="school_id")
     private School school;
 
     @Override

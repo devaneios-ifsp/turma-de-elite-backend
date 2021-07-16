@@ -29,6 +29,7 @@ public class SchoolClass {
     private List<TeacherClassMembership> teachersMemberships = new ArrayList<>();
 
     @ManyToOne
+    @JoinColumn(name = "school_id")
     public School school;
 
     private Boolean isActive;

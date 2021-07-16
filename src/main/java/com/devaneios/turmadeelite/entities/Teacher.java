@@ -34,9 +34,10 @@ public class Teacher {
 
     @OneToMany(cascade = CascadeType.ALL,orphanRemoval = true)
     @JoinColumn(name = "teacher_id")
-    private List<StudentClassMembership> classMembership = new ArrayList<>();
+    private List<TeacherClassMembership> classMembership = new ArrayList<>();
 
     @ManyToOne
+    @JoinColumn(name = "school_id")
     public School school;
 
 }
