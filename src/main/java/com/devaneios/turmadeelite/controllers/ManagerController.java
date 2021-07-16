@@ -2,8 +2,11 @@ package com.devaneios.turmadeelite.controllers;
 
 import com.devaneios.turmadeelite.dto.ManagerCreateDTO;
 import com.devaneios.turmadeelite.dto.SchoolUserViewDTO;
+import com.devaneios.turmadeelite.dto.SchoolViewDTO;
 import com.devaneios.turmadeelite.entities.Manager;
+import com.devaneios.turmadeelite.entities.School;
 import com.devaneios.turmadeelite.security.guards.IsAdmin;
+import com.devaneios.turmadeelite.security.guards.IsManager;
 import com.devaneios.turmadeelite.services.ManagerService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -13,6 +16,11 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/managers")
@@ -59,6 +67,20 @@ public class ManagerController {
         return ResponseEntity.ok(response);
     }
 
+    @Operation(summary = "Visualizar uma lista de gestores buscando pelo nome")
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Gestores encontrados com sucesso"
+            ),
+    })
+    @GetMapping("/name/{name}")
+    ResponseEntity<List<SchoolUserViewDTO>> getManagersByNameSimilarity(@PathVariable String name){
+        List<Manager> paginatedManagers = this.managerService.getManagersByNameSimilarity(name).orElse(new ArrayList<>());
+        List<SchoolUserViewDTO> response = paginatedManagers.stream().map(SchoolUserViewDTO::new).collect(Collectors.toList());
+        return ResponseEntity.ok(response);
+    }
+
     @Operation(summary = "Encontrar um gestor pelo seu id e a escola na qual está associado")
     @ApiResponses(value = {
             @ApiResponse(
@@ -70,7 +92,7 @@ public class ManagerController {
                     description = "Gestor com id especificado não encontrado"
             ),
     })
-    @IsAdmin
+    @IsManager
     @GetMapping("/{id}")
     ResponseEntity<SchoolUserViewDTO> getManager(@PathVariable Long id){
         Manager manager = this.managerService.findManagerById(id);

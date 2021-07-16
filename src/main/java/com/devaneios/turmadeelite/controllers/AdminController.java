@@ -1,7 +1,9 @@
 package com.devaneios.turmadeelite.controllers;
 
+import com.devaneios.turmadeelite.dto.SchoolViewDTO;
 import com.devaneios.turmadeelite.dto.UserCredentialsCreateDTO;
 import com.devaneios.turmadeelite.dto.AdminViewDTO;
+import com.devaneios.turmadeelite.entities.School;
 import com.devaneios.turmadeelite.entities.UserCredentials;
 import com.devaneios.turmadeelite.security.guards.IsAdmin;
 import com.devaneios.turmadeelite.services.UserService;
@@ -15,6 +17,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/admin")
@@ -73,6 +77,21 @@ public class AdminController {
     @ResponseBody AdminViewDTO findAdminById(@PathVariable Long userId){
         UserCredentials adminById = this.userService.findAdminById(userId);
         return new AdminViewDTO(adminById);
+    }
+
+    @Operation(summary = "Visualizar uma lista de admins buscando pelo nome")
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Usuários administradores encontrados com sucesso"
+            ),
+    })
+    @IsAdmin
+    @GetMapping("/name/{name}")
+    ResponseEntity<List<AdminViewDTO>> getAdminsByNameSimilarity(@PathVariable String name){
+        List<UserCredentials> paginatedAdmins = this.userService.getUsersByNameSimilarity(name);
+        List<AdminViewDTO> response = paginatedAdmins.stream().map(AdminViewDTO::new).collect(Collectors.toList());
+        return ResponseEntity.ok(response);
     }
 
     @IsAdmin

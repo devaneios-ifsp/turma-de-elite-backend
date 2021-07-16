@@ -6,6 +6,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface ManagerRepository extends CrudRepository<Manager,Long> {
@@ -17,4 +18,7 @@ public interface ManagerRepository extends CrudRepository<Manager,Long> {
 
     @Query("SELECT m FROM Manager m JOIN m.credentials c JOIN m.school s WHERE c.authUuid=:principal")
     Optional<Manager> findManagerByAuthUuidWithSchoolAndCredentials(String principal);
+
+    @Query("SELECT m FROM Manager m JOIN m.credentials c WHERE c.name LIKE :name%")
+    Optional<List<Manager>> findByNameContainingIgnoreCase(String name);
 }

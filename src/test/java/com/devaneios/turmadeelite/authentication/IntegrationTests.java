@@ -41,7 +41,6 @@ public class IntegrationTests {
     static String token = "";
 
     static SchoolViewDTO firstSchool = null;
-
     static SchoolUserViewDTO firstManager = null;
 
     @BeforeAll
