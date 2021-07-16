@@ -69,6 +69,7 @@ public class SchoolCRUDTestHelper extends CRUDTestHelper<SchoolCreateDTO,SchoolV
         return SchoolCreateDTO.builder()
                 .name(upperCaseName)
                 .identifier(schoolDTO.getIdentifier())
+                .isActive(schoolDTO.getIsActive())
                 .build();
     }
 }

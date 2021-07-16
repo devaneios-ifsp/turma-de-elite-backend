@@ -4,12 +4,16 @@ import com.devaneios.turmadeelite.entities.Teacher;
 import com.devaneios.turmadeelite.exceptions.EmailAlreadyRegistered;
 import org.springframework.data.domain.Page;
 
+import java.util.List;
+
 public interface TeacherService {
-    void createTeacherUser(String email, String name, String language, Long schoolId, Boolean isActive) throws EmailAlreadyRegistered;
+    void createTeacherUser(String email, String name, String language, Boolean isActive, String managerAuthUuid) throws EmailAlreadyRegistered;
 
-    Page<Teacher> getPaginatedTeachers(int size, int pageNumber);
+    Page<Teacher> getPaginatedTeachers(int size, int pageNumber, String authUuid);
 
-    Teacher findTeacherById(Long id);
+    Teacher findTeacherById(Long id, String authUuid);
 
-    void updateTeacherUser(String email, String name, String language, Long schoolId, Boolean isActive,Long managerId) throws EmailAlreadyRegistered;
+    void updateTeacherUser(String email, String name, String language, Boolean isActive,Long teacherId, String managerAuthUuid) throws EmailAlreadyRegistered;
+
+    List<Teacher> findTeachersByEmailSubstring(String email, String managerAuthUuid);
 }

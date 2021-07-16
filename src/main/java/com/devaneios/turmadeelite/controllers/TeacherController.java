@@ -1,7 +1,7 @@
 package com.devaneios.turmadeelite.controllers;
 
 import com.devaneios.turmadeelite.dto.SchoolUserViewDTO;
-import com.devaneios.turmadeelite.dto.SchoolUserCreateDTO;
+import com.devaneios.turmadeelite.dto.TeacherCreateDTO;
 import com.devaneios.turmadeelite.entities.Teacher;
 import com.devaneios.turmadeelite.security.guards.IsManager;
 
@@ -13,7 +13,11 @@ import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/teachers")
@@ -34,13 +38,13 @@ public class TeacherController {
             )
     })
     @PostMapping
-    ResponseEntity<?> registerTeacher(@RequestBody SchoolUserCreateDTO schoolUserCreateDTO){
+    ResponseEntity<?> registerTeacher(@RequestBody TeacherCreateDTO teacherCreateDTO, Authentication authentication){
         this.teacherService.createTeacherUser(
-                schoolUserCreateDTO.getEmail(),
-                schoolUserCreateDTO.getName(),
-                schoolUserCreateDTO.getLanguage(),
-                schoolUserCreateDTO.getSchoolId(),
-                schoolUserCreateDTO.getIsActive());
+                teacherCreateDTO.getEmail(),
+                teacherCreateDTO.getName(),
+                teacherCreateDTO.getLanguage(),
+                teacherCreateDTO.getIsActive(),
+                (String) authentication.getPrincipal());
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
@@ -53,8 +57,16 @@ public class TeacherController {
     })
     @IsManager
     @GetMapping
-    ResponseEntity<Page<SchoolUserViewDTO>> getTeachers(@RequestParam int size, @RequestParam int pageNumber){
-        Page<Teacher> paginatedTeachers = this.teacherService.getPaginatedTeachers(size, pageNumber);
+    ResponseEntity<Page<SchoolUserViewDTO>> getTeacherById(
+            @RequestParam int size,
+            @RequestParam int pageNumber,
+            Authentication authentication
+    ){
+        Page<Teacher> paginatedTeachers = this.teacherService.getPaginatedTeachers(
+                                                size,
+                                                pageNumber,
+                                                (String) authentication.getPrincipal()
+                                            );
         Page<SchoolUserViewDTO> response = paginatedTeachers.map(SchoolUserViewDTO::new);
         return ResponseEntity.ok(response);
     }
@@ -72,14 +84,18 @@ public class TeacherController {
     })
     @IsManager
     @PutMapping("/{id}")
-    ResponseEntity<?> updateTeacher(@RequestBody SchoolUserCreateDTO teacherCreateDTO, @PathVariable Long id){
+    ResponseEntity<?> updateTeacher(
+            @RequestBody TeacherCreateDTO teacherCreateDTO,
+            @PathVariable Long id,
+            Authentication authentication
+    ){
         this.teacherService.updateTeacherUser(
                 teacherCreateDTO.getEmail(),
                 teacherCreateDTO.getName(),
                 teacherCreateDTO.getLanguage(),
-                teacherCreateDTO.getSchoolId(),
                 teacherCreateDTO.getIsActive(),
-                id);
+                id,
+                (String) authentication.getPrincipal());
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
@@ -96,8 +112,29 @@ public class TeacherController {
     })
     @IsManager
     @GetMapping("/{id}")
-    ResponseEntity<SchoolUserViewDTO> getTeachers(@PathVariable Long id){
-        Teacher teacher = this.teacherService.findTeacherById(id);
+    ResponseEntity<SchoolUserViewDTO> getTeacherById(@PathVariable Long id,Authentication authentication){
+        Teacher teacher = this.teacherService.findTeacherById(id,(String) authentication.getPrincipal());
         return ResponseEntity.ok(new SchoolUserViewDTO(teacher));
     }
+
+    @Operation(summary = "Encontrar professores da escola através do email ou de parte do email")
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Professores encontrados e retornados com sucesso"
+            ),
+    })
+    @IsManager
+    @GetMapping("/email/{email}")
+    @ResponseBody List<SchoolUserViewDTO> getTeachersByEmail(@PathVariable String email, Authentication authentication){
+        return this.teacherService
+                .findTeachersByEmailSubstring(
+                        email,
+                        (String) authentication.getPrincipal())
+                .stream()
+                .map(SchoolUserViewDTO::new)
+                .collect(Collectors.toList());
+    }
+
+
 }

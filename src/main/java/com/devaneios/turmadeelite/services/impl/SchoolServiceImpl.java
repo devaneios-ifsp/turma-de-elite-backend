@@ -1,8 +1,10 @@
 package com.devaneios.turmadeelite.services.impl;
 
 import com.devaneios.turmadeelite.dto.SchoolCreateDTO;
+import com.devaneios.turmadeelite.entities.Manager;
 import com.devaneios.turmadeelite.entities.School;
 import com.devaneios.turmadeelite.exceptions.AlreadyRegisteredSchool;
+import com.devaneios.turmadeelite.repositories.ManagerRepository;
 import com.devaneios.turmadeelite.repositories.SchoolRepository;
 import com.devaneios.turmadeelite.services.SchoolService;
 import lombok.AllArgsConstructor;
@@ -15,6 +17,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import javax.transaction.Transactional;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -22,6 +25,7 @@ import java.util.Optional;
 public class SchoolServiceImpl implements SchoolService {
 
     private final SchoolRepository repository;
+    private final ManagerRepository managerRepository;
 
     @Override
     @Transactional
@@ -63,5 +67,13 @@ public class SchoolServiceImpl implements SchoolService {
     @Override
     public List<School> getSchoolsByNameSimilarity(String name) {
         return this.repository.findByNameContainingIgnoreCase(name);
+    }
+
+    public School findSchoolByManagerAuthUuid(String authUuid){
+        return this.managerRepository
+                .findManagerByAuthUuidWithSchoolAndCredentials(authUuid)
+                .map(Manager::getSchool)
+                .filter(Objects::nonNull)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
     }
 }

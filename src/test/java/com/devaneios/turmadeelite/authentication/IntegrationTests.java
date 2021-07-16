@@ -219,35 +219,42 @@ public class IntegrationTests {
                 firstSchool = school;
             }
         }
-    }
 
-    @DisplayName("Cadastrar,listar e atualizar gestores em uma escola")
-    @Test
-    @Order(2)
-    void createManager() throws Exception{
         ManagerCRUDTestHelper managerTestHelper = new ManagerCRUDTestHelper(mvc, mapper, token);
-        List<SchoolUserCreateDTO> managers = managerTestHelper.buildCreateDTOs();
-        for(SchoolUserCreateDTO manager: managers){
+
+        List<ManagerCreateDTO> managers = managerTestHelper.buildCreateDTOs();
+        for(ManagerCreateDTO manager: managers){
             manager.setSchoolId(firstSchool.id);
             managerTestHelper.postEntity(manager);
         }
 
         List<SchoolUserViewDTO> registeredManagers = managerTestHelper.listEntities();
         for(SchoolUserViewDTO manager: registeredManagers){
+            System.out.println(registeredManagers);
             if(firstManager==null) firstManager=manager;
             managerTestHelper.getById(manager.getId());
             managerTestHelper.updateEntity(manager.id,manager);
         }
-    }
 
-    @DisplayName("Cadastrar,listar e atualizar professores em uma escola")
-    @Test
-    @Order(3)
-    void createTeacher() throws Exception{
-        TeacherCRUDTestHelper teacherTestHelper = new TeacherCRUDTestHelper(mvc, mapper, token);
-        List<SchoolUserCreateDTO> teachers = teacherTestHelper.buildCreateDTOs();
-        for(SchoolUserCreateDTO teacher: teachers){
-            teacher.setSchoolId(firstSchool.id);
+        UserCredentials user = this.userRepository
+                .findById(firstManager.getId())
+                .orElseThrow(Exception::new);
+
+        FirstAccessDTO firstAccessDTO = new FirstAccessDTO(
+                user.getEmail(),
+                "123456",
+                user.getFirstAccessToken());
+
+        mvc.perform(post("/first-access")
+                .content(mapper.writeValueAsString(firstAccessDTO))
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().is2xxSuccessful());
+
+        String tokenFrom = this.authenticationService.createTokenFrom(user.getEmail(), "123456");
+        System.out.println(tokenFrom);
+        TeacherCRUDTestHelper teacherTestHelper = new TeacherCRUDTestHelper(mvc, mapper, tokenFrom);
+        List<TeacherCreateDTO> teachers = teacherTestHelper.buildCreateDTOs();
+        for(TeacherCreateDTO teacher: teachers){
             teacherTestHelper.postEntity(teacher);
         }
         List<SchoolUserViewDTO> registeredTeachers = teacherTestHelper.listEntities();
@@ -256,4 +263,19 @@ public class IntegrationTests {
             teacherTestHelper.updateEntity(teacher.getId(),teacher);
         }
     }
+
+    @DisplayName("Cadastrar,listar e atualizar gestores em uma escola")
+    @Test
+    @Order(2)
+    void createManager() throws Exception{
+
+
+    }
+//
+//    @DisplayName("Cadastrar,listar e atualizar professores em uma escola")
+//    @Test
+//    @Order(3)
+//    void createTeacher() throws Exception{
+//
+//    }
 }

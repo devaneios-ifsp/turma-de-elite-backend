@@ -1,7 +1,7 @@
 package com.devaneios.turmadeelite.authentication;
 
 import com.devaneios.turmadeelite.authentication.utils.MockPage;
-import com.devaneios.turmadeelite.dto.SchoolUserCreateDTO;
+import com.devaneios.turmadeelite.dto.TeacherCreateDTO;
 import com.devaneios.turmadeelite.dto.SchoolUserViewDTO;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -11,14 +11,14 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 
-public class TeacherCRUDTestHelper extends CRUDTestHelper<SchoolUserCreateDTO, SchoolUserViewDTO> {
+public class TeacherCRUDTestHelper extends CRUDTestHelper<TeacherCreateDTO, SchoolUserViewDTO> {
     public TeacherCRUDTestHelper(MockMvc mvc, ObjectMapper mapper, String token) {
         super(mvc, mapper, token, "/teachers");
     }
 
     @Override
-    public List<SchoolUserCreateDTO> buildCreateDTOs() {
-        SchoolUserCreateDTO teacher1 = SchoolUserCreateDTO
+    public List<TeacherCreateDTO> buildCreateDTOs() {
+        TeacherCreateDTO teacher1 = TeacherCreateDTO
                 .builder()
                 .email("edna.krabappel@springfield.edu.br")
                 .name("Edna Krabappel")
@@ -26,7 +26,7 @@ public class TeacherCRUDTestHelper extends CRUDTestHelper<SchoolUserCreateDTO, S
                 .language("pt")
                 .build();
 
-        SchoolUserCreateDTO teacher2 = SchoolUserCreateDTO
+        TeacherCreateDTO teacher2 = TeacherCreateDTO
                 .builder()
                 .email("severus.snape@hogwarts.edu.br")
                 .name("Severus Snape")
@@ -43,11 +43,10 @@ public class TeacherCRUDTestHelper extends CRUDTestHelper<SchoolUserCreateDTO, S
     }
 
     @Override
-    protected SchoolUserCreateDTO changeValues(SchoolUserViewDTO viewDTO) {
-        return SchoolUserCreateDTO
+    protected TeacherCreateDTO changeValues(SchoolUserViewDTO viewDTO) {
+        return TeacherCreateDTO
                 .builder()
                 .name(viewDTO.name.toUpperCase(Locale.ROOT))
-                .schoolId(viewDTO.getSchool().id)
                 .email(viewDTO.email)
                 .language("pt")
                 .isActive(true)

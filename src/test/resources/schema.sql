@@ -44,6 +44,7 @@ CREATE TABLE activity(
 
 CREATE TABLE student(
     student_id BIGINT PRIMARY KEY,
+    registry TEXT(10) NOT NULL,
     FOREIGN KEY(student_id) REFERENCES user_credentials(id)
 );
 
