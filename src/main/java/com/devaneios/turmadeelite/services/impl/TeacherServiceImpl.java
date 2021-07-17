@@ -79,6 +79,11 @@ public class TeacherServiceImpl implements TeacherService {
     }
 
     @Override
+    public Optional<List<Teacher>> getTeachersByNameSimilarity(String name) {
+        return this.teacherRepository.findByNameContainingIgnoreCase(name);
+    }
+
+    @Override
     public void updateTeacherUser(
             String email,
             String name,

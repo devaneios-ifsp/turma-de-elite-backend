@@ -28,4 +28,7 @@ public interface TeacherRepository extends JpaRepository<Teacher,Long> {
 
     @Query("SELECT t FROM Teacher t JOIN t.credentials c JOIN t.school s WHERE c.email LIKE :email AND s.id=:schoolId")
     List<Teacher> findTeacherByEmailLikeAndSchoolId(String email, Long schoolId);
+
+    @Query("SELECT t FROM Teacher t JOIN t.credentials c WHERE c.name LIKE :name%")
+    Optional<List<Teacher>> findByNameContainingIgnoreCase(String name);
 }
