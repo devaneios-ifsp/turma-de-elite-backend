@@ -1,6 +1,7 @@
 package com.devaneios.turmadeelite.security.verifiers;
 
 import com.devaneios.turmadeelite.entities.UserCredentials;
+import com.devaneios.turmadeelite.exceptions.UnexpectedAuthenticationException;
 import com.devaneios.turmadeelite.repositories.UserRepository;
 import com.devaneios.turmadeelite.security.AuthenticationInfo;
 import lombok.AllArgsConstructor;
@@ -17,10 +18,10 @@ public class AdminVerifier implements ValidityVerifier{
     public void verify() {
         UserCredentials credentials = this.userRepository
                 .findByAuthUuid(authenticationInfo.getPrincipal())
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED));
+                .orElseThrow(() -> new UnexpectedAuthenticationException());
 
         if(!credentials.getIsActive()){
-            throw new ResponseStatusException(HttpStatus.FORBIDDEN);
+            throw new UnexpectedAuthenticationException();
         }
     }
 }

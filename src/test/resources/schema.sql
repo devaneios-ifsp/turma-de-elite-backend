@@ -37,9 +37,13 @@ CREATE TABLE activity(
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
     name CHAR(50) NOT NULL,
     description VARCHAR(240) NOT NULL,
-    is_deliverable BOOLEAN,
-    expire_date DATETIME NOT NULL,
-    max_value DOUBLE NOT NULL
+    punctuation DOUBLE NOT NULL,
+    is_visible BOOLEAN NOT NULL,
+    is_active BOOLEAN NOT NULL,
+    is_deliverable BOOLEAN NOT NULL,
+    max_delivery_date DATETIME NOT NULL,
+    teacher_id BIGINT NOT NULL,
+    FOREIGN KEY(teacher_id) REFERENCES teacher(teacher_id)
 );
 
 CREATE TABLE student(
@@ -98,4 +102,12 @@ CREATE TABLE teacher_class_membership(
     FOREIGN KEY(teacher_id) REFERENCES teacher(teacher_id),
     FOREIGN KEY(class_id) REFERENCES class(id),
     is_active BOOLEAN DEFAULT TRUE
+);
+
+CREATE TABLE class_activities(
+    class_id BIGINT NOT NULL,
+    activity_id BIGINT NOT NULL,
+    FOREIGN KEY(class_id) REFERENCES class(id),
+    FOREIGN KEY (activity_ID) REFERENCES activity(id),
+    PRIMARY KEY (class_id,activity_id)
 );

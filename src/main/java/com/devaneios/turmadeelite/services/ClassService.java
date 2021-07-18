@@ -1,9 +1,6 @@
 package com.devaneios.turmadeelite.services;
 
-import com.devaneios.turmadeelite.dto.ClassCreateDTO;
-import com.devaneios.turmadeelite.dto.ClassStatusNameDTO;
-import com.devaneios.turmadeelite.dto.SchoolClassViewDTO;
-import com.devaneios.turmadeelite.dto.SchoolViewDTO;
+import com.devaneios.turmadeelite.dto.*;
 import com.devaneios.turmadeelite.entities.SchoolClass;
 import org.springframework.data.domain.Page;
 
@@ -21,4 +18,8 @@ public interface ClassService {
     void updateStudentStatus(Long classId, Long studentId, Boolean status, String managerAuthUuid);
 
     void updateTeacherStatus(Long classId, Long teacherId, Boolean status, String managerAuthUuid);
+
+    List<SchoolClass> getAllClassesOfTeacher(String teacherAuthUuid);
+
+    void addTeacherToClass(String managerAuthUuid, Long classId, Long teacherId);
 }

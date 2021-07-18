@@ -28,18 +28,22 @@ public class School {
     @Column(columnDefinition = "boolean default true")
     private Boolean isActive;
 
+    @Builder.Default
     @OneToMany(cascade = CascadeType.ALL,orphanRemoval = true)
     @JoinColumn(name = "school_id")
     private List<Manager> managers = new ArrayList<>();
 
+    @Builder.Default
     @OneToMany(cascade = CascadeType.ALL,orphanRemoval = true)
     @JoinColumn(name = "school_id")
     private List<Teacher> teachers = new ArrayList<>();
 
+    @Builder.Default
     @OneToMany(cascade = CascadeType.ALL,orphanRemoval = true)
     @JoinColumn(name = "school_id")
     private List<Teacher> students = new ArrayList<>();
 
+    @Builder.Default
     @OneToMany(cascade = CascadeType.ALL,orphanRemoval = true)
     @JoinColumn(name = "school_id")
     private List<SchoolClass> classes = new ArrayList<>();
@@ -52,15 +56,5 @@ public class School {
     public void removeManager(Manager manager){
         this.managers.remove(manager);
         manager.setSchool(null);
-    }
-
-    public void addTeacher(Teacher teacher){
-        this.teachers.add(teacher);
-        teacher.setSchool(this);
-    }
-
-    public void removeTeacher(Teacher teacher){
-        this.teachers.remove(teacher);
-        teacher.setSchool(null);
     }
 }

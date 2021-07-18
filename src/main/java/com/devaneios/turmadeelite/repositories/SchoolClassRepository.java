@@ -55,4 +55,7 @@ public interface SchoolClassRepository extends CrudRepository<SchoolClass,Long> 
     @Modifying
     @Query(value = "UPDATE teacher_class_membership SET is_active=:status WHERE class_id=:classId AND teacher_id=:teacherId ;",nativeQuery = true)
     void updateTeacherStatusInClass(Long classId, Long teacherId, Boolean status);
+
+    @Query("SELECT s FROM SchoolClass s JOIN s.teachersMemberships tm JOIN tm.teacher t WHERE t.id=:teacherId")
+    List<SchoolClass> findAllSchoolClassesByTeacher(Long teacherId);
 }

@@ -2,12 +2,11 @@ package com.devaneios.turmadeelite.services.impl;
 
 import com.devaneios.turmadeelite.dto.ClassCreateDTO;
 import com.devaneios.turmadeelite.dto.ClassStatusNameDTO;
+import com.devaneios.turmadeelite.dto.SchoolClassNameDTO;
 import com.devaneios.turmadeelite.dto.SchoolClassViewDTO;
-import com.devaneios.turmadeelite.entities.School;
-import com.devaneios.turmadeelite.entities.SchoolClass;
-import com.devaneios.turmadeelite.entities.StudentClassMembership;
-import com.devaneios.turmadeelite.entities.TeacherClassMembership;
+import com.devaneios.turmadeelite.entities.*;
 import com.devaneios.turmadeelite.repositories.SchoolClassRepository;
+import com.devaneios.turmadeelite.repositories.TeacherRepository;
 import com.devaneios.turmadeelite.services.ClassService;
 import com.devaneios.turmadeelite.services.SchoolService;
 import lombok.AllArgsConstructor;
@@ -19,6 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -27,6 +27,7 @@ public class ClassServiceImpl implements ClassService {
 
     private final SchoolClassRepository classRepository;
     private final SchoolService schoolService;
+    private final TeacherRepository teacherRepository;
 
     @Transactional
     @Override
@@ -75,6 +76,23 @@ public class ClassServiceImpl implements ClassService {
                     schoolClass.setTeachersMemberships(teachers);
                     return schoolClass;
                 });
+    }
+
+    @Override
+    public List<SchoolClass> getAllClassesOfTeacher(String teacherAuthUuid){
+        Teacher teacher = this.teacherRepository
+                .findByAuthUuid(teacherAuthUuid)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+
+        return this.classRepository.findAllSchoolClassesByTeacher(teacher.getId());
+    }
+
+    @Transactional
+    @Override
+    public void addTeacherToClass(String managerAuthUuid, Long classId, Long teacherId) {
+        School school = schoolService.findSchoolByManagerAuthUuid(managerAuthUuid);
+        if(school == null) throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        this.classRepository.addTeacherToClass(teacherId, classId);
     }
 
     @Override

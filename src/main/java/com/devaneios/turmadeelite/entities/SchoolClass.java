@@ -32,6 +32,14 @@ public class SchoolClass {
     @JoinColumn(name = "school_id")
     public School school;
 
+    @ManyToMany
+    @JoinTable(
+            name = "class_activities",
+            joinColumns = @JoinColumn(name = "class_id"),
+            inverseJoinColumns = @JoinColumn(name = "activity_id")
+    )
+    List<Activity> classActivities;
+
     private Boolean isActive;
 
     private Boolean isDone;

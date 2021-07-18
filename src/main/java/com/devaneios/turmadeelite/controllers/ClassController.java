@@ -1,9 +1,6 @@
 package com.devaneios.turmadeelite.controllers;
 
-import com.devaneios.turmadeelite.dto.ClassCreateDTO;
-import com.devaneios.turmadeelite.dto.ClassStatusNameDTO;
-import com.devaneios.turmadeelite.dto.SchoolClassViewDTO;
-import com.devaneios.turmadeelite.dto.UserCredentialsCreateDTO;
+import com.devaneios.turmadeelite.dto.*;
 import com.devaneios.turmadeelite.entities.SchoolClass;
 import com.devaneios.turmadeelite.security.guards.IsAdmin;
 import com.devaneios.turmadeelite.security.guards.IsManager;
@@ -20,11 +17,12 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/class")
 @AllArgsConstructor
-public class ClassControl {
+public class ClassController {
 
     private final ClassService classService;
 
@@ -39,6 +37,20 @@ public class ClassControl {
     @PostMapping
     ResponseEntity<?> createAdminUser(@Valid @RequestBody ClassCreateDTO dto, Authentication authentication){
         this.classService.createClass(dto, (String) authentication.getPrincipal());
+        return new ResponseEntity<>(HttpStatus.CREATED);
+    }
+
+    @Operation(summary = "Adiciona um professor a determinada turma")
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "201",
+                    description = "Professor adicionado com sucesso"
+            )
+    })
+    @IsManager
+    @PostMapping("/{classId}/teacher/{teacherId}")
+    ResponseEntity<?> addTeacherToClass(@PathVariable Long classId, @PathVariable Long teacherId, Authentication authentication){
+        this.classService.addTeacherToClass((String) authentication.getPrincipal(),classId,teacherId);
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
@@ -77,6 +89,23 @@ public class ClassControl {
                 (String) authentication.getPrincipal(),pageNumber,size);
         Page<SchoolClassViewDTO> viewPage = schoolClassPage.map(SchoolClassViewDTO::new);
         return ResponseEntity.ok(viewPage);
+    }
+
+    @Operation(summary = "Recuperar todas as turmas do professor que requisitar")
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Turmas encontradas com sucesso"
+            )
+    })
+    @IsManager
+    @GetMapping("/teacher-himself")
+    @ResponseBody List<SchoolClassNameDTO> getAllClassesBySchool(Authentication authentication){
+        return this.classService
+                .getAllClassesOfTeacher((String) authentication.getPrincipal())
+                .stream()
+                .map(SchoolClassNameDTO::new)
+                .collect(Collectors.toList());
     }
 
     @Operation(summary = "Atualizar nome e status de uma turma")

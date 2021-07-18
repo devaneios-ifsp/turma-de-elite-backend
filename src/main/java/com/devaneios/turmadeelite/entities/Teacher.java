@@ -36,6 +36,9 @@ public class Teacher {
     @JoinColumn(name = "teacher_id")
     private List<TeacherClassMembership> classMembership = new ArrayList<>();
 
+    @OneToMany
+    private List<Activity> activities;
+
     @ManyToOne
     @JoinColumn(name = "school_id")
     public School school;
