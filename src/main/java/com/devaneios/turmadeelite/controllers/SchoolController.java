@@ -75,7 +75,7 @@ public class SchoolController {
         return ResponseEntity.ok(response);
     }
 
-    @Operation(summary = "Recuper uma escola pelo Id")
+    @Operation(summary = "Recuperar uma escola pelo Id")
     @ApiResponses(value = {
             @ApiResponse(
                     responseCode = "200",

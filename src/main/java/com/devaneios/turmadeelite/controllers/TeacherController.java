@@ -73,11 +73,11 @@ public class TeacherController {
         return ResponseEntity.ok(response);
     }
 
-    @Operation(summary = "Visualizar uma lista de gestores buscando pelo nome")
+    @Operation(summary = "Visualizar uma lista de professores buscando pelo nome")
     @ApiResponses(value = {
             @ApiResponse(
                     responseCode = "200",
-                    description = "Gestores encontrados com sucesso"
+                    description = "Professores encontrados com sucesso"
             ),
     })
     @GetMapping("/name/{name}")
