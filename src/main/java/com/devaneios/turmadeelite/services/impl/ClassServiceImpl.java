@@ -96,6 +96,11 @@ public class ClassServiceImpl implements ClassService {
     }
 
     @Override
+    public void addStudentToClass(String managerAuthUuid, Long classId, Long studentId) {
+
+    }
+
+    @Override
     @Transactional
     public void updateStatusAndName(Long id, String managerAuthUuid, ClassStatusNameDTO statusNameDTO) {
         School school = schoolService.findSchoolByManagerAuthUuid(managerAuthUuid);

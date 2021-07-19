@@ -22,4 +22,6 @@ public interface ClassService {
     List<SchoolClass> getAllClassesOfTeacher(String teacherAuthUuid);
 
     void addTeacherToClass(String managerAuthUuid, Long classId, Long teacherId);
+
+    void addStudentToClass(String managerAuthUuid, Long classId, Long studentId);
 }
