@@ -34,5 +34,5 @@ public class ActivityCreateDTO {
     private Boolean isDeliverable;
 
     @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss")
-    private LocalDateTime maxDeliveryDateTime;
+    private LocalDateTime maxDeliveryDate;
 }

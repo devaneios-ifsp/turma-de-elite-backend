@@ -17,7 +17,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @AllArgsConstructor
@@ -39,7 +38,7 @@ public class ActivityServiceImpl implements ActivityService {
                 .punctuation(activityCreateDTO.getPunctuation())
                 .isVisible(activityCreateDTO.getIsVisible())
                 .isDeliverable(activityCreateDTO.getIsDeliverable())
-                .maxDeliveryDate(activityCreateDTO.getMaxDeliveryDateTime())
+                .maxDeliveryDate(activityCreateDTO.getMaxDeliveryDate())
                 .teacher(teacher)
                 .isActive(activityCreateDTO.getIsActive())
                 .build();
@@ -67,7 +66,7 @@ public class ActivityServiceImpl implements ActivityService {
         activity.setPunctuation(activity.getPunctuation());
         activity.setIsVisible(activityCreateDTO.getIsVisible());
         activity.setIsDeliverable(activityCreateDTO.getIsDeliverable());
-        activity.setMaxDeliveryDate(activityCreateDTO.getMaxDeliveryDateTime());
+        activity.setMaxDeliveryDate(activityCreateDTO.getMaxDeliveryDate());
         activity.setIsActive(activityCreateDTO.getIsActive());
         activity.setTeacher(teacher);
 
@@ -92,6 +91,6 @@ public class ActivityServiceImpl implements ActivityService {
         Teacher teacher = this.teacherRepository
                 .findByAuthUuid(teacherAuthUuid)
                 .orElseThrow(()-> new ResponseStatusException(HttpStatus.FORBIDDEN));
-        return this.activityRepository.findAllByTeacherId(teacher.getId(),pageable);
+        return this.activityRepository.findAllByTeacherId(teacher.getId(), pageable);
     }
 }
