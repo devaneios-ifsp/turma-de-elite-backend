@@ -3,6 +3,7 @@ package com.devaneios.turmadeelite.controllers;
 import com.devaneios.turmadeelite.dto.ActivityCreateDTO;
 import com.devaneios.turmadeelite.dto.ActivityViewDTO;
 import com.devaneios.turmadeelite.dto.AdminViewDTO;
+import com.devaneios.turmadeelite.entities.Activity;
 import com.devaneios.turmadeelite.security.guards.IsAdmin;
 import com.devaneios.turmadeelite.security.guards.IsTeacher;
 import com.devaneios.turmadeelite.services.ActivityService;
@@ -74,5 +75,23 @@ public class ActivityController {
         return this.activityService
                 .getAllActivitiesOfTeacher((String) authentication.getPrincipal(),pageSize,pageNumber)
                 .map(ActivityViewDTO::new);
+    }
+
+    @Operation(summary = "Recupera uma atividade pelo Id")
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Atividade encontrada com sucesso"
+            )
+    })
+    @IsTeacher
+    @GetMapping("/{id}")
+    public @ResponseBody ActivityViewDTO getAllActivitiesOfTeacher(
+            @PathVariable Long id,
+            Authentication authentication){
+
+        Activity activity = this.activityService
+                .getActivityByIdAndTeacher(id, (String) authentication.getPrincipal());
+        return new ActivityViewDTO(activity);
     }
 }

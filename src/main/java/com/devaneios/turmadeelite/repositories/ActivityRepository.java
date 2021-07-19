@@ -18,7 +18,7 @@ public interface ActivityRepository extends CrudRepository<Activity,Long> {
     void addActivityToClass(Long activityId,Long classId);
 
     @Modifying
-    @Query(value = "DELETE class_activities WHERE class_id=:classId AND activity_id=:activityId ;",nativeQuery = true)
+    @Query(value = "DELETE FROM class_activities WHERE class_id=:classId AND activity_id=:activityId ;",nativeQuery = true)
     void removeActivityFromClass(Long activityId,Long classId);
 
     @Query("SELECT a FROM Activity a JOIN a.teacher t WHERE t.id=:teacherId")
