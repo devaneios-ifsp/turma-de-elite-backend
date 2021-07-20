@@ -35,6 +35,10 @@ public class Activity {
 
     private LocalDateTime maxDeliveryDate;
 
+    @OneToOne
+    @JoinColumn(name = "attachment_id")
+    private Attachment attachment;
+
     @ManyToOne
     @JoinColumn(name = "teacher_id")
     private Teacher teacher;

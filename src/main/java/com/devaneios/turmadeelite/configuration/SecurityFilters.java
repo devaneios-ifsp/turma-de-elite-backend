@@ -21,6 +21,7 @@ public class SecurityFilters implements Filter {
         httpServletResponse.setHeader("X-Content-Type-Options","nosniff");
         httpServletResponse.setHeader("X-Frame-Options","SAMEORIGIN");
         httpServletResponse.setHeader("Referrer-Policy","same-origin");
+        httpServletResponse.setHeader("Access-Control-Expose-Headers","filename");
         chain.doFilter(request,response);
     }
 }

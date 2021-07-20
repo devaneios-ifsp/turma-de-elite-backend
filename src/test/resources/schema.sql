@@ -33,6 +33,13 @@ CREATE TABLE teacher (
     FOREIGN KEY(school_id) REFERENCES school(id)
 );
 
+CREATE TABLE attachments(
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    filename VARCHAR(100),
+    bucket_key VARCHAR(100),
+    file_md5 VARCHAR(40)
+);
+
 CREATE TABLE activity(
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
     name CHAR(50) NOT NULL,
@@ -43,7 +50,9 @@ CREATE TABLE activity(
     is_deliverable BOOLEAN NOT NULL,
     max_delivery_date DATETIME NOT NULL,
     teacher_id BIGINT NOT NULL,
-    FOREIGN KEY(teacher_id) REFERENCES teacher(teacher_id)
+    attachment_id,
+    FOREIGN KEY(teacher_id) REFERENCES teacher(teacher_id),
+    FOREIGN KEY(attachment_id) REFERENCES attachments(id)
 );
 
 CREATE TABLE student(

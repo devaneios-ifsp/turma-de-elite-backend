@@ -32,6 +32,8 @@ public class ActivityViewDTO {
     @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss")
     private LocalDateTime maxDeliveryDate;
 
+    private String filename;
+
     private List<SchoolClassNameDTO> classes;
 
     public ActivityViewDTO(Activity activity){
@@ -43,6 +45,7 @@ public class ActivityViewDTO {
         this.isActive = activity.getIsActive();
         this.isDeliverable = activity.getIsDeliverable();
         this.maxDeliveryDate = activity.getMaxDeliveryDate();
+        this.filename = activity.getAttachment() != null ? activity.getAttachment().getFilename():null;
         this.classes = activity.getClasses() != null
                 ? activity
                     .getClasses()

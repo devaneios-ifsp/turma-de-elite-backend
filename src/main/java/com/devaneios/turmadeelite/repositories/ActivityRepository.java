@@ -9,6 +9,7 @@ import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface ActivityRepository extends CrudRepository<Activity,Long> {
@@ -23,4 +24,7 @@ public interface ActivityRepository extends CrudRepository<Activity,Long> {
 
     @Query("SELECT a FROM Activity a JOIN a.teacher t WHERE t.id=:teacherId")
     Page<Activity> findAllByTeacherId(Long teacherId, Pageable pageable);
+
+    @Query("SELECT a FROM Activity a LEFT JOIN FETCH a.attachment t WHERE a.id=:activityId")
+    Optional<Activity> findByIdWithAttachment(Long activityId);
 }

@@ -1,6 +1,7 @@
 package com.devaneios.turmadeelite.security.verifiers;
 
 import com.devaneios.turmadeelite.repositories.ManagerRepository;
+import com.devaneios.turmadeelite.repositories.StudentRepository;
 import com.devaneios.turmadeelite.repositories.TeacherRepository;
 import com.devaneios.turmadeelite.repositories.UserRepository;
 import com.devaneios.turmadeelite.security.AuthenticationInfo;
@@ -14,6 +15,7 @@ public class ValidityVerifierFactory {
     private final UserRepository userRepository;
     private final ManagerRepository managerRepository;
     private final TeacherRepository teacherRepository;
+    private final StudentRepository studentRepository;
 
     public ValidityVerifier fromAuthenticationInfo(AuthenticationInfo authenticationInfo) {
         switch (authenticationInfo.getRole()){
@@ -23,6 +25,8 @@ public class ValidityVerifierFactory {
                 return new ManagerVerifier(this.managerRepository,authenticationInfo);
             case TEACHER:
                 return new TeacherVerifier(this.teacherRepository,authenticationInfo);
+            case STUDENT:
+                return new StudentVerifier(this.studentRepository,authenticationInfo);
             default:
                 throw new IllegalArgumentException();
         }
