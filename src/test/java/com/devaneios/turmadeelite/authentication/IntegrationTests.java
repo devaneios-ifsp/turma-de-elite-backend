@@ -4,6 +4,7 @@ import com.devaneios.turmadeelite.dto.*;
 import com.devaneios.turmadeelite.entities.Role;
 import com.devaneios.turmadeelite.entities.UserCredentials;
 import com.devaneios.turmadeelite.repositories.UserRepository;
+import com.devaneios.turmadeelite.services.DataStorageService;
 import com.devaneios.turmadeelite.services.impl.FirebaseAuthenticationService;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -11,6 +12,7 @@ import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.web.servlet.MockMvc;
@@ -35,6 +37,9 @@ public class IntegrationTests {
 
     @Autowired
     private FirebaseAuthenticationService authenticationService;
+
+    @MockBean
+    private DataStorageService dataStorageService;
 
     static ObjectMapper mapper = new ObjectMapper();
 

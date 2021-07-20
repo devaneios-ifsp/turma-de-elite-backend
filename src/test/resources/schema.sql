@@ -50,7 +50,7 @@ CREATE TABLE activity(
     is_deliverable BOOLEAN NOT NULL,
     max_delivery_date DATETIME NOT NULL,
     teacher_id BIGINT NOT NULL,
-    attachment_id,
+    attachment_id BIGINT,
     FOREIGN KEY(teacher_id) REFERENCES teacher(teacher_id),
     FOREIGN KEY(attachment_id) REFERENCES attachments(id)
 );
