@@ -37,6 +37,7 @@ public class Teacher {
     private List<TeacherClassMembership> classMembership = new ArrayList<>();
 
     @OneToMany
+    @JoinColumn(name = "teacher_id")
     private List<Activity> activities;
 
     @ManyToOne

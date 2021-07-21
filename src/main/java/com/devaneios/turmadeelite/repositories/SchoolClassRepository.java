@@ -61,4 +61,7 @@ public interface SchoolClassRepository extends CrudRepository<SchoolClass,Long> 
 
     @Query("SELECT s FROM SchoolClass s JOIN s.classActivities c WHERE c.id=:activityId")
     List<SchoolClass> findAllSchoolClassesByActivityId(Long activityId);
+
+    @Query("SELECT s FROM SchoolClass s JOIN s.studentsMemberships sm JOIN sm.student st WHERE st.id=:id")
+    List<SchoolClass> findAllByStudentId(Long id);
 }

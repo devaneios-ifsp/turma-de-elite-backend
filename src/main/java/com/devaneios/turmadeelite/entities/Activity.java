@@ -46,7 +46,7 @@ public class Activity {
     @Builder.Default
     @ManyToMany(mappedBy = "classActivities")
     List<SchoolClass> classes = new ArrayList<>();
-//
-//    @OneToMany(cascade = CascadeType.ALL,orphanRemoval = true, mappedBy = "activity")
-//    private List<ActivityDelivery> deliveries = new ArrayList<>();
+
+    @OneToMany(cascade = CascadeType.ALL,orphanRemoval = true, mappedBy = "activity")
+    private List<ActivityDelivery> deliveries = new ArrayList<>();
 }

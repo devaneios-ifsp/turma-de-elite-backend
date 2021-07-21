@@ -65,12 +65,14 @@ CREATE TABLE student(
 
 CREATE TABLE activity_delivery(
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
-    delivery_timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
+    delivery_timestamp DATETIME NOT NULL,
     grade_received DOUBLE,
     student_delivery_id BIGINT NOT NULL,
     activity_id BIGINT NOT NULL,
+    attachment_id BIGINT NOT NULL,
     FOREIGN KEY(student_delivery_id) REFERENCES student(student_id),
-    FOREIGN KEY(activity_id) REFERENCES activity(id)
+    FOREIGN KEY(activity_id) REFERENCES activity(id),
+    FOREIGN KEY(attachment_id) REFERENCES attachments(id)
 );
 
 CREATE TABLE achievement(

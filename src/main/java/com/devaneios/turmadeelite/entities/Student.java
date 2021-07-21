@@ -31,7 +31,7 @@ public class Student {
     public School school;
 
     private String registry;
-//
-//    @OneToMany(cascade = CascadeType.ALL,orphanRemoval = true,mappedBy = "student")
-//    private List<ActivityDelivery> deliveries = new ArrayList<>();
+
+    @OneToMany(cascade = CascadeType.ALL,orphanRemoval = true,mappedBy = "student")
+    private List<ActivityDelivery> deliveries = new ArrayList<>();
 }

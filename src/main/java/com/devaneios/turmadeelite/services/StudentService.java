@@ -3,8 +3,10 @@ package com.devaneios.turmadeelite.services;
 import com.devaneios.turmadeelite.dto.StudentCreateDTO;
 import com.devaneios.turmadeelite.entities.Student;
 import org.springframework.data.domain.Page;
+import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface StudentService {
     void createStudent(StudentCreateDTO studentDTO, String managerAuthUuid);

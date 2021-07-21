@@ -2,14 +2,11 @@ package com.devaneios.turmadeelite.services.impl;
 
 import com.devaneios.turmadeelite.dto.ActivityCreateDTO;
 import com.devaneios.turmadeelite.dto.AttachmentDTO;
-import com.devaneios.turmadeelite.entities.Activity;
-import com.devaneios.turmadeelite.entities.Attachment;
-import com.devaneios.turmadeelite.entities.SchoolClass;
-import com.devaneios.turmadeelite.entities.Teacher;
-import com.devaneios.turmadeelite.repositories.ActivityRepository;
-import com.devaneios.turmadeelite.repositories.AttachmentRepository;
-import com.devaneios.turmadeelite.repositories.SchoolClassRepository;
-import com.devaneios.turmadeelite.repositories.TeacherRepository;
+import com.devaneios.turmadeelite.dto.StudentActivitiesDTO;
+import com.devaneios.turmadeelite.dto.StudentActivityDetailsDTO;
+import com.devaneios.turmadeelite.entities.*;
+import com.devaneios.turmadeelite.repositories.*;
+import com.devaneios.turmadeelite.services.ActivityDeliveryService;
 import com.devaneios.turmadeelite.services.ActivityService;
 import com.devaneios.turmadeelite.services.DataStorageService;
 import lombok.AllArgsConstructor;
@@ -26,6 +23,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.security.NoSuchAlgorithmException;
+import java.util.LinkedList;
 import java.util.List;
 
 @Service
@@ -37,6 +35,8 @@ public class ActivityServiceImpl implements ActivityService {
     private final SchoolClassRepository classRepository;
     private final DataStorageService storageService;
     private final AttachmentRepository attachmentRepository;
+    private final StudentRepository studentRepository;
+    private final ActivityDeliveryService activityDeliveryService;
 
     @Override
     @Transactional
@@ -149,9 +149,73 @@ public class ActivityServiceImpl implements ActivityService {
     }
 
     @Override
-    public AttachmentDTO getAttachmentFromActivity(Long id, String teacherAuthUuid) throws IOException {
+    public AttachmentDTO getTeacherAttachmentFromActivity(Long id, String teacherAuthUuid) throws IOException {
         this.teacherRepository
                 .findByAuthUuid(teacherAuthUuid)
+                .orElseThrow(()-> new ResponseStatusException(HttpStatus.FORBIDDEN));
+
+        Activity activity = this.activityRepository
+                .findByIdWithAttachment(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+
+        Attachment attachment = activity.getAttachment();
+
+        if(attachment==null){
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        }
+
+        InputStream inputStream = this.storageService.downloadFile(attachment.getBucketKey());
+        return new AttachmentDTO(attachment.getFilename(),inputStream);
+    }
+
+    @Override
+    public List<StudentActivitiesDTO> getStudentActivities(String studentAuthUuid) {
+        Student student = this.studentRepository
+                .findByAuthUuid(studentAuthUuid)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.FORBIDDEN));
+
+        List<StudentActivitiesDTO> activitiesResponse = new LinkedList<>();
+
+        List<SchoolClass> allClassesByStudent = this.classRepository.findAllByStudentId(student.getId());
+        for(SchoolClass schoolClass:allClassesByStudent){
+            List<Activity> activitiesByClass = this.activityRepository.findAllDoableActivitiesByClassId(schoolClass.getId());
+            for(Activity activity:activitiesByClass){
+                Teacher teacher = this.activityRepository.findTeacherByActivity(activity.getId());
+                activity.setTeacher(teacher);
+                ActivityStatus activityStatus = this.activityDeliveryService.getStatusFrom(activity, student);
+                activitiesResponse.add(new StudentActivitiesDTO(activity,schoolClass.getId(),activityStatus));
+            }
+        }
+
+        return activitiesResponse;
+    }
+
+    @Override
+    public StudentActivityDetailsDTO getActivityDetailsById(String studentAuthUuid, Long activityId, Long classId) {
+        Student student = this.studentRepository
+                .findByAuthUuid(studentAuthUuid)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.FORBIDDEN));
+
+        SchoolClass schoolClass = this.classRepository
+                .findById(classId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+
+        return this.activityRepository
+                .findByClassIdAndActivityId(classId,activityId)
+                .map( activity -> {
+                    Teacher teacher = this.activityRepository.findTeacherByActivity(activity.getId());
+                    activity.setTeacher(teacher);
+                    Attachment attachment = this.attachmentRepository.findByActivityId(activity.getId());
+                    activity.setAttachment(attachment);
+                    String filename = this.activityDeliveryService.deliveryFilename(student, activity);
+                    return new StudentActivityDetailsDTO(activity,schoolClass,filename);
+                }).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+    }
+
+    @Override
+    public AttachmentDTO getStudentAttachmentFromActivity(Long id, String studentAuthUuid) throws IOException {
+        this.studentRepository
+                .findByAuthUuid(studentAuthUuid)
                 .orElseThrow(()-> new ResponseStatusException(HttpStatus.FORBIDDEN));
 
         Activity activity = this.activityRepository

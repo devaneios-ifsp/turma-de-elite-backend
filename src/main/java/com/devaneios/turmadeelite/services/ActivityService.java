@@ -2,6 +2,8 @@ package com.devaneios.turmadeelite.services;
 
 import com.devaneios.turmadeelite.dto.ActivityCreateDTO;
 import com.devaneios.turmadeelite.dto.AttachmentDTO;
+import com.devaneios.turmadeelite.dto.StudentActivitiesDTO;
+import com.devaneios.turmadeelite.dto.StudentActivityDetailsDTO;
 import com.devaneios.turmadeelite.entities.Activity;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
@@ -17,5 +19,10 @@ public interface ActivityService {
     void updateActivity(ActivityCreateDTO activityCreateDTO,String teacherAuthUuid,Long activityId) throws IOException, NoSuchAlgorithmException;
     Page<Activity> getAllActivitiesOfTeacher(String teacherAuthUuid,int pageSize,int pageNumber);
     Activity getActivityByIdAndTeacher(Long activityId, String teacherAuthUuid);
-    AttachmentDTO getAttachmentFromActivity(Long id, String teacherAuthUuid) throws IOException;
+    AttachmentDTO getTeacherAttachmentFromActivity(Long id, String teacherAuthUuid) throws IOException;
+    List<StudentActivitiesDTO> getStudentActivities(String studentAuthUuid);
+
+    StudentActivityDetailsDTO getActivityDetailsById(String studentAuthUuid, Long activityId, Long classId);
+
+    AttachmentDTO getStudentAttachmentFromActivity(Long id, String studentAuthUuid) throws IOException;
 }
