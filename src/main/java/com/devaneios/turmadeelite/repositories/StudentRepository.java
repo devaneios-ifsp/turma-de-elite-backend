@@ -33,4 +33,6 @@ public interface StudentRepository extends CrudRepository<Student,Long> {
     @Query(value = "SELECT s FROM Student s JOIN s.credentials c WHERE c.authUuid=:studentAuthUuid")
     Optional<Student> findByAuthUuid(String studentAuthUuid);
 
+    @Query("SELECT st FROM Student st JOIN st.classMembership cm JOIN cm.schoolClass c WHERE c.id=:classId")
+    List<Student> findAllByClassId(Long classId);
 }

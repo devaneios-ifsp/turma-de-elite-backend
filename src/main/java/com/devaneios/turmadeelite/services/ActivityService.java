@@ -17,7 +17,7 @@ import java.util.stream.DoubleStream;
 public interface ActivityService {
     void createActivity(ActivityCreateDTO activityCreateDTO,String teacherAuthUuid) throws IOException, NoSuchAlgorithmException;
     void updateActivity(ActivityCreateDTO activityCreateDTO,String teacherAuthUuid,Long activityId) throws IOException, NoSuchAlgorithmException;
-    Page<Activity> getAllActivitiesOfTeacher(String teacherAuthUuid,int pageSize,int pageNumber);
+    Page<Activity> getAllActivitiesOfTeacherPaginated(String teacherAuthUuid, int pageSize, int pageNumber);
     Activity getActivityByIdAndTeacher(Long activityId, String teacherAuthUuid);
     AttachmentDTO getTeacherAttachmentFromActivity(Long id, String teacherAuthUuid) throws IOException;
     List<StudentActivitiesDTO> getStudentActivities(String studentAuthUuid);
@@ -25,4 +25,6 @@ public interface ActivityService {
     StudentActivityDetailsDTO getActivityDetailsById(String studentAuthUuid, Long activityId, Long classId);
 
     AttachmentDTO getStudentAttachmentFromActivity(Long id, String studentAuthUuid) throws IOException;
+
+    List<Activity> getAllActivitiesOfTeacher(String teacherAuthUUid);
 }

@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.*;
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/activities")
@@ -69,14 +70,20 @@ public class ActivityController {
     })
     @IsTeacher
     @GetMapping
-    public @ResponseBody Page<ActivityViewDTO> getAllActivitiesOfTeacher(
-            @RequestParam int pageSize,
-            @RequestParam int pageNumber,
+    public @ResponseBody Object getAllActivitiesOfTeacher(
+            @RequestParam(required = false) Integer pageSize,
+            @RequestParam(required = false) Integer pageNumber,
             Authentication authentication){
-
-        return this.activityService
-                .getAllActivitiesOfTeacher((String) authentication.getPrincipal(),pageSize,pageNumber)
-                .map(ActivityViewDTO::new);
+        if(pageSize == null){
+            return this.activityService.getAllActivitiesOfTeacher((String) authentication.getPrincipal())
+                    .stream()
+                    .map(ActivityViewNameDTO::new)
+                    .collect(Collectors.toList());
+        }else{
+            return this.activityService
+                    .getAllActivitiesOfTeacherPaginated((String) authentication.getPrincipal(),pageSize,pageNumber)
+                    .map(ActivityViewDTO::new);
+        }
     }
 
     @Operation(summary = "Recupera uma atividade pelo Id")

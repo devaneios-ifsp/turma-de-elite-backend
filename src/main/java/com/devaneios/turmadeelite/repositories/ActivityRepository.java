@@ -25,7 +25,10 @@ public interface ActivityRepository extends CrudRepository<Activity,Long> {
     void removeActivityFromClass(Long activityId,Long classId);
 
     @Query("SELECT a FROM Activity a JOIN a.teacher t WHERE t.id=:teacherId")
-    Page<Activity> findAllByTeacherId(Long teacherId, Pageable pageable);
+    Page<Activity> findAllByTeacherIdPaginated(Long teacherId, Pageable pageable);
+
+    @Query("SELECT a FROM Activity a JOIN a.teacher t WHERE t.id=:teacherId")
+    List<Activity> findAllByTeacherId(Long teacherId);
 
     @Query("SELECT a FROM Activity a LEFT JOIN FETCH a.attachment t WHERE a.id=:activityId")
     Optional<Activity> findByIdWithAttachment(Long activityId);

@@ -2,38 +2,48 @@ package com.devaneios.turmadeelite.entities;
 
 import lombok.*;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.time.LocalDateTime;
 
-//@Entity
-//@Table(name = "achievement")
-//@NoArgsConstructor
-//@AllArgsConstructor
-//@Getter
-//@Setter
-//@Builder
+@Entity
+@Table(name = "achievement")
+@NoArgsConstructor
+@AllArgsConstructor
+@Getter
+@Setter
+@Builder
 public class Achievement {
-//
-//    @Id
-//    @Column(name = "student_id")
-//    private Long id;
-//
-//    private String name;
-//
-//    private LocalDateTime beforeAt;
-//
-//    private Integer earlierOf;
-//
-//    private Integer bestOf;
-//
-//    private Double averageGradeGreaterOrEqualsThan;
-//
-//    private Boolean isActive;
-//
-//    private Long classId;
-//
-//    private Long activityId;
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    private String name;
+
+    private String description;
+
+    private LocalDateTime beforeAt;
+
+    private Integer earlierOf;
+
+    private Integer bestOf;
+
+    private Double averageGradeGreaterOrEqualsThan;
+
+    private Boolean isActive;
+
+    private String iconName;
+
+    @ManyToOne
+    @JoinColumn(name = "class_id")
+    private SchoolClass schoolClass;
+
+    @ManyToOne
+    @JoinColumn(name = "activity_id")
+    private Activity activity;
+
+    @ManyToOne
+    @JoinColumn(name = "teacher_id")
+    private Teacher teacher;
+
 }

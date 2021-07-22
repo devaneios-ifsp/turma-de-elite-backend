@@ -124,12 +124,12 @@ public class ActivityServiceImpl implements ActivityService {
     }
 
     @Override
-    public Page<Activity> getAllActivitiesOfTeacher(String teacherAuthUuid,int pageSize,int pageNumber){
+    public Page<Activity> getAllActivitiesOfTeacherPaginated(String teacherAuthUuid, int pageSize, int pageNumber){
         Pageable pageable = PageRequest.of(pageNumber,pageSize);
         Teacher teacher = this.teacherRepository
                 .findByAuthUuid(teacherAuthUuid)
                 .orElseThrow(()-> new ResponseStatusException(HttpStatus.FORBIDDEN));
-        return this.activityRepository.findAllByTeacherId(teacher.getId(), pageable).map(activity -> {
+        return this.activityRepository.findAllByTeacherIdPaginated(teacher.getId(), pageable).map(activity -> {
             List<SchoolClass> classesByActivityId = this.classRepository.findAllSchoolClassesByActivityId(activity.getId());
             activity.setClasses(classesByActivityId);
             return activity;
@@ -230,5 +230,13 @@ public class ActivityServiceImpl implements ActivityService {
 
         InputStream inputStream = this.storageService.downloadFile(attachment.getBucketKey());
         return new AttachmentDTO(attachment.getFilename(),inputStream);
+    }
+
+    @Override
+    public List<Activity> getAllActivitiesOfTeacher(String teacherAuthUUid) {
+        Teacher teacher = this.teacherRepository
+                .findByAuthUuid(teacherAuthUUid)
+                .orElseThrow(()-> new ResponseStatusException(HttpStatus.FORBIDDEN));
+        return this.activityRepository.findAllByTeacherId(teacher.getId());
     }
 }

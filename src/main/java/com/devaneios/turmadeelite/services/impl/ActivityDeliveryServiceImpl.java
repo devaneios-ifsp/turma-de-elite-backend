@@ -1,11 +1,9 @@
 package com.devaneios.turmadeelite.services.impl;
 
+import com.devaneios.turmadeelite.dto.ActivityDeliveriesDTO;
 import com.devaneios.turmadeelite.dto.AttachmentDTO;
 import com.devaneios.turmadeelite.entities.*;
-import com.devaneios.turmadeelite.repositories.ActivityDeliveryRepository;
-import com.devaneios.turmadeelite.repositories.ActivityRepository;
-import com.devaneios.turmadeelite.repositories.AttachmentRepository;
-import com.devaneios.turmadeelite.repositories.StudentRepository;
+import com.devaneios.turmadeelite.repositories.*;
 import com.devaneios.turmadeelite.services.ActivityDeliveryService;
 import com.devaneios.turmadeelite.services.DataStorageService;
 import lombok.AllArgsConstructor;
@@ -23,7 +21,12 @@ import java.security.NoSuchAlgorithmException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -34,6 +37,8 @@ public class ActivityDeliveryServiceImpl implements ActivityDeliveryService {
     private final ActivityRepository activityRepository;
     private final StudentRepository studentRepository;
     private final ActivityDeliveryRepository deliveryRepository;
+    private final SchoolClassRepository classRepository;
+    private final TeacherRepository teacherRepository;
 
     @Transactional
     @Override
@@ -56,9 +61,13 @@ public class ActivityDeliveryServiceImpl implements ActivityDeliveryService {
         Attachment attachment = this.storageService.from(deliveryDocument, "activities/student-deliveries/" + activityId + "/");
         Attachment savedAttachment = this.attachmentRepository.save(attachment);
 
+        ZonedDateTime zonedNow = ZonedDateTime.now();
+        ZoneId saoPauloZoneId = ZoneId.of("America/Sao_Paulo");
+        ZonedDateTime zonedDateTime = zonedNow.withZoneSameInstant(saoPauloZoneId);
+
         ActivityDelivery activityDelivery = ActivityDelivery
                 .builder()
-                .deliveryTimestamp(LocalDateTime.now(ZoneId.of("GMT-3")))
+                .deliveryTimestamp(zonedDateTime.toLocalDateTime())
                 .student(student)
                 .activity(activity)
                 .attachment(savedAttachment)
@@ -90,7 +99,12 @@ public class ActivityDeliveryServiceImpl implements ActivityDeliveryService {
 
         if(Objects.isNull(delivery)){
             LocalDateTime maxDeliveryDate = activity.getMaxDeliveryDate();
-            LocalDateTime now = LocalDateTime.now(ZoneId.of("GMT-3"));
+
+            ZonedDateTime zonedNow = ZonedDateTime.now();
+            ZoneId saoPauloZoneId = ZoneId.of("America/Sao_Paulo");
+            ZonedDateTime zonedDateTime = zonedNow.withZoneSameInstant(saoPauloZoneId);
+
+            LocalDateTime now = zonedDateTime.toLocalDateTime();
             if(now.isAfter(maxDeliveryDate)){
                 return ActivityStatus.EXPIRED;
             }else{
@@ -133,5 +147,66 @@ public class ActivityDeliveryServiceImpl implements ActivityDeliveryService {
 
         InputStream inputStream = this.storageService.downloadFile(attachment.getBucketKey());
         return new AttachmentDTO(attachment.getFilename(),inputStream);
+    }
+
+    @Override
+    public List<ActivityDeliveriesDTO> getDeliveriesByActivity(Long activityId, String teacherAuthUuid) {
+        this.teacherRepository
+                .findByAuthUuid(teacherAuthUuid)
+                .ifPresent( teacherRequesting -> {
+                    Teacher teacherByActivity = this.activityRepository.findTeacherByActivity(activityId);
+                    if(teacherRequesting.getId() != teacherByActivity.getId()){
+                        throw new ResponseStatusException(HttpStatus.FORBIDDEN);
+                    }
+                });
+
+        return this.deliveryRepository
+                .findStudentDeliveriesForActivityWithAttachment(activityId)
+                .stream()
+                .map( delivery -> ActivityDeliveriesDTO
+                            .builder()
+                            .deliveryId(delivery.getId())
+                            .studentId(delivery.getStudent().getId())
+                            .studentName(delivery.getStudent().getCredentials().getName())
+                            .filename(delivery.getAttachment().getFilename())
+                            .percentageReceived(delivery.getGradeReceived())
+                            .build()
+                ).collect(Collectors.toList());
+    }
+
+    @Override
+    public AttachmentDTO getDeliveryAttachment(Long activityDeliveryId) throws IOException {
+        ActivityDelivery delivery = this.deliveryRepository
+                .findByIdWIthAttachment(activityDeliveryId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+
+        Attachment attachment = delivery.getAttachment();
+
+        if(attachment==null){
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        }
+
+        InputStream inputStream = this.storageService.downloadFile(attachment.getBucketKey());
+        return new AttachmentDTO(attachment.getFilename(),inputStream);
+    }
+
+    @Override
+    @Transactional
+    public void giveGradeToDelivery(Long deliveryId, String teacherAuthUuid,Float gradePercentage) {
+        Teacher teacherRequesting = this.teacherRepository
+                .findByAuthUuid(teacherAuthUuid)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.FORBIDDEN));
+
+        ActivityDelivery delivery = this.deliveryRepository
+                .findById(deliveryId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+
+        Teacher teacherThatGiveTheActivity = this.activityRepository.findTeacherByActivity(delivery.getActivity().getId());
+
+        if(teacherRequesting.getId() != teacherThatGiveTheActivity.getId()){
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN);
+        }
+
+        this.deliveryRepository.giveGradeToDeliveryId(deliveryId,gradePercentage);
     }
 }
