@@ -59,6 +59,7 @@ public class AchievementServiceImpl implements AchievementService {
                 .findByAuthUuid(teacherAuthUuid)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.FORBIDDEN));
         Achievement achievement = achievementCreateDTO.toEntity(teacher);
+        achievement.setId(achievementId);
         this.achievementRepository.save(achievement);
     }
 }

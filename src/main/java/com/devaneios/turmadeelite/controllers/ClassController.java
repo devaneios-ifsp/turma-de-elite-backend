@@ -35,7 +35,7 @@ public class ClassController {
     })
     @IsManager
     @PostMapping
-    ResponseEntity<?> createAdminUser(@Valid @RequestBody ClassCreateDTO dto, Authentication authentication){
+    ResponseEntity<?> createClass(@Valid @RequestBody ClassCreateDTO dto, Authentication authentication){
         this.classService.createClass(dto, (String) authentication.getPrincipal());
         return new ResponseEntity<>(HttpStatus.CREATED);
     }

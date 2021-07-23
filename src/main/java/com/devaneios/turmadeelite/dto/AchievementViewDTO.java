@@ -1,6 +1,8 @@
 package com.devaneios.turmadeelite.dto;
 
 import com.devaneios.turmadeelite.entities.Achievement;
+import com.devaneios.turmadeelite.entities.Activity;
+import com.devaneios.turmadeelite.entities.SchoolClass;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -44,7 +46,13 @@ public class AchievementViewDTO {
         this.bestOf = achievement.getBestOf();
         this.averageGradeGreaterOrEqualsThan = achievement.getAverageGradeGreaterOrEqualsThan();
         this.isActive = achievement.getIsActive();
-        this.classId = achievement.getSchoolClass().getId();
-        this.activityId = achievement.getActivity().getId();
+        SchoolClass schoolClass = achievement.getSchoolClass();
+        Activity activity = achievement.getActivity();
+        if(schoolClass!=null){
+            this.classId = schoolClass.getId();
+        }
+        if(activity!=null){
+            this.activityId = achievement.getActivity().getId();
+        }
     }
 }

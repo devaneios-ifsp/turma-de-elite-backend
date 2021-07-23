@@ -15,10 +15,12 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletResponse;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.nio.charset.StandardCharsets;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -256,17 +258,117 @@ public class IntegrationTests {
                 .andExpect(status().is2xxSuccessful());
 
         String tokenFrom = this.authenticationService.createTokenFrom(user.getEmail(), "123456");
-        System.out.println(tokenFrom);
         TeacherCRUDTestHelper teacherTestHelper = new TeacherCRUDTestHelper(mvc, mapper, tokenFrom);
         List<TeacherCreateDTO> teachers = teacherTestHelper.buildCreateDTOs();
+
         for(TeacherCreateDTO teacher: teachers){
             teacherTestHelper.postEntity(teacher);
         }
+
         List<SchoolUserViewDTO> registeredTeachers = teacherTestHelper.listEntities();
         for(SchoolUserViewDTO teacher: registeredTeachers){
             teacherTestHelper.getById(teacher.getId());
             teacherTestHelper.updateEntity(teacher.getId(),teacher);
         }
+
+        StudentCRUDTestHelper studentCRUDTestHelper = new StudentCRUDTestHelper(mvc, mapper, tokenFrom);
+        List<StudentCreateDTO> students = studentCRUDTestHelper.buildCreateDTOs();
+
+        for(StudentCreateDTO student: students){
+            studentCRUDTestHelper.postEntity(student);
+        }
+
+        List<StudentViewDTO> studentsListed = studentCRUDTestHelper.listEntities();
+        for(StudentViewDTO studentListed: studentsListed){
+            studentCRUDTestHelper.getById(studentListed.id);
+            studentCRUDTestHelper.updateEntity(studentListed.id,studentListed);
+        }
+
+        ClassCRUDTestHelper classCRUDTestHelper = new ClassCRUDTestHelper(mvc, mapper, tokenFrom);
+        List<ClassCreateDTO> classes = classCRUDTestHelper.buildCreateDTOs();
+
+        List<Long> teachersId = registeredTeachers
+                .stream()
+                .map(SchoolUserViewDTO::getId)
+                .collect(Collectors.toList());
+
+        List<Long> studentsId = studentsListed
+                .stream()
+                .map(StudentViewDTO::getId)
+                .collect(Collectors.toList());
+
+        for(ClassCreateDTO schoolClass:classes){
+            schoolClass.setTeachersId(teachersId);
+            schoolClass.setStudentsId(studentsId);
+            classCRUDTestHelper.postEntity(schoolClass);
+        }
+
+        List<SchoolClassViewDTO> classesListed = classCRUDTestHelper.listEntities();
+        for(SchoolClassViewDTO classListed:classesListed){
+            classCRUDTestHelper.getById(classListed.getId());
+            classCRUDTestHelper.updateEntity(classListed.getId(), classListed);
+        }
+
+        List<Long> classIds = classesListed
+                .stream()
+                .map(SchoolClassViewDTO::getId)
+                .collect(Collectors.toList());
+
+        SchoolClassViewDTO firstSchoolClass = classesListed.get(0);
+        StudentViewDTO firstStudent = studentsListed.get(0);
+        SchoolUserViewDTO firstTeacher = registeredTeachers.get(0);
+
+        mvc.perform(put("/api/class/" + firstSchoolClass.getId() +"/student/" + firstStudent.getId())
+                .header("Authorization","Bearer "+ tokenFrom)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("false"))
+                .andExpect(status().isOk());
+
+        mvc.perform(put("/api/class/" + firstSchoolClass.getId() +"/teacher/" + firstStudent.getId())
+                .header("Authorization","Bearer "+ tokenFrom)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("false"))
+                .andExpect(status().isOk());
+
+        teacherTestHelper.postEntity(new TeacherCreateDTO("novo-professor@gmail.com","Novo Professor",true,"pt"));
+
+        List<SchoolUserViewDTO> newTeachers = teacherTestHelper.listEntities();
+        for(SchoolUserViewDTO teacher: newTeachers){
+            if(teacher.email.equals("novo-professor@gmail.com")){
+                mvc.perform(post("/api/class/" + firstSchoolClass.getId() + "/teacher/" + teacher.getId())
+                        .header("Authorization","Bearer "+ tokenFrom)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("false"))
+                        .andExpect(status().isCreated());
+            }
+        }
+
+        UserCredentials teacherUser = this.userRepository
+                .findById(firstTeacher.getId())
+                .orElseThrow(Exception::new);
+
+        FirstAccessDTO teacherFirstAccess = new FirstAccessDTO(
+                teacherUser.getEmail(),
+                "123456",
+                teacherUser.getFirstAccessToken());
+
+        mvc.perform(post("/first-access")
+                .content(mapper.writeValueAsString(teacherFirstAccess))
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().is2xxSuccessful());
+
+        String teacherToken = this.authenticationService.createTokenFrom(user.getEmail(), "123456");
+
+//        MockMultipartFile mockMultipartFile = new MockMultipartFile("user-file","activity.pdf",
+//                "text/plain", "test data".getBytes());
+//
+//        new ActivityCreateDTO("Álgebra","Resolução de equações do 2° grau",classIds,180D,true,true,true,"2021-07-25 12:00:00",mockMultipartFile);
+//
+//        mvc.perform(multipart("/api/activities")
+//                .(mapper.writeValueAsString())
+//                .header("Authorization","Bearer "+ teacherToken)
+//                .contentType(MediaType.MULTIPART_FORM_DATA))
+//                .andExpect(status().is2xxSuccessful());
     }
 
     @DisplayName("Cadastrar,listar e atualizar gestores em uma escola")

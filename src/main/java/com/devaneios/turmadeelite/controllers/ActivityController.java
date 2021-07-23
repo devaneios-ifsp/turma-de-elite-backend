@@ -39,7 +39,7 @@ public class ActivityController {
     })
     @IsTeacher
     @PostMapping
-    ResponseEntity<?> getPaginatedAdminUser(@ModelAttribute ActivityCreateDTO activityCreateDTO, Authentication authentication) throws IOException, NoSuchAlgorithmException {
+    ResponseEntity<?> createActivity(@ModelAttribute ActivityCreateDTO activityCreateDTO, Authentication authentication) throws IOException, NoSuchAlgorithmException {
         this.activityService.createActivity(activityCreateDTO,(String) authentication.getPrincipal());
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
