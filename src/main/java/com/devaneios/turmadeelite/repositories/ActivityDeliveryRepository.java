@@ -30,6 +30,6 @@ public interface ActivityDeliveryRepository extends CrudRepository<ActivityDeliv
 
 //    List<ActivityDelivery> findAll();
 //
-//    @Query("FROM ActivityDelivery a")
-//    List<ActivityDelivery> findByStudentAndClass(Long studentId, Long classId);
+    @Query("FROM ActivityDelivery a JOIN a.activity ac JOIN ac.classes c JOIN a.student st WHERE c.id=:classId AND st.id=:studentId")
+    List<ActivityDelivery> findByStudentAndClass(Long studentId, Long classId);
 }

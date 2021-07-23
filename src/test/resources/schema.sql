@@ -122,3 +122,11 @@ CREATE TABLE class_activities(
     FOREIGN KEY (activity_ID) REFERENCES activity(id),
     PRIMARY KEY (class_id,activity_id)
 );
+
+CREATE TABLE student_achievements(
+    student_id BIGINT NOT NULL,
+    achievement_id BIGINT NOT NULL,
+    FOREIGN KEY(student_id) REFERENCES student(student_id),
+    FOREIGN KEY(achievement_id) REFERENCES achievement(id),
+    PRIMARY KEY(student_id,achievement_id)
+);

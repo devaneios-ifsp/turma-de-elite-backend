@@ -37,7 +37,7 @@ public interface ActivityRepository extends CrudRepository<Activity,Long> {
             "JOIN a.classes c " +
             "JOIN c.studentsMemberships stm " +
             "JOIN stm.student st " +
-            "WHERE st.id=:id AND a.isVisible=true AND a.isActive=true AND a.isDeliverable=true")
+            "WHERE st.id=:id AND a.isVisible=true AND a.isActive=true ")
     Page<Activity> findAllByStudentId(Long id, Pageable page);
 
     @Query("SELECT t FROM Teacher t JOIN t.activities at WHERE at.id=:id")
@@ -46,9 +46,9 @@ public interface ActivityRepository extends CrudRepository<Activity,Long> {
     @Query("SELECT a FROM Activity a " +
             "JOIN a.classes c " +
             "WHERE c.id=:classId " +
-            "AND a.isVisible=true AND a.isActive=true AND a.isDeliverable=true AND a.id=:activityId")
+            "AND a.isVisible=true AND a.isActive=true AND a.id=:activityId")
     Optional<Activity> findByClassIdAndActivityId(Long classId, Long activityId);
 
-    @Query("SELECT a FROM Activity a JOIN a.classes c WHERE c.id=:classId AND a.isVisible=true AND a.isActive=true AND a.isDeliverable=true")
+    @Query("SELECT a FROM Activity a JOIN a.classes c WHERE c.id=:classId AND a.isVisible=true AND a.isActive=true ")
     List<Activity> findAllDoableActivitiesByClassId(Long classId);
 }

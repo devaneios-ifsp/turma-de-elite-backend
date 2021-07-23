@@ -4,6 +4,8 @@ import lombok.*;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "achievement")
@@ -45,5 +47,8 @@ public class Achievement {
     @ManyToOne
     @JoinColumn(name = "teacher_id")
     private Teacher teacher;
+
+    @ManyToMany(mappedBy = "studentAchievements")
+    List<Student> students = new ArrayList<>();
 
 }

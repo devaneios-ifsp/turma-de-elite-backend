@@ -6,17 +6,15 @@ import com.devaneios.turmadeelite.dto.StudentActivitiesDTO;
 import com.devaneios.turmadeelite.dto.StudentActivityDetailsDTO;
 import com.devaneios.turmadeelite.entities.Activity;
 import org.springframework.data.domain.Page;
-import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.security.NoSuchAlgorithmException;
 import java.util.List;
-import java.util.stream.DoubleStream;
 
 public interface ActivityService {
-    void createActivity(ActivityCreateDTO activityCreateDTO,String teacherAuthUuid) throws IOException, NoSuchAlgorithmException;
-    void updateActivity(ActivityCreateDTO activityCreateDTO,String teacherAuthUuid,Long activityId) throws IOException, NoSuchAlgorithmException;
+    void createActivity(ActivityCreateDTO activityCreateDTO, MultipartFile document, String teacherAuthUuid) throws IOException, NoSuchAlgorithmException;
+    void updateActivity(ActivityCreateDTO activityCreateDTO, MultipartFile document, String teacherAuthUuid, Long activityId) throws IOException, NoSuchAlgorithmException;
     Page<Activity> getAllActivitiesOfTeacherPaginated(String teacherAuthUuid, int pageSize, int pageNumber);
     Activity getActivityByIdAndTeacher(Long activityId, String teacherAuthUuid);
     AttachmentDTO getTeacherAttachmentFromActivity(Long id, String teacherAuthUuid) throws IOException;

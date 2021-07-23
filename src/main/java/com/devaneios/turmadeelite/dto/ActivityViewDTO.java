@@ -43,7 +43,6 @@ public class ActivityViewDTO {
         this.punctuation = activity.getPunctuation();
         this.isVisible = activity.getIsVisible();
         this.isActive = activity.getIsActive();
-        this.isDeliverable = activity.getIsDeliverable();
         this.maxDeliveryDate = activity.getMaxDeliveryDate();
         this.filename = activity.getAttachment() != null ? activity.getAttachment().getFilename():null;
         this.classes = activity.getClasses() != null

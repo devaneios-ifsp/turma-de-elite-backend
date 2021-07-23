@@ -35,4 +35,8 @@ public interface StudentRepository extends CrudRepository<Student,Long> {
 
     @Query("SELECT st FROM Student st JOIN st.classMembership cm JOIN cm.schoolClass c WHERE c.id=:classId")
     List<Student> findAllByClassId(Long classId);
+
+    @Modifying
+    @Query(value = "INSERT INTO student_achievements (student_id,achievement_id) VALUES (:studentId,:achievementId) ;",nativeQuery = true)
+    void giveAchievement(Long studentId, Long achievementId);
 }

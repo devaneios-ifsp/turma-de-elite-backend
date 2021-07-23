@@ -40,27 +40,29 @@ public class ActivityServiceImpl implements ActivityService {
 
     @Override
     @Transactional
-    public void createActivity(ActivityCreateDTO activityCreateDTO,String teacherAuthUuid) throws IOException, NoSuchAlgorithmException {
+    public void createActivity(ActivityCreateDTO activityCreateDTO, MultipartFile document, String teacherAuthUuid) throws IOException, NoSuchAlgorithmException {
         Teacher teacher = this.teacherRepository
                 .findByAuthUuid(teacherAuthUuid)
                 .orElseThrow(()-> new ResponseStatusException(HttpStatus.FORBIDDEN));
 
-        MultipartFile document = activityCreateDTO.getDocument();
-
-        Attachment attachment = this.storageService.from(document, "activities/teachers-posts/");
-        Attachment savedAttachment = this.attachmentRepository.save(attachment);
         Activity activity = Activity
                 .builder()
                 .name(activityCreateDTO.getName())
                 .description(activityCreateDTO.getDescription())
                 .punctuation(activityCreateDTO.getPunctuation())
                 .isVisible(activityCreateDTO.getIsVisible())
-                .isDeliverable(activityCreateDTO.getIsDeliverable())
                 .maxDeliveryDate(activityCreateDTO.getFormattedDeliveryDate())
                 .teacher(teacher)
                 .isActive(activityCreateDTO.getIsActive())
-                .attachment(savedAttachment)
                 .build();
+
+        Attachment savedAttachment = null;
+
+        if(document!=null){
+            Attachment attachment = this.storageService.from(document, "activities/teachers-posts/");
+            savedAttachment = this.attachmentRepository.save(attachment);
+            activity.setAttachment(savedAttachment);
+        }
 
         Activity savedActivity = this.activityRepository.save(activity);
         List<Long> schoolClassesIds = activityCreateDTO.getSchoolClasses();
@@ -69,12 +71,14 @@ public class ActivityServiceImpl implements ActivityService {
             this.activityRepository.addActivityToClass(savedActivity.getId(), schoolClassId);
         });
 
-        this.storageService.uploadFile(attachment.getBucketKey(),(FileInputStream) document.getInputStream());
+        if(document!=null){
+            this.storageService.uploadFile(savedAttachment.getBucketKey(),(FileInputStream) document.getInputStream());
+        }
     }
 
     @Override
     @Transactional
-    public void updateActivity(ActivityCreateDTO activityCreateDTO,String teacherAuthUuid,Long activityId) throws IOException, NoSuchAlgorithmException {
+    public void updateActivity(ActivityCreateDTO activityCreateDTO, MultipartFile document, String teacherAuthUuid, Long activityId) throws IOException, NoSuchAlgorithmException {
         Activity activity = this.activityRepository
                 .findByIdWithAttachment(activityId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
@@ -83,15 +87,17 @@ public class ActivityServiceImpl implements ActivityService {
                 .findByAuthUuid(teacherAuthUuid)
                 .orElseThrow(()-> new ResponseStatusException(HttpStatus.FORBIDDEN));
 
-        MultipartFile document = activityCreateDTO.getDocument();
+        Attachment attachment = null;
 
-        Attachment attachment = this.storageService.from(document, "activities/teachers-posts/");
+        if(document!=null){
+            attachment = this.storageService.from(document, "activities/teachers-posts/");
+        }
+
 
         activity.setName(activityCreateDTO.getName());
         activity.setDescription(activityCreateDTO.getDescription());
         activity.setPunctuation(activity.getPunctuation());
         activity.setIsVisible(activityCreateDTO.getIsVisible());
-        activity.setIsDeliverable(activityCreateDTO.getIsDeliverable());
         activity.setMaxDeliveryDate(activityCreateDTO.getFormattedDeliveryDate());
         activity.setIsActive(activityCreateDTO.getIsActive());
         activity.setTeacher(teacher);
@@ -110,15 +116,22 @@ public class ActivityServiceImpl implements ActivityService {
             this.activityRepository.addActivityToClass(activityId, schoolClassId);
         });
 
-        String newMd5 = attachment.getFileMd5();
-        Attachment oldAttachment = activity.getAttachment();
-        String oldMd5 = oldAttachment.getFileMd5();
-
-        if(!oldMd5.equals(newMd5)){
-            activity.setAttachment(attachment);
-            this.attachmentRepository.save(attachment);
-            this.storageService.deleteObject(oldAttachment.getBucketKey());
-            this.storageService.uploadFile(attachment.getBucketKey(),(FileInputStream) document.getInputStream());
+        if(document!=null){
+            String newMd5 = attachment.getFileMd5();
+            Attachment oldAttachment = activity.getAttachment();
+            if(oldAttachment!=null){
+                String oldMd5 = oldAttachment.getFileMd5();
+                if(!oldMd5.equals(newMd5)){
+                    activity.setAttachment(attachment);
+                    this.attachmentRepository.save(attachment);
+                    this.storageService.deleteObject(oldAttachment.getBucketKey());
+                    this.storageService.uploadFile(attachment.getBucketKey(),(FileInputStream) document.getInputStream());
+                }
+            }else{
+                activity.setAttachment(attachment);
+                this.attachmentRepository.save(attachment);
+                this.storageService.uploadFile(attachment.getBucketKey(),(FileInputStream) document.getInputStream());
+            }
         }
         this.activityRepository.save(activity);
     }

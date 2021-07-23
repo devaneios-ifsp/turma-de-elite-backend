@@ -31,8 +31,6 @@ public class Activity {
 
     private Boolean isActive;
 
-    private Boolean isDeliverable;
-
     private LocalDateTime maxDeliveryDate;
 
     @OneToOne

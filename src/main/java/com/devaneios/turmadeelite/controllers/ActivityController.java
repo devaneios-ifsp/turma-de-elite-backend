@@ -17,6 +17,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
@@ -39,8 +40,12 @@ public class ActivityController {
     })
     @IsTeacher
     @PostMapping
-    ResponseEntity<?> createActivity(@ModelAttribute ActivityCreateDTO activityCreateDTO, Authentication authentication) throws IOException, NoSuchAlgorithmException {
-        this.activityService.createActivity(activityCreateDTO,(String) authentication.getPrincipal());
+    ResponseEntity<?> createActivity(
+            @ModelAttribute ActivityCreateDTO activityCreateDTO,
+            @RequestPart(required = false,name = "document") MultipartFile document,
+            Authentication authentication
+    ) throws IOException, NoSuchAlgorithmException {
+        this.activityService.createActivity(activityCreateDTO,document,(String) authentication.getPrincipal());
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
@@ -56,8 +61,9 @@ public class ActivityController {
     public ResponseEntity<?> updateActivity(
             @PathVariable Long id,
             @ModelAttribute ActivityCreateDTO activityCreateDTO,
+            @RequestPart(required = false,name = "document") MultipartFile document,
             Authentication authentication) throws IOException, NoSuchAlgorithmException {
-        this.activityService.updateActivity(activityCreateDTO,(String) authentication.getPrincipal(),id);
+        this.activityService.updateActivity(activityCreateDTO,document,(String) authentication.getPrincipal(),id);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 

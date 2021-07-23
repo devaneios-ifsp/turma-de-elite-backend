@@ -2,7 +2,6 @@ package com.devaneios.turmadeelite.controllers;
 
 import com.devaneios.turmadeelite.dto.*;
 import com.devaneios.turmadeelite.entities.SchoolClass;
-import com.devaneios.turmadeelite.security.guards.IsAdmin;
 import com.devaneios.turmadeelite.security.guards.IsManager;
 import com.devaneios.turmadeelite.services.ClassService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -16,7 +15,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.List;
 import java.util.stream.Collectors;
 
 @RestController
@@ -54,7 +52,7 @@ public class ClassController {
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
-    @Operation(summary = "Recuperar uma turma pelo seu id")
+    @Operation(summary = "Recuperar uma turma pelo seu id requisitado pelo gestor")
     @ApiResponses(value = {
             @ApiResponse(
                     responseCode = "200",
@@ -68,8 +66,44 @@ public class ClassController {
     @IsManager
     @GetMapping("/{id}")
     ResponseEntity<?> getSchoolClassById(@PathVariable Long id,Authentication authentication){
-        SchoolClass schoolClass = this.classService.getSchoolClassById(id, (String) authentication.getPrincipal());
+        SchoolClass schoolClass = this.classService.getSchoolClassByIdAsManager(id, (String) authentication.getPrincipal());
         return ResponseEntity.ok(new SchoolClassViewDTO(schoolClass));
+    }
+
+    @Operation(summary = "Recuperar uma turma pelo seu id, requisitado pelo professor")
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Turma encontrada com sucesso"
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "Não foi encontrado uma turma com este id na escola do cliente"
+            )
+    })
+    @IsManager
+    @GetMapping("/{id}/general-info")
+    ResponseEntity<?> getSchoolClassByIdGeneralInfo(@PathVariable Long id,Authentication authentication){
+        SchoolClass schoolClass = this.classService.getSchoolClassByIdAsTeacher(id, (String) authentication.getPrincipal());
+        return ResponseEntity.ok(new SchoolClassViewDTO(schoolClass));
+    }
+
+    @Operation(summary = "Encerra uma turma")
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Turma encerrada com sucesso"
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "Não foi encontrado uma turma com este id na escola do cliente"
+            )
+    })
+    @IsManager
+    @PutMapping("/{id}/close")
+    ResponseEntity<?> closeClass(@PathVariable Long id,Authentication authentication){
+        this.classService.closeClass(id, (String) authentication.getPrincipal());
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @Operation(summary = "Recuperar todas as turmas do cliente")
@@ -100,12 +134,23 @@ public class ClassController {
     })
     @IsManager
     @GetMapping("/teacher-himself")
-    @ResponseBody List<SchoolClassNameDTO> getAllClassesBySchool(Authentication authentication){
-        return this.classService
-                .getAllClassesOfTeacher((String) authentication.getPrincipal())
-                .stream()
-                .map(SchoolClassNameDTO::new)
-                .collect(Collectors.toList());
+    @ResponseBody Object getAllClassesBySchool(
+            @RequestParam(required = false) Integer size,
+            @RequestParam(required = false) Integer pageNumber,
+            Authentication authentication
+    ){
+        if(size != null){
+            return this.classService
+                    .getAllClassesOfTeacher((String) authentication.getPrincipal(),pageNumber,size)
+                    .map(SchoolClassNameDTO::new);
+        } else {
+            return this.classService
+                    .getAllClassesOfTeacher((String) authentication.getPrincipal())
+                    .stream()
+                    .map(SchoolClassNameDTO::new)
+                    .collect(Collectors.toList());
+        }
+
     }
 
     @Operation(summary = "Atualizar nome e status de uma turma")

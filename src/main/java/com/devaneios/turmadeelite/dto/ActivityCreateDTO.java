@@ -32,12 +32,9 @@ public class ActivityCreateDTO {
     private Boolean isVisible;
     @NotNull
     private Boolean isActive;
-    @NotNull
-    private Boolean isDeliverable;
 
     private String maxDeliveryDate;
 
-    private MultipartFile document;
 
     public LocalDateTime getFormattedDeliveryDate(){
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");

@@ -41,7 +41,7 @@ public interface SchoolClassRepository extends CrudRepository<SchoolClass,Long> 
 
     @Query("SELECT s FROM SchoolClass s " +
             "JOIN s.school sc " +
-            "WHERE sc.id=:schoolId")
+            "WHERE sc.id=:schoolId AND s.isDone = false")
     Page<SchoolClass> findAllSchoolClassesBySchoolId(Long schoolId, Pageable pageRequest);
 
     @Modifying
@@ -59,12 +59,22 @@ public interface SchoolClassRepository extends CrudRepository<SchoolClass,Long> 
     @Query("SELECT s FROM SchoolClass s JOIN s.teachersMemberships tm JOIN tm.teacher t WHERE t.id=:teacherId")
     List<SchoolClass> findAllSchoolClassesByTeacher(Long teacherId);
 
+    @Query("SELECT s FROM SchoolClass s JOIN s.teachersMemberships tm JOIN tm.teacher t WHERE t.id=:teacherId")
+    Page<SchoolClass> findAllSchoolClassesByTeacher(Long teacherId, Pageable pageable);
+
+    @Query("SELECT s FROM SchoolClass s JOIN s.teachersMemberships tm JOIN tm.teacher t WHERE t.id=:teacherId AND s.id=:classId")
+    SchoolClass findSchoolClassesByIdAndTeacherId(Long classId, Long teacherId);
+
     @Query("SELECT s FROM SchoolClass s JOIN s.classActivities c WHERE c.id=:activityId")
     List<SchoolClass> findAllSchoolClassesByActivityId(Long activityId);
 
-    @Query("SELECT s FROM SchoolClass s JOIN s.studentsMemberships sm JOIN sm.student st WHERE st.id=:id")
+    @Query("SELECT s FROM SchoolClass s JOIN s.studentsMemberships sm JOIN sm.student st WHERE st.id=:id AND s.isDone=false")
     List<SchoolClass> findAllByStudentId(Long id);
 
     @Query("SELECT s FROM SchoolClass s JOIN s.classActivities c JOIN s.teachersMemberships tm JOIN tm.teacher t WHERE c.id=:activityId AND t.id=:teacherId")
     List<SchoolClass> findAllSchoolClassesByActivityIdAndTeacherId(Long activityId, Long teacherId);
+
+    @Modifying
+    @Query(value = "UPDATE class SET is_done = true WHERE id=:id ;",nativeQuery = true)
+    void closeClass(Long id);
 }

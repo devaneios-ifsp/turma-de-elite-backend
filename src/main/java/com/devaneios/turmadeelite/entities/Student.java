@@ -34,4 +34,13 @@ public class Student {
 
     @OneToMany(cascade = CascadeType.ALL,orphanRemoval = true,mappedBy = "student")
     private List<ActivityDelivery> deliveries = new ArrayList<>();
+
+    @Builder.Default
+    @ManyToMany
+    @JoinTable(
+            name = "student_achievements",
+            joinColumns = @JoinColumn(name = "student_id"),
+            inverseJoinColumns = @JoinColumn(name = "achievement_id")
+    )
+    List<Achievement> studentAchievements = new ArrayList<>();
 }
