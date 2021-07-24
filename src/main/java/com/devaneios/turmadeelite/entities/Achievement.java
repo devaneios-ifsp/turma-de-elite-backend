@@ -5,7 +5,9 @@ import lombok.*;
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "achievement")
@@ -14,10 +16,12 @@ import java.util.List;
 @Getter
 @Setter
 @Builder
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class Achievement {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @EqualsAndHashCode.Include
     private Long id;
 
     private String name;
@@ -49,6 +53,6 @@ public class Achievement {
     private Teacher teacher;
 
     @ManyToMany(mappedBy = "studentAchievements")
-    List<Student> students = new ArrayList<>();
+    Set<Student> students = new HashSet<>();
 
 }

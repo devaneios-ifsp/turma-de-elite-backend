@@ -13,9 +13,12 @@ import java.util.List;
 @Getter
 @Setter
 @Builder
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class Student {
+
     @Id
     @Column(name = "student_id")
+    @EqualsAndHashCode.Include
     private Long id;
 
     @OneToOne

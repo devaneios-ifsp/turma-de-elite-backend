@@ -189,7 +189,7 @@ public class ActivityServiceImpl implements ActivityService {
 
         List<StudentActivitiesDTO> activitiesResponse = new LinkedList<>();
 
-        List<SchoolClass> allClassesByStudent = this.classRepository.findAllByStudentId(student.getId());
+        List<SchoolClass> allClassesByStudent = this.classRepository.findAllNotIsDoneByStudentId(student.getId());
         for(SchoolClass schoolClass:allClassesByStudent){
             List<Activity> activitiesByClass = this.activityRepository.findAllDoableActivitiesByClassId(schoolClass.getId());
             for(Activity activity:activitiesByClass){

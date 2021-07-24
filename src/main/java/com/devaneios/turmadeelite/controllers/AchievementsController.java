@@ -1,9 +1,11 @@
 package com.devaneios.turmadeelite.controllers;
 
 import com.devaneios.turmadeelite.dto.AchievementCreateDTO;
+import com.devaneios.turmadeelite.dto.AchievementPanelDTO;
 import com.devaneios.turmadeelite.dto.AchievementViewDTO;
 import com.devaneios.turmadeelite.entities.Achievement;
 import com.devaneios.turmadeelite.security.guards.IsAdmin;
+import com.devaneios.turmadeelite.security.guards.IsStudent;
 import com.devaneios.turmadeelite.security.guards.IsTeacher;
 import com.devaneios.turmadeelite.services.AchievementService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -16,6 +18,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/achievements")
@@ -81,4 +86,21 @@ public class AchievementsController {
         this.achievementService.updateAchievement(achievementId,achievementCreateDTO,(String) authentication.getPrincipal());
         return new ResponseEntity<>(HttpStatus.OK);
     }
+
+    @Operation(summary = "Recupera as conquistas de um aluno")
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Conquistas encontradas com sucesso"
+            )
+    })
+    @IsStudent
+    @GetMapping("/student")
+    @ResponseBody
+    List<AchievementPanelDTO> getAchievementsAcquiredByStudent(Authentication authentication){
+        return this.achievementService
+                .getStudentAchievements((String) authentication.getPrincipal());
+    }
+
+
 }
