@@ -26,14 +26,19 @@ public class StudentActivityDetailsDTO {
     public String description;
     public String filename;
     public String deliveryFilename;
+    public Double scoreReceived;
 
-    public StudentActivityDetailsDTO(Activity activity, SchoolClass schoolClass, String deliveryFilename){
+    public StudentActivityDetailsDTO(
+            Activity activity,
+            SchoolClass schoolClass,
+            String deliveryFilename){
         this.id = activity.getId();
         this.name = activity.getName();
         this.schoolClassName = schoolClass.getName();
         this.expireDate = activity.getMaxDeliveryDate();
         this.description = activity.getDescription();
         this.deliveryFilename = deliveryFilename;
+        this.scoreReceived = scoreReceived;
         Attachment attachment = activity.getAttachment();
         if(attachment!=null){
             this.filename = attachment.getFilename();

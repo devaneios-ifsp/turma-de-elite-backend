@@ -36,6 +36,7 @@ public class ActivityServiceImpl implements ActivityService {
     private final DataStorageService storageService;
     private final AttachmentRepository attachmentRepository;
     private final StudentRepository studentRepository;
+    private final ActivityDeliveryRepository deliveryRepository;
     private final ActivityDeliveryService activityDeliveryService;
 
     @Override
@@ -221,7 +222,14 @@ public class ActivityServiceImpl implements ActivityService {
                     Attachment attachment = this.attachmentRepository.findByActivityId(activity.getId());
                     activity.setAttachment(attachment);
                     String filename = this.activityDeliveryService.deliveryFilename(student, activity);
-                    return new StudentActivityDetailsDTO(activity,schoolClass,filename);
+                    StudentActivityDetailsDTO deliveryDetails = new StudentActivityDetailsDTO(activity, schoolClass, filename);
+                    this.deliveryRepository.findStudentDeliveryForActivity(student.getId(),activityId).ifPresent( delivery -> {
+                        Float gradeReceived = delivery.getGradeReceived();
+                        if (gradeReceived != null) {
+                            deliveryDetails.setScoreReceived(gradeReceived != 0 ? (gradeReceived / 100) * activity.getPunctuation():0);
+                        }
+                    });
+                    return deliveryDetails;
                 }).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
     }
 
