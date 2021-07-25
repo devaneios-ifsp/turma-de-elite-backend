@@ -25,7 +25,6 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.UUID;
 
-@Profile("production")
 @Service
 public class S3DataStorageProduction implements DataStorageService {
 
