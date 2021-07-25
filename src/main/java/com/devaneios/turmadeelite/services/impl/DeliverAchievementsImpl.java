@@ -1,19 +1,16 @@
 package com.devaneios.turmadeelite.services.impl;
 
-import com.devaneios.turmadeelite.entities.Achievement;
-import com.devaneios.turmadeelite.entities.Activity;
-import com.devaneios.turmadeelite.entities.ActivityDelivery;
-import com.devaneios.turmadeelite.entities.Student;
+import com.devaneios.turmadeelite.dto.StudentRankingDTO;
+import com.devaneios.turmadeelite.entities.*;
 
 import com.devaneios.turmadeelite.repositories.AchievementRepository;
 import com.devaneios.turmadeelite.repositories.ActivityDeliveryRepository;
 import com.devaneios.turmadeelite.repositories.ActivityRepository;
 import com.devaneios.turmadeelite.repositories.StudentRepository;
 import com.devaneios.turmadeelite.services.DeliverAchievements;
+import com.google.common.collect.Comparators;
 import lombok.AllArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
 
 import javax.transaction.Transactional;
 import java.time.LocalDateTime;
@@ -35,11 +32,48 @@ public class DeliverAchievementsImpl implements DeliverAchievements {
         List<Achievement> allAchievements = this.achievementRepository.findAll();
         List<Student> classStudents = this.studentRepository.findAllByClassId(classId);
         for(Achievement achievement:allAchievements){
-            for(Student student: classStudents){
-                List<ActivityDelivery> deliveries = this.deliveryRepository.findByStudentAndClass(student.getId(), classId);
-                if(hasAchievement(achievement,deliveries)){
-                    this.deliverAchievement(student.getId(),achievement);
-                };
+
+            Activity activity = achievement.getActivity();
+            SchoolClass schoolClass = achievement.getSchoolClass();
+
+            if(activity !=null){
+                List<ActivityDelivery> deliveriesForActivity = this.deliveryRepository.findStudentDeliveriesForActivityWithAttachment(activity.getId());
+                giveActivityAchievementForEligible(achievement,deliveriesForActivity);
+            }else{
+                this.giveClassAchievementForEligible(achievement,schoolClass.getId());
+            }
+        }
+    }
+
+    private void giveClassAchievementForEligible(Achievement achievement, Long classId) {
+        List<Student> classStudents = this.studentRepository.findAllByClassId(classId);
+
+        List<Activity> classActivities = this.activityRepository.findAllDoableActivitiesByClassId(classId);
+
+        for(Student classStudent: classStudents){
+            int activitiesFound = 0;
+            Double totalReceived = 0D;
+
+            for(Activity classActivity: classActivities){
+                Long studentId = classStudent.getId();
+                Long activityId = classActivity.getId();
+
+                Double gradeReceivedForActivity = this.deliveryRepository
+                        .findStudentDeliveryForActivityWithAttachment(studentId, activityId)
+                        .map(ActivityDelivery::getGradeReceived)
+                        .filter(Objects::nonNull)
+                        .filter(percentageReceived -> percentageReceived > 0)
+                        .map( percentageReceived -> (percentageReceived / 100) * classActivity.getPunctuation())
+                        .orElse(0D);
+
+                totalReceived += gradeReceivedForActivity;
+                activitiesFound +=1;
+            }
+
+            Double averageGrade = activitiesFound != 0 ? totalReceived / activitiesFound : 0;
+
+            if(averageGrade >= achievement.getAverageGradeGreaterOrEqualsThan()){
+                this.deliverAchievement(classStudent.getId(),achievement);
             }
         }
     }
@@ -48,70 +82,89 @@ public class DeliverAchievementsImpl implements DeliverAchievements {
         this.studentRepository.giveAchievement(studentId,achievement.getId());
     }
 
-    private boolean hasAchievement(Achievement achievement, List<ActivityDelivery> activityDelivery){
-        return beforeAt(achievement,activityDelivery)
-                || earlierOf(achievement,activityDelivery)
-                || bestOf(achievement,activityDelivery)
-                || averageGradeGreaterOrEqualsThan(achievement,activityDelivery);
-    }
+    private void giveActivityAchievementForEligible(Achievement achievement, List<ActivityDelivery> activityDelivery){
+        Set<Long> eligibleStudentsForBeforeAt = beforeAt(achievement,activityDelivery);
+        Set<Long> eligibleStudentsEarlierOf = earlierOf(achievement, activityDelivery);
+        Set<Long> eligibleStudentsBestOf = bestOf(achievement, activityDelivery);
+        HashSet<Long> allEligibleStudents = new HashSet<>(eligibleStudentsBestOf);
+        allEligibleStudents.addAll(eligibleStudentsForBeforeAt);
+        allEligibleStudents.addAll(eligibleStudentsEarlierOf);
 
-    private boolean averageGradeGreaterOrEqualsThan(Achievement achievement, List<ActivityDelivery> activityDelivery) {
-        Double minimumAverage = achievement.getAverageGradeGreaterOrEqualsThan();
-        if(Objects.isNull(minimumAverage)){
-            return false;
-        }else{
-            Double deliveriesAverage = activityDelivery
-                    .stream()
-                    .collect(Collectors.averagingDouble(ActivityDelivery::getGradeReceived));
-            return minimumAverage <= deliveriesAverage;
+        for(Long studentId: allEligibleStudents){
+            if(
+                    eligibleStudentsForBeforeAt.contains(studentId)
+                            && eligibleStudentsEarlierOf.contains(studentId)
+                            && eligibleStudentsBestOf.contains(studentId)){
+                this.deliverAchievement(studentId,achievement);
+            }
         }
     }
 
-    private boolean bestOf(Achievement achievement, List<ActivityDelivery> deliveries) {
+    private Set<Long> bestOf(Achievement achievement, List<ActivityDelivery> deliveries) {
         Integer bestOf = achievement.getBestOf();
         if(Objects.isNull(bestOf)){
-            return true;
+            return deliveries
+                    .stream()
+                    .map(ActivityDelivery::getStudent)
+                    .map(Student::getId)
+                    .collect(Collectors.toSet());
         }else{
             List<ActivityDelivery> attributable = deliveries
                     .stream()
-                    .filter(delivery -> delivery.getActivity().getId() == achievement.getActivity().getId())
+                    .filter(delivery -> delivery.getActivity().getId().equals(achievement.getActivity().getId()))
+                    .sorted(Comparator.comparing(ActivityDelivery::getGradeReceived, Comparator.reverseOrder()))
                     .collect(Collectors.toList());
-            attributable.sort(Comparator.comparing(ActivityDelivery::getGradeReceived));
-            if(attributable.size()>=(bestOf - 1)){
-                ActivityDelivery delivery = deliveries.get(bestOf - 1);
-                return Objects.nonNull(delivery);
-            }
-            return false;
-        }
-    }
 
-    private boolean beforeAt(Achievement achievement, List<ActivityDelivery> deliveries){
-        LocalDateTime beforeAt = achievement.getBeforeAt();
-        if(Objects.isNull(beforeAt)){
-            return true;
-        }else{
-            for(ActivityDelivery delivery: deliveries){
-                boolean isFromThatActivity = achievement.getActivity().getId() == delivery.getActivity().getId();
-                boolean isBefore = delivery.getDeliveryTimestamp().isBefore(beforeAt);
-                if( isFromThatActivity && isBefore ){
-                    return true;
+            HashSet<Long> eligibleStudentIds = new HashSet<>();
+            if(attributable.size()>=(bestOf - 1)){
+                ActivityDelivery delivery = attributable.get(bestOf - 1);
+                if(Objects.nonNull(delivery)){
+                    eligibleStudentIds.add(delivery.getStudent().getId());
                 }
             }
-            return false;
+            return eligibleStudentIds;
         }
     }
 
-    private boolean earlierOf(Achievement achievement, List<ActivityDelivery> deliveries){
+    private Set<Long> beforeAt(Achievement achievement, List<ActivityDelivery> deliveries){
+        LocalDateTime beforeAt = achievement.getBeforeAt();
+        if(Objects.isNull(beforeAt)){
+            return deliveries
+                    .stream()
+                    .map(ActivityDelivery::getStudent)
+                    .map(Student::getId)
+                    .collect(Collectors.toSet());
+        }else{
+            Set<Long> eligibleStudentsIds = new HashSet<>();
+            for(ActivityDelivery delivery: deliveries){
+                boolean isFromThatActivity = achievement.getActivity().getId().equals(delivery.getActivity().getId());
+                boolean isBefore = delivery.getDeliveryTimestamp().isBefore(beforeAt);
+                if( isFromThatActivity && isBefore ){
+                    eligibleStudentsIds.add(delivery.getStudent().getId());
+                }
+            }
+            return eligibleStudentsIds;
+        }
+    }
+
+    private Set<Long> earlierOf(Achievement achievement, List<ActivityDelivery> deliveries){
         Integer earlierOf = achievement.getEarlierOf();
         if(Objects.isNull(earlierOf)){
-            return true;
+            return deliveries
+                    .stream()
+                    .map(ActivityDelivery::getStudent)
+                    .map(Student::getId)
+                    .collect(Collectors.toSet());
         }else{
             deliveries.sort(Comparator.comparing(ActivityDelivery::getDeliveryTimestamp));
+            Set<Long> eligibleStudentsIds = new HashSet<>();
             if(deliveries.size() >= (earlierOf - 1)){
                 ActivityDelivery delivery = deliveries.get(earlierOf - 1);
-                return Objects.nonNull(delivery);
+                if(Objects.nonNull(delivery)){
+                    eligibleStudentsIds.add(delivery.getStudent().getId());
+                }
             }
-            return false;
+            return eligibleStudentsIds;
         }
     }
 }

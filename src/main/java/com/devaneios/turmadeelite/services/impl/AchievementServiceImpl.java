@@ -71,7 +71,8 @@ public class AchievementServiceImpl implements AchievementService {
                 .findByAuthUuid(studentAuthUuid)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.FORBIDDEN));
 
-        List<SchoolClass> studentClasses = this.classRepository.findAllByStudentIdAndIsDone(student.getId());
+        List<SchoolClass> studentClasses = this.classRepository.findAllNotIsDoneByStudentId(student.getId());
+        studentClasses.addAll(this.classRepository.findAllByStudentIdAndIsDone(student.getId()));
         List<Achievement> allAchievements = new LinkedList<>();
         for(SchoolClass schoolClass: studentClasses){
             List<Achievement> achievementsByClass = this.achievementRepository.findAllByClassId(schoolClass.getId());
