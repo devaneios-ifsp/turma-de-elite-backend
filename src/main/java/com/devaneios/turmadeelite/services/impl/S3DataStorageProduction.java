@@ -12,6 +12,7 @@ import com.amazonaws.services.s3.model.S3ObjectInputStream;
 import com.devaneios.turmadeelite.entities.Attachment;
 import com.devaneios.turmadeelite.services.DataStorageService;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -24,15 +25,16 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.UUID;
 
+@Profile("production")
 @Service
-public class S3DataStorage implements DataStorageService {
+public class S3DataStorageProduction implements DataStorageService {
 
     private final AmazonS3 s3;
 
     @Value("${aws.s3.bucketName}")
     String bucketName;
 
-    public S3DataStorage(
+    public S3DataStorageProduction(
             @Value("${aws.s3.region}") String region,
             @Value("${aws.s3.accessKeyId}") String accessKeyId,
             @Value("${aws.s3.accessKey}") String accessKey
