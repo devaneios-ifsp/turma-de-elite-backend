@@ -2,6 +2,7 @@ package com.devaneios.turmadeelite.controllers;
 
 import com.devaneios.turmadeelite.dto.SchoolUserViewDTO;
 import com.devaneios.turmadeelite.dto.TeacherCreateDTO;
+import com.devaneios.turmadeelite.entities.Manager;
 import com.devaneios.turmadeelite.entities.Teacher;
 import com.devaneios.turmadeelite.security.guards.IsManager;
 
@@ -16,6 +17,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -68,6 +70,20 @@ public class TeacherController {
                                                 (String) authentication.getPrincipal()
                                             );
         Page<SchoolUserViewDTO> response = paginatedTeachers.map(SchoolUserViewDTO::new);
+        return ResponseEntity.ok(response);
+    }
+
+    @Operation(summary = "Visualizar uma lista de professores buscando pelo nome")
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Professores encontrados com sucesso"
+            ),
+    })
+    @GetMapping("/name/{name}")
+    ResponseEntity<List<SchoolUserViewDTO>> getTeachersByNameSimilarity(@PathVariable String name){
+        List<Teacher> paginatedTeacher = this.teacherService.getTeachersByNameSimilarity(name).orElse(new ArrayList<>());
+        List<SchoolUserViewDTO> response = paginatedTeacher.stream().map(SchoolUserViewDTO::new).collect(Collectors.toList());
         return ResponseEntity.ok(response);
     }
 

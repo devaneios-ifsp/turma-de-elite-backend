@@ -1,10 +1,13 @@
 package com.devaneios.turmadeelite.services;
 
+import com.devaneios.turmadeelite.entities.Manager;
 import com.devaneios.turmadeelite.entities.Teacher;
 import com.devaneios.turmadeelite.exceptions.EmailAlreadyRegistered;
 import org.springframework.data.domain.Page;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public interface TeacherService {
     void createTeacherUser(String email, String name, String language, Boolean isActive, String managerAuthUuid) throws EmailAlreadyRegistered;
@@ -16,4 +19,6 @@ public interface TeacherService {
     void updateTeacherUser(String email, String name, String language, Boolean isActive,Long teacherId, String managerAuthUuid) throws EmailAlreadyRegistered;
 
     List<Teacher> findTeachersByEmailSubstring(String email, String managerAuthUuid);
+
+    Optional<List<Teacher>> getTeachersByNameSimilarity(String name);
 }
