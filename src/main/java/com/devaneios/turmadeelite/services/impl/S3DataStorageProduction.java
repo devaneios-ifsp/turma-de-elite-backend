@@ -20,6 +20,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.math.BigInteger;
 import java.security.DigestInputStream;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -98,6 +99,7 @@ public class S3DataStorageProduction implements DataStorageService {
         MessageDigest messageDigest = MessageDigest.getInstance("MD5");
         DigestInputStream digestInputStream = new DigestInputStream(inputStream, messageDigest);
         byte[] bytes = digestInputStream.getMessageDigest().digest();
-        return new String(bytes);
+        BigInteger bi = new BigInteger(1, bytes);
+        return String.format("%0" + (bytes.length << 1) + "X", bi);
     }
 }
