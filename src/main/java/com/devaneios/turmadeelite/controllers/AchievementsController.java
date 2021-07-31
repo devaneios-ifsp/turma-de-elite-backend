@@ -12,6 +12,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.AllArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,6 +20,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import javax.validation.Valid;
+import java.lang.annotation.Annotation;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -38,7 +41,7 @@ public class AchievementsController {
             )
     })
     @PostMapping
-    ResponseEntity<?> createAchievement(@RequestBody AchievementCreateDTO achievementCreateDTO, Authentication authentication){
+    ResponseEntity<?> createAchievement(@Valid @RequestBody AchievementCreateDTO achievementCreateDTO, Authentication authentication){
         this.achievementService.createAchievement(achievementCreateDTO,(String) authentication.getPrincipal());
         return new ResponseEntity(HttpStatus.CREATED);
     }
