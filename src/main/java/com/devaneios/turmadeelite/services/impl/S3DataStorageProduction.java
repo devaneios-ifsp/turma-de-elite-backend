@@ -48,8 +48,6 @@ public class S3DataStorageProduction implements DataStorageService {
                 .build();
     }
 
-
-
     @Override
     public void uploadFile(String key, FileInputStream inputStream) throws IOException {
         try {
@@ -62,7 +60,6 @@ public class S3DataStorageProduction implements DataStorageService {
         } finally {
             inputStream.close();
         }
-
     }
 
     @Override
