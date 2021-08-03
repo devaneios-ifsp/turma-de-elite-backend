@@ -47,7 +47,6 @@ CREATE TABLE activity(
     punctuation DOUBLE NOT NULL,
     is_visible BOOLEAN NOT NULL,
     is_active BOOLEAN NOT NULL,
-    is_deliverable BOOLEAN NOT NULL,
     max_delivery_date DATETIME NOT NULL,
     teacher_id BIGINT NOT NULL,
     attachment_id BIGINT,

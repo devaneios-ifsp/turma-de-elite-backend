@@ -22,3 +22,9 @@ spring:
           auth: true
           starttls:
             enable: true
+junit:
+  jupiter:
+    testclass:
+      order:
+        default: org.junit.jupiter.api.ClassOrderer$OrderAnnotation
+
