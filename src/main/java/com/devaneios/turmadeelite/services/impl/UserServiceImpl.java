@@ -71,6 +71,7 @@ public class UserServiceImpl implements UserService {
         UserCredentials userCredentials = this.userRepository.findById(userId).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
         userCredentials.setEmail(admin.getEmail());
         userCredentials.setName(admin.getName());
+        userCredentials.setIsActive(admin.getIsActive());
         this.userRepository.save(userCredentials);
     }
 

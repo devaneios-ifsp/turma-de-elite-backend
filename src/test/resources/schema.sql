@@ -44,10 +44,10 @@ CREATE TABLE activity(
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
     name CHAR(50) NOT NULL,
     description VARCHAR(240) NOT NULL,
+    icon_name VARCHAR(50) NOT NULL,
     punctuation DOUBLE NOT NULL,
     is_visible BOOLEAN NOT NULL,
     is_active BOOLEAN NOT NULL,
-    is_deliverable BOOLEAN NOT NULL,
     max_delivery_date DATETIME NOT NULL,
     teacher_id BIGINT NOT NULL,
     attachment_id BIGINT,
@@ -79,12 +79,14 @@ CREATE TABLE achievement(
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(50) NOT NULL,
     description VARCHAR(240) NOT NULL,
+    icon_name VARCHAR(50) NOT NULL,
     before_at DATETIME,
     earlier_of INT,
     best_of INT,
     average_grade_greater_or_equals_than FLOAT,
     class_id BIGINT,
     activity_id BIGINT,
+    is_active BOOLEAN DEFAULT TRUE,
     FOREIGN KEY(activity_id) REFERENCES activity(id)
 );
 
@@ -130,3 +132,5 @@ CREATE TABLE student_achievements(
     FOREIGN KEY(achievement_id) REFERENCES achievement(id),
     PRIMARY KEY(student_id,achievement_id)
 );
+
+alter table achievement add column is_active boolean default true;
