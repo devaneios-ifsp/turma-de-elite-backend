@@ -27,6 +27,7 @@ import java.security.NoSuchAlgorithmException;
 import java.util.UUID;
 
 @Service
+@Profile("!test")
 public class S3DataStorageProduction implements DataStorageService {
 
     private final AmazonS3 s3;
@@ -51,7 +52,8 @@ public class S3DataStorageProduction implements DataStorageService {
 
 
     @Override
-    public void uploadFile(String key, FileInputStream inputStream) throws IOException {
+    public void uploadFile(String key, Object fileInputStream) throws IOException {
+        FileInputStream inputStream = (FileInputStream) fileInputStream;
         try {
             long size = inputStream.getChannel().size();
             ObjectMetadata metaData = new ObjectMetadata();

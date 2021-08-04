@@ -59,6 +59,7 @@ public class ActivityDeliveryServiceImpl implements ActivityDeliveryService {
         }
 
         Attachment attachment = this.storageService.from(deliveryDocument, "activities/student-deliveries/" + activityId + "/");
+        System.out.println("activities/student-deliveries/" + activityId + "/");
         Attachment savedAttachment = this.attachmentRepository.save(attachment);
 
         ZonedDateTime zonedNow = ZonedDateTime.now();
@@ -74,7 +75,7 @@ public class ActivityDeliveryServiceImpl implements ActivityDeliveryService {
                 .build();
 
         this.deliveryRepository.save(activityDelivery);
-        this.storageService.uploadFile(attachment.getBucketKey(),(FileInputStream) deliveryDocument.getInputStream());
+        this.storageService.uploadFile(attachment.getBucketKey(),deliveryDocument.getInputStream());
     }
 
     @Override

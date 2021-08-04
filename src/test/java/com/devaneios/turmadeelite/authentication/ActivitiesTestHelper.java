@@ -118,10 +118,43 @@ public class ActivitiesTestHelper {
                 .andExpect(jsonPath("$.length()").value(Matchers.greaterThan(0)));
     }
 
-    public void getTeacherActivitiesById() throws Exception{
-        mvc.perform(get("/api/activities/1")
+    public void updateActivity(Long id) throws Exception{
+        mvc.perform(get("/api/activities/"+id)
                 .header("Authorization",teacherBearerToken))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.length()").value(Matchers.greaterThan(0)));
+
+        ActivityCreateDTO activity = ActivityCreateDTO
+                .builder()
+                .name("Matriz de transformação I")
+                .description("Realize os exercícios do anexo referentes a matriz transformação")
+                .schoolClasses(Arrays.asList(1L))
+                .punctuation(70D)
+                .isActive(true)
+                .maxDeliveryDate("2022-01-02 12:00:00")
+                .isVisible(true)
+                .build();
+        MockMultipartFile multipartFile = new MockMultipartFile("file", "fis".getBytes());
+
+        MockHttpServletRequestBuilder requestBuilder = put("/api/activities/"+id)
+                .contentType(MediaType.MULTIPART_FORM_DATA)
+                .flashAttr("document",multipartFile)
+                .param("name", activity.getName())
+                .param("description", activity.getName())
+                .param("schoolClasses", activity
+                        .getSchoolClasses()
+                        .stream()
+                        .map(aLong -> aLong.toString())
+                        .collect(Collectors.joining())
+                )
+                .param("punctuation", activity.getPunctuation().toString())
+                .param("isActive", activity.getIsActive().toString())
+                .param("maxDeliveryDate", activity.getMaxDeliveryDate())
+                .param("isVisible", activity.getIsVisible().toString())
+                .header("Authorization", teacherBearerToken);
+
+        mvc.perform(
+                requestBuilder)
+                .andExpect(status().isOk());
     }
 }

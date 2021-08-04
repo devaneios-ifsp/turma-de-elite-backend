@@ -1,6 +1,7 @@
 package com.devaneios.turmadeelite.authentication;
 
 import com.devaneios.turmadeelite.dto.*;
+import com.devaneios.turmadeelite.entities.Attachment;
 import com.devaneios.turmadeelite.entities.Role;
 import com.devaneios.turmadeelite.entities.UserCredentials;
 import com.devaneios.turmadeelite.repositories.UserRepository;
@@ -9,12 +10,15 @@ import com.devaneios.turmadeelite.services.impl.FirebaseAuthenticationService;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.*;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletResponse;
+import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.nio.charset.StandardCharsets;
@@ -28,6 +32,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureMockMvc()
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+@ActiveProfiles("test")
 public class IntegrationTests {
 
     @Autowired
@@ -39,7 +44,7 @@ public class IntegrationTests {
     @Autowired
     private FirebaseAuthenticationService authenticationService;
 
-    @MockBean
+    @Autowired
     private DataStorageService dataStorageService;
 
     static ObjectMapper mapper = new ObjectMapper();
@@ -86,6 +91,7 @@ public class IntegrationTests {
                 .andExpect(status().isCreated());
 
         token = authenticationService.createTokenFrom("bianca@aluno.ifsp.edu.br","123456");
+
     }
 
     @DisplayName("Criar um usuário admin sem estar autenticado")
@@ -368,10 +374,25 @@ public class IntegrationTests {
         ActivitiesTestHelper activitiesTestHelper = new ActivitiesTestHelper(mvc, mapper, teacherToken, studentToken);
         List<ActivityCreateDTO> activities = activitiesTestHelper.createActivities();
         activitiesTestHelper.saveActivities(activities);
+        activitiesTestHelper.updateActivity(1L);
         activitiesTestHelper.activitiesCanBeListedPaginated();
         activitiesTestHelper.activitiesCanBeListed();
         activitiesTestHelper.getStudentActivities();
-        activitiesTestHelper.getTeacherActivitiesById();
+    }
+
+    @DisplayName("Entregar atividades")
+    @Test
+    @Order(9)
+    void deliveryActivities()throws Exception{
+        ActivityDeliveryTestHelper activityDeliveryTestHelper = new ActivityDeliveryTestHelper(
+                mvc,
+                mapper,
+                studentToken,
+                teacherToken);
+
+        MockMultipartFile multipartFile = new MockMultipartFile("file", "fis".getBytes());
+
+        activityDeliveryTestHelper.deliveryActivity(1L);
     }
 
     private String getTokenFromUser(Long id) throws Exception {
