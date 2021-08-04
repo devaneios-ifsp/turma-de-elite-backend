@@ -18,7 +18,7 @@ public class MockStorage implements DataStorageService {
 
     @Override
     public void uploadFile(String key, Object inputStream) throws IOException {
-
+        System.out.println("Call mocked method");
     }
 
     @Override
@@ -34,7 +34,7 @@ public class MockStorage implements DataStorageService {
 
     @Override
     public void deleteObject(String key) {
-
+        System.out.println("Call mocked method");
     }
 
     @Override
