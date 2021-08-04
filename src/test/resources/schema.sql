@@ -79,13 +79,18 @@ CREATE TABLE achievement(
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(50) NOT NULL,
     description VARCHAR(240) NOT NULL,
+    icon_name VARCHAR(50) NOT NULL,
+    is_active BOOLEAN DEFAULT TRUE,
     before_at DATETIME,
     earlier_of INT,
     best_of INT,
     average_grade_greater_or_equals_than FLOAT,
     class_id BIGINT,
     activity_id BIGINT,
-    FOREIGN KEY(activity_id) REFERENCES activity(id)
+    teacher_id BIGINT,
+    FOREIGN KEY(activity_id) REFERENCES activity(id),
+    FOREIGN KEY (teacher_id) REFERENCES teacher(teacher_id),
+    FOREIGN KEY (class_id) REFERENCES class(id)
 );
 
 CREATE TABLE class(

@@ -3,6 +3,7 @@ package com.devaneios.turmadeelite.controllers;
 import com.devaneios.turmadeelite.dto.*;
 import com.devaneios.turmadeelite.entities.SchoolClass;
 import com.devaneios.turmadeelite.security.guards.IsManager;
+import com.devaneios.turmadeelite.security.guards.IsTeacher;
 import com.devaneios.turmadeelite.services.ClassService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;

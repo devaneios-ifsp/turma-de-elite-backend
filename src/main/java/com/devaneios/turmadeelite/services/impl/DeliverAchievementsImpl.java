@@ -35,12 +35,15 @@ public class DeliverAchievementsImpl implements DeliverAchievements {
 
             Activity activity = achievement.getActivity();
             SchoolClass schoolClass = achievement.getSchoolClass();
+            System.out.println(schoolClass);
 
             if(activity !=null){
                 List<ActivityDelivery> deliveriesForActivity = this.deliveryRepository.findStudentDeliveriesForActivityWithAttachment(activity.getId());
                 giveActivityAchievementForEligible(achievement,deliveriesForActivity);
             }else{
-                this.giveClassAchievementForEligible(achievement,schoolClass.getId());
+                //Optional <Long> id = Optional.ofNullable(schoolClass.getId());
+                System.out.println("entro no else");
+                //this.giveClassAchievementForEligible(achievement,schoolClass.getId());
             }
         }
     }
