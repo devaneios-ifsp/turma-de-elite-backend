@@ -1,6 +1,7 @@
 package com.devaneios.turmadeelite.authentication;
 
 import com.devaneios.turmadeelite.dto.*;
+import com.devaneios.turmadeelite.entities.Attachment;
 import com.devaneios.turmadeelite.entities.Role;
 import com.devaneios.turmadeelite.entities.UserCredentials;
 import com.devaneios.turmadeelite.repositories.UserRepository;
@@ -9,6 +10,7 @@ import com.devaneios.turmadeelite.services.impl.FirebaseAuthenticationService;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.*;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -16,6 +18,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.nio.charset.StandardCharsets;
@@ -29,6 +32,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureMockMvc()
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+@ActiveProfiles("test")
 public class IntegrationTests {
 
     @Autowired
@@ -40,7 +44,7 @@ public class IntegrationTests {
     @Autowired
     private FirebaseAuthenticationService authenticationService;
 
-    @MockBean
+    @Autowired
     private DataStorageService dataStorageService;
 
     static ObjectMapper mapper = new ObjectMapper();
@@ -49,6 +53,8 @@ public class IntegrationTests {
 
     static SchoolViewDTO firstSchool = null;
     static SchoolUserViewDTO firstManager = null;
+    static String teacherToken;
+    static String studentToken;
 
     @BeforeAll
     static void setup(
@@ -85,10 +91,12 @@ public class IntegrationTests {
                 .andExpect(status().isCreated());
 
         token = authenticationService.createTokenFrom("bianca@aluno.ifsp.edu.br","123456");
+
     }
 
     @DisplayName("Criar um usuário admin sem estar autenticado")
     @Test
+    @Order(1)
     void creatingAdminUnauthenticated() throws Exception {
         UserCredentialsCreateDTO dto = new UserCredentialsCreateDTO("patricia.paschoal@aluno.ifsp.edu.br", "Patrícia Paschoal",true, "pt");
         mvc.perform(post("/api/admin")
@@ -99,6 +107,7 @@ public class IntegrationTests {
 
     @DisplayName("Recuperar role sem estar autenticado")
     @Test
+    @Order(2)
     void recoverRoleUnauthorized() throws Exception {
         mvc.perform(get("/api/roles")
                 .contentType(MediaType.APPLICATION_JSON))
@@ -107,6 +116,7 @@ public class IntegrationTests {
 
     @DisplayName("Fluxo completo da criação de um usuário")
     @Test
+    @Order(3)
     void creatingAdminWithRightRole() throws Exception {
         mvc.perform(get("/api/roles")
                 .header("Authorization","Bearer " + token)
@@ -133,6 +143,7 @@ public class IntegrationTests {
 
     @DisplayName("Verificar token e realizar primeiro acesso, criando um usuário no sistema de autenticação externo")
     @Test
+    @Order(3)
     void firstAccessFlow() throws Exception {
         FirstAccessDTO firstAccessDTO = new FirstAccessDTO(
                 "andre.montero702@gmail.com",
@@ -149,13 +160,14 @@ public class IntegrationTests {
                 });
 
         mvc.perform(post("/first-access")
-        .content(mapper.writeValueAsString(firstAccessDTO))
-        .contentType(MediaType.APPLICATION_JSON))
-        .andExpect(status().isCreated());
+                .content(mapper.writeValueAsString(firstAccessDTO))
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isCreated());
     }
 
     @DisplayName("Não é possível realizar primeiro acesso duas vezes")
     @Test
+    @Order(3)
     void conflictFailFirstAccess() throws Exception{
 
         FirstAccessDTO firstAccessDTO = new FirstAccessDTO(
@@ -182,6 +194,7 @@ public class IntegrationTests {
 
     @DisplayName("Não é possível realizar primeiro acesso de alguém que nunca se cadastrou")
     @Test
+    @Order(4)
     void notFoundFail() throws Exception{
         FirstAccessDTO firstAccessDTO = new FirstAccessDTO(
                 "natan.lisboa@gmail.com.br",
@@ -201,6 +214,7 @@ public class IntegrationTests {
 
     @DisplayName("Recuperar administradores pelo Id e atualizá-los")
     @Test
+    @Order(5)
     void listAndUpdateAdmin() throws Exception{
         AdminCRUDTestHelper adminTestHelper = new AdminCRUDTestHelper(mvc, mapper, token);
         adminTestHelper.createSomeEntities();
@@ -211,21 +225,27 @@ public class IntegrationTests {
         }
     }
 
-    @DisplayName("Criar,Atualizar e listar escolas\nUtilizar estes gestores para cadastrar,listar e atualizar professores")
+    @DisplayName("Criar,Atualizar e listar escolas")
     @Test
-    @Order(1)
-    void createSchool() throws Exception{
+    @Order(6)
+    void createSchool() throws Exception {
         SchoolCRUDTestHelper schoolHelper = new SchoolCRUDTestHelper(mvc, mapper, token);
         schoolHelper.createSomeEntities();
         schoolHelper.getByNameSimilarity();
         List<SchoolViewDTO> schools = schoolHelper.listEntities();
-        for(SchoolViewDTO school: schools){
+        for (SchoolViewDTO school : schools) {
             schoolHelper.getById(school.id);
-            schoolHelper.updateEntity(school.id,school);
-            if(firstSchool == null){
+            schoolHelper.updateEntity(school.id, school);
+            if (firstSchool == null) {
                 firstSchool = school;
             }
         }
+    }
+
+    @DisplayName("Criar,Atualizar e listar gestores")
+    @Test
+    @Order(7)
+    void createManager() throws Exception {
 
         ManagerCRUDTestHelper managerTestHelper = new ManagerCRUDTestHelper(mvc, mapper, token);
 
@@ -343,46 +363,55 @@ public class IntegrationTests {
             }
         }
 
-        UserCredentials teacherUser = this.userRepository
-                .findById(firstTeacher.getId())
+        teacherToken = getTokenFromUser(firstTeacher.getId());
+        studentToken = getTokenFromUser(firstStudent.getId());
+    }
+
+    @DisplayName("Criar, listar e atualizar atividades")
+    @Test
+    @Order(8)
+    void createActivities()throws Exception{
+        ActivitiesTestHelper activitiesTestHelper = new ActivitiesTestHelper(mvc, mapper, teacherToken, studentToken);
+        List<ActivityCreateDTO> activities = activitiesTestHelper.createActivities();
+        activitiesTestHelper.saveActivities(activities);
+        activitiesTestHelper.updateActivity(1L);
+        activitiesTestHelper.activitiesCanBeListedPaginated();
+        activitiesTestHelper.activitiesCanBeListed();
+        activitiesTestHelper.getStudentActivities();
+    }
+
+    @DisplayName("Entregar atividades")
+    @Test
+    @Order(9)
+    void deliveryActivities()throws Exception{
+        ActivityDeliveryTestHelper activityDeliveryTestHelper = new ActivityDeliveryTestHelper(
+                mvc,
+                mapper,
+                studentToken,
+                teacherToken);
+
+        MockMultipartFile multipartFile = new MockMultipartFile("file", "fis".getBytes());
+
+        activityDeliveryTestHelper.deliveryActivity(1L);
+    }
+
+    private String getTokenFromUser(Long id) throws Exception {
+        UserCredentials user = this.userRepository
+                .findById(id)
                 .orElseThrow(Exception::new);
 
         FirstAccessDTO teacherFirstAccess = new FirstAccessDTO(
-                teacherUser.getEmail(),
+                user.getEmail(),
                 "123456",
-                teacherUser.getFirstAccessToken());
+                user.getFirstAccessToken());
 
         mvc.perform(post("/first-access")
                 .content(mapper.writeValueAsString(teacherFirstAccess))
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().is2xxSuccessful());
 
-        String teacherToken = this.authenticationService.createTokenFrom(user.getEmail(), "123456");
-
-//        MockMultipartFile mockMultipartFile = new MockMultipartFile("user-file","activity.pdf",
-//                "text/plain", "test data".getBytes());
-//
-//        new ActivityCreateDTO("Álgebra","Resolução de equações do 2° grau",classIds,180D,true,true,true,"2021-07-25 12:00:00",mockMultipartFile);
-//
-//        mvc.perform(multipart("/api/activities")
-//                .(mapper.writeValueAsString())
-//                .header("Authorization","Bearer "+ teacherToken)
-//                .contentType(MediaType.MULTIPART_FORM_DATA))
-//                .andExpect(status().is2xxSuccessful());
+        return this.authenticationService.createTokenFrom(user.getEmail(), "123456");
     }
 
-    @DisplayName("Cadastrar,listar e atualizar gestores em uma escola")
-    @Test
-    @Order(2)
-    void createManager() throws Exception{
 
-
-    }
-//
-//    @DisplayName("Cadastrar,listar e atualizar professores em uma escola")
-//    @Test
-//    @Order(3)
-//    void createTeacher() throws Exception{
-//
-//    }
 }

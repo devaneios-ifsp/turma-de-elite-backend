@@ -19,6 +19,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.validation.Valid;
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
 import java.util.List;
@@ -41,6 +42,7 @@ public class ActivityController {
     @IsTeacher
     @PostMapping
     ResponseEntity<?> createActivity(
+            @Valid
             @ModelAttribute ActivityCreateDTO activityCreateDTO,
             @RequestPart(required = false,name = "document") MultipartFile document,
             Authentication authentication
