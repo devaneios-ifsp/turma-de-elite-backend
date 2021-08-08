@@ -5,10 +5,7 @@ import com.devaneios.turmadeelite.entities.Activity;
 import com.devaneios.turmadeelite.entities.SchoolClass;
 import com.devaneios.turmadeelite.entities.Teacher;
 import com.fasterxml.jackson.annotation.JsonFormat;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.time.LocalDateTime;
 
@@ -16,6 +13,7 @@ import java.time.LocalDateTime;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 public class AchievementCreateDTO {
     public String name;
     public String description;

@@ -64,12 +64,12 @@ public class ActivityDeliveryController {
             )
     })
     @IsStudent
-    @PostMapping("/{deliveryId}/grade")
+    @PostMapping(value = "/{deliveryId}/grade",consumes = MediaType.TEXT_PLAIN_VALUE)
     ResponseEntity<?> getPaginatedAdminUser(
             @PathVariable Long deliveryId,
-            @RequestBody Float gradePercentage,
+            @RequestBody String gradePercentage,
             Authentication authentication) throws IOException, NoSuchAlgorithmException {
-        this.deliveryService.giveGradeToDelivery(deliveryId,(String) authentication.getPrincipal(),gradePercentage);
+        this.deliveryService.giveGradeToDelivery(deliveryId,(String) authentication.getPrincipal(),Float.parseFloat(gradePercentage));
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 

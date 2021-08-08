@@ -82,7 +82,7 @@ public class AchievementsController {
     })
     @IsAdmin
     @PutMapping("/{achievementId}")
-    ResponseEntity<?> updateSchoolById(@PathVariable Long achievementId,@RequestBody AchievementCreateDTO achievementCreateDTO,Authentication authentication){
+    ResponseEntity<?> updateAchievementById(@PathVariable Long achievementId,@RequestBody AchievementCreateDTO achievementCreateDTO,Authentication authentication){
         this.achievementService.updateAchievement(achievementId,achievementCreateDTO,(String) authentication.getPrincipal());
         return new ResponseEntity<>(HttpStatus.OK);
     }

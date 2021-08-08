@@ -70,9 +70,9 @@ public class ActivitiesTestHelper {
         MockMultipartFile multipartFile = new MockMultipartFile("file", "fis".getBytes());
 
         for(ActivityCreateDTO activity: activities){
-            MockHttpServletRequestBuilder requestBuilder = post("/api/activities")
+            MockHttpServletRequestBuilder requestBuilder = fileUpload("/api/activities")
+                    .file(multipartFile)
                     .contentType(MediaType.MULTIPART_FORM_DATA)
-                    .flashAttr("document",multipartFile)
                     .param("name", activity.getName())
                     .param("description", activity.getName())
                     .param("schoolClasses", activity
@@ -156,5 +156,44 @@ public class ActivitiesTestHelper {
         mvc.perform(
                 requestBuilder)
                 .andExpect(status().isOk());
+    }
+
+    public void getActivitiesDetails(int activityId, int classId) throws Exception {
+        mvc.perform(
+                get("/api/activities/" + activityId + "/class/" + classId + "/student")
+                .header("Authorization",studentBearerToken))
+            .andExpect(status().isOk());
+    }
+
+    public void downloadTeacherActivityAttachment(Long id) throws Exception {
+        mvc.perform(
+                get("/api/activities/"+ id + "/download")
+                .header("Authorization",teacherBearerToken)
+        ).andExpect(status().isOk());
+    }
+
+    public void downloadStudentActivityAttachment(Long id) throws Exception {
+        mvc.perform(
+                get("/api/activities/"+ id + "/student/download")
+                        .header("Authorization",studentBearerToken)
+        ).andExpect(status().isOk());
+    }
+
+
+    public void deliveryGrade(int deliveryId, Float grade) throws Exception {
+        mvc.perform(
+                post("/api/activity-deliveries/" + deliveryId + "/grade")
+                .header("Authorization",teacherBearerToken)
+                .content(grade.toString())
+                .contentType(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.TEXT_PLAIN_VALUE)
+        ).andExpect(status().isCreated());
+    }
+
+    public void downloadStudentActivityDelivery(int activityId) throws Exception {
+        mvc.perform(
+                get("/api/activity-deliveries/student/activity/" + activityId + "/download")
+                        .header("Authorization",studentBearerToken)
+        ).andExpect(status().isOk());
     }
 }

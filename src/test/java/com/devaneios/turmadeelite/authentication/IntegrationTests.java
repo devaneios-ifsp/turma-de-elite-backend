@@ -384,6 +384,7 @@ public class IntegrationTests {
     @Test
     @Order(9)
     void deliveryActivities()throws Exception{
+        ActivitiesTestHelper activitiesTestHelper = new ActivitiesTestHelper(mvc, mapper, teacherToken, studentToken);
         ActivityDeliveryTestHelper activityDeliveryTestHelper = new ActivityDeliveryTestHelper(
                 mvc,
                 mapper,
@@ -393,6 +394,47 @@ public class IntegrationTests {
         MockMultipartFile multipartFile = new MockMultipartFile("file", "fis".getBytes());
 
         activityDeliveryTestHelper.deliveryActivity(1L);
+        activitiesTestHelper.getActivitiesDetails(1,1);
+    }
+
+    @DisplayName("Visualizar entregas de atividades e entregar notas")
+    @Test
+    @Order(10)
+    void deliveryGrades()throws Exception{
+        ActivitiesTestHelper activitiesTestHelper = new ActivitiesTestHelper(mvc, mapper, teacherToken, studentToken);
+        activitiesTestHelper.downloadStudentActivityDelivery(1);
+        activitiesTestHelper.deliveryGrade(1,50F);
+    }
+
+    @DisplayName("Detalhar turma como professor")
+    @Test
+    @Order(11)
+    void detailClass() throws Exception{
+        mvc.perform(
+                get("/api/class/1/general-info")
+                .header("Authorization","Bearer "+teacherToken)
+        ).andExpect(status().isOk());
+    }
+
+    @DisplayName("Listar escolas em que o professor está atribuído")
+    @Test
+    @Order(12)
+    void getSelfClasses() throws Exception{
+        mvc.perform(
+                get("/api/class/teacher-himself")
+                .header("Authorization","Bearer "+teacherToken)
+        ).andExpect(status().isOk());
+        mvc.perform(
+                get("/api/class/teacher-himself?size=3&pageNumber=0")
+                        .header("Authorization","Bearer "+teacherToken)
+        ).andExpect(status().isOk());
+    }
+
+    @DisplayName("Criar conquistas")
+    @Test
+    @Order(13)
+    void createAchievement() throws Exception{
+
     }
 
     private String getTokenFromUser(Long id) throws Exception {

@@ -74,7 +74,7 @@ public class StudentServiceImpl implements StudentService {
             student = optionalStudent.get();
             if(!student.getRegistry().equals(studentCreateDTO.getRegistry())) throw new ResponseStatusException(HttpStatus.CONFLICT);
         }else{
-            student = optionalStudent.get();
+            student = this.studentRepository.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
         }
 
         credentials.setEmail(studentCreateDTO.getEmail());

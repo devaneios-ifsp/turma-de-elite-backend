@@ -171,7 +171,6 @@ public class ActivityServiceImpl implements ActivityService {
         Activity activity = this.activityRepository
                 .findByIdWithAttachment(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
-
         Attachment attachment = activity.getAttachment();
 
         if(attachment==null){
@@ -244,7 +243,6 @@ public class ActivityServiceImpl implements ActivityService {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
 
         Attachment attachment = activity.getAttachment();
-
         if(attachment==null){
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }
