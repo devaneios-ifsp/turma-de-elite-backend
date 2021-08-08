@@ -1,6 +1,7 @@
 package com.devaneios.turmadeelite.dto;
 
 import com.devaneios.turmadeelite.entities.SchoolClass;
+import com.devaneios.turmadeelite.entities.TierConfig;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -20,6 +21,7 @@ public class SchoolClassViewDTO {
     private List<TeacherMembershipDTO> teachers;
     private Boolean isActive;
     private Boolean isDone;
+    private TierConfigDTO tierConfig;
 
     public SchoolClassViewDTO(SchoolClass schoolClass){
         this.id = schoolClass.getId();
@@ -36,7 +38,10 @@ public class SchoolClassViewDTO {
                 .stream()
                 .map(TeacherMembershipDTO::new)
                 .collect(Collectors.toList());
-
+        TierConfig tierConfig = schoolClass.getTierConfig();
+        if(tierConfig!=null){
+            this.tierConfig = new TierConfigDTO(tierConfig.getGoldPercent(),tierConfig.getSilverPercent(), tierConfig.getBronzePercent());
+        }
         this.isActive = schoolClass.getIsActive();
         this.isDone = schoolClass.getIsDone();
     }

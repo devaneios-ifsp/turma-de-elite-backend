@@ -134,3 +134,12 @@ CREATE TABLE student_achievements(
     FOREIGN KEY(achievement_id) REFERENCES achievement(id),
     PRIMARY KEY(student_id,achievement_id)
 );
+
+CREATE TABLE tier_config(
+    class_id BIGINT NOT NULL,
+    gold_percent FLOAT NOT NULL,
+    silver_percent FLOAT NOT NULL,
+    bronze_percent FLOAT NOT NULL,
+    PRIMARY KEY(class_id),
+    FOREIGN KEY(class_id) REFERENCES class(id)
+);
