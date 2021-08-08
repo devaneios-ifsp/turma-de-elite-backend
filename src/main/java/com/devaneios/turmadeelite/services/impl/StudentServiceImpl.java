@@ -69,12 +69,12 @@ public class StudentServiceImpl implements StudentService {
 
         Student student = null;
         School school = this.schoolService.findSchoolByManagerAuthUuid(managerAuthUuid);
-        Optional<Student> optionalStudent = this.studentRepository.findByRegistryAndSchoolId(studentCreateDTO.getRegistry(),school.getId());
+        Optional<Student> optionalStudent = this.studentRepository.findByRegistryAndSchoolId(studentCreateDTO.getRegistry(), school.getId());
         if(optionalStudent.isPresent()){
             student = optionalStudent.get();
             if(!student.getRegistry().equals(studentCreateDTO.getRegistry())) throw new ResponseStatusException(HttpStatus.CONFLICT);
         }else{
-            student = optionalStudent.get();
+            student = this.studentRepository.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
         }
 
         credentials.setEmail(studentCreateDTO.getEmail());
