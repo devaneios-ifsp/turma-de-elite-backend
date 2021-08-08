@@ -53,11 +53,12 @@ public class FirebaseAuthenticationService implements AuthenticationService {
         CustomTokenIdRequestDTO request = new CustomTokenIdRequestDTO();
         request.setEmail(email);
         request.setPassword(password);
+        String requestBody =mapper.writeValueAsString(request);
         RequestEntity<String> requestEntity = RequestEntity
                                                 .post(new URL(url)
                                                 .toURI())
                                                 .contentType(MediaType.APPLICATION_JSON)
-                                                .body(mapper.writeValueAsString(request));
+                                                .body(requestBody);
 
         ResponseEntity<FirebaseCustomTokenIdDTO> response = restTemplate.exchange(requestEntity,FirebaseCustomTokenIdDTO.class);
         return response.getBody().getIdToken();
