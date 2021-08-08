@@ -19,6 +19,7 @@ public interface StudentRepository extends CrudRepository<Student,Long> {
     @Query(value = "SELECT s FROM Student s JOIN s.school sc JOIN s.credentials c WHERE sc.id=:schoolId AND c.role='STUDENT'")
     Page<Student> findAllBySchoolId(Long schoolId, Pageable pageable);
 
+    @Query(value = "SELECT s FROM Student s JOIN s.school sc  WHERE sc.id=:schoolId AND s.registry=:registry")
     Optional<Student> findByRegistryAndSchoolId(String registry,Long schoolId);
 
     @Query(value = "SELECT s FROM Student s JOIN s.school sc  WHERE sc.id=:schoolId AND s.id=:id")
