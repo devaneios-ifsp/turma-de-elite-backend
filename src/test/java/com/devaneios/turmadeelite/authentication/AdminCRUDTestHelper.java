@@ -51,7 +51,7 @@ public class AdminCRUDTestHelper extends CRUDTestHelper<UserCredentialsCreateDTO
                 .builder()
                 .email(adminViewDTO.email)
                 .name(adminViewDTO.getName().toUpperCase(Locale.ROOT))
-                .isActive(false)
+                .isActive(true)
                 .language("pt")
                 .build();
     }

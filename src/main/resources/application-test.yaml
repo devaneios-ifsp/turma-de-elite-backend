@@ -1,9 +1,12 @@
 spring:
+  batch:
+    initialize-schema: always
   datasource:
-    driver-class-name: com.mysql.cj.jdbc.Driver
-    username: ${MYSQL_USER}
-    password: ${MYSQL_PASSWORD}
+    driver-class-name: org.postgresql.Driver
+    username: ${POSTGRES_USER}
+    password: ${POSTGRES_PASSWORD}
     url: ${INTEGRATION_DATABASE_URL}
+    continue-on-error: true
   jpa:
     database-platform: org.hibernate.dialect.MySQLDialect
     jpa:
