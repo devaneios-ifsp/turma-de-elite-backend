@@ -8,12 +8,13 @@ spring:
     url: ${INTEGRATION_DATABASE_URL}
     continue-on-error: true
   jpa:
-    database-platform: org.hibernate.dialect.MySQLDialect
+    database-platform: org.hibernate.dialect.PostgreSQL94Dialect
     jpa:
       properties:
         hibernate:
+          format_sql: true
           dialect: org.hibernate.dialect.MySQLDialect
-      show-sql: true
+    show-sql: true
   mail:
     host: smtp.gmail.com
     port: 587
