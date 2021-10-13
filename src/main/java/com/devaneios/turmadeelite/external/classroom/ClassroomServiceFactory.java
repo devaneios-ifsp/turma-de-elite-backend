@@ -1,6 +1,6 @@
-package com.devaneios.turmadeelite.classroom;
+package com.devaneios.turmadeelite.external.classroom;
 
-import com.devaneios.turmadeelite.classroom.authentication.GoogleOauth2Service;
+import com.devaneios.turmadeelite.external.classroom.authentication.GoogleOauth2Service;
 import com.google.api.client.auth.oauth2.Credential;
 import com.google.api.services.classroom.Classroom;
 import lombok.AllArgsConstructor;
@@ -8,8 +8,8 @@ import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 
-import static com.devaneios.turmadeelite.classroom.authentication.GoogleOauth2Service.HTTP_TRANSPORT;
-import static com.devaneios.turmadeelite.classroom.authentication.GoogleOauth2Service.JSON_FACTORY;
+import static com.devaneios.turmadeelite.external.classroom.authentication.GoogleOauth2Service.HTTP_TRANSPORT;
+import static com.devaneios.turmadeelite.external.classroom.authentication.GoogleOauth2Service.JSON_FACTORY;
 
 @Service
 @AllArgsConstructor

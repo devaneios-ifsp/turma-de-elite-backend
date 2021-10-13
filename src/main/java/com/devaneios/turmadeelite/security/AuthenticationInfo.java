@@ -1,14 +1,12 @@
 package com.devaneios.turmadeelite.security;
 
 import com.devaneios.turmadeelite.entities.Role;
-import lombok.Data;
 import lombok.Setter;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
 import javax.security.auth.Subject;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 

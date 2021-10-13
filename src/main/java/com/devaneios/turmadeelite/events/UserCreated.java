@@ -2,7 +2,6 @@ package com.devaneios.turmadeelite.events;
 
 import com.devaneios.turmadeelite.dto.Language;
 import com.devaneios.turmadeelite.entities.UserCredentials;
-import lombok.Data;
 import lombok.Getter;
 import org.springframework.context.ApplicationEvent;
 

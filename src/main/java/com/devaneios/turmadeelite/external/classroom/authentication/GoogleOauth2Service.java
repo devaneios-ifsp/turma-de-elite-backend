@@ -1,7 +1,11 @@
-package com.devaneios.turmadeelite.classroom.authentication;
+package com.devaneios.turmadeelite.external.classroom.authentication;
 
-import com.google.api.client.auth.oauth2.*;
-import com.google.api.client.googleapis.auth.oauth2.*;
+import com.google.api.client.auth.oauth2.AuthorizationCodeResponseUrl;
+import com.google.api.client.auth.oauth2.Credential;
+import com.google.api.client.googleapis.auth.oauth2.GoogleAuthorizationCodeFlow;
+import com.google.api.client.googleapis.auth.oauth2.GoogleAuthorizationCodeRequestUrl;
+import com.google.api.client.googleapis.auth.oauth2.GoogleClientSecrets;
+import com.google.api.client.googleapis.auth.oauth2.GoogleTokenResponse;
 import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.JsonFactory;
 import com.google.api.client.json.gson.GsonFactory;
@@ -41,10 +45,10 @@ public class GoogleOauth2Service {
                 .build();
     }
 
-    public String classroomAuth() throws IOException {
+    public String classroomAuth(String authUuid) throws IOException {
         GoogleAuthorizationCodeRequestUrl googleAuthorizationCodeRequestUrl = authFlow.newAuthorizationUrl();
         googleAuthorizationCodeRequestUrl.setRedirectUri("http://localhost:8080/Callback");
-        return googleAuthorizationCodeRequestUrl.toURL().toString();
+        return googleAuthorizationCodeRequestUrl.setState(authUuid).toURL().toString();
     }
 
     public void classroomCallback(String url, String authUUid) throws IOException {
@@ -52,8 +56,6 @@ public class GoogleOauth2Service {
         String code = authorizationCodeResponseUrl.getCode();
         GoogleTokenResponse execute = this.authFlow.newTokenRequest(code).setRedirectUri("http://localhost:8080/Callback").execute();
         this.authFlow.createAndStoreCredential(execute, authUUid);
-
-
     }
 
     public Credential getCredential(String authUUid) throws IOException {

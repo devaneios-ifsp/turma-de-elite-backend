@@ -1,7 +1,6 @@
 package com.devaneios.turmadeelite.dto.email.portugues;
 
 import com.devaneios.turmadeelite.dto.email.FirstAccessEmailDTO;
-import lombok.Builder;
 
 public class EnglishFirstAccessEmailDTO extends FirstAccessEmailDTO {
 

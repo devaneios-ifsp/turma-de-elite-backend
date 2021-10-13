@@ -1,6 +1,7 @@
 package com.devaneios.turmadeelite.services;
 
-import com.devaneios.turmadeelite.dto.*;
+import com.devaneios.turmadeelite.dto.ClassCreateDTO;
+import com.devaneios.turmadeelite.dto.ClassStatusNameDTO;
 import com.devaneios.turmadeelite.entities.SchoolClass;
 import org.springframework.data.domain.Page;
 
