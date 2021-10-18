@@ -1,6 +1,5 @@
 package com.devaneios.turmadeelite.controllers;
 
-import com.devaneios.turmadeelite.dto.ActivityCreateDTO;
 import com.devaneios.turmadeelite.dto.ActivityDeliveriesDTO;
 import com.devaneios.turmadeelite.dto.AttachmentDTO;
 import com.devaneios.turmadeelite.security.guards.IsStudent;

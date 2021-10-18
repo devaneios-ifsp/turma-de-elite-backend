@@ -1,9 +1,7 @@
 package com.devaneios.turmadeelite.controllers;
 
-import com.devaneios.turmadeelite.dto.SchoolViewDTO;
-import com.devaneios.turmadeelite.dto.UserCredentialsCreateDTO;
 import com.devaneios.turmadeelite.dto.AdminViewDTO;
-import com.devaneios.turmadeelite.entities.School;
+import com.devaneios.turmadeelite.dto.UserCredentialsCreateDTO;
 import com.devaneios.turmadeelite.entities.UserCredentials;
 import com.devaneios.turmadeelite.security.guards.IsAdmin;
 import com.devaneios.turmadeelite.services.UserService;

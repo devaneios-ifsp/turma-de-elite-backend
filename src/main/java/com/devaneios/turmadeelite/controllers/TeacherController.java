@@ -2,10 +2,8 @@ package com.devaneios.turmadeelite.controllers;
 
 import com.devaneios.turmadeelite.dto.SchoolUserViewDTO;
 import com.devaneios.turmadeelite.dto.TeacherCreateDTO;
-import com.devaneios.turmadeelite.entities.Manager;
 import com.devaneios.turmadeelite.entities.Teacher;
 import com.devaneios.turmadeelite.security.guards.IsManager;
-
 import com.devaneios.turmadeelite.services.TeacherService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;

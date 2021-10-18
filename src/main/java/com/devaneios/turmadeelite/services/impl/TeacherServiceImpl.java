@@ -1,10 +1,11 @@
 package com.devaneios.turmadeelite.services.impl;
 
-import com.devaneios.turmadeelite.entities.*;
+import com.devaneios.turmadeelite.entities.Role;
+import com.devaneios.turmadeelite.entities.School;
+import com.devaneios.turmadeelite.entities.Teacher;
+import com.devaneios.turmadeelite.entities.UserCredentials;
 import com.devaneios.turmadeelite.events.UserCreated;
 import com.devaneios.turmadeelite.exceptions.EmailAlreadyRegistered;
-import com.devaneios.turmadeelite.repositories.ManagerRepository;
-import com.devaneios.turmadeelite.repositories.SchoolRepository;
 import com.devaneios.turmadeelite.repositories.TeacherRepository;
 import com.devaneios.turmadeelite.repositories.UserRepository;
 import com.devaneios.turmadeelite.services.SchoolService;
@@ -20,7 +21,6 @@ import org.springframework.web.server.ResponseStatusException;
 
 import javax.transaction.Transactional;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 

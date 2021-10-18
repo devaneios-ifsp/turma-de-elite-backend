@@ -11,7 +11,6 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.DoubleStream;
 
 @Repository
 public interface ActivityRepository extends CrudRepository<Activity,Long> {

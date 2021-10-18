@@ -2,10 +2,7 @@ package com.devaneios.turmadeelite.dto;
 
 import com.devaneios.turmadeelite.entities.SchoolClass;
 import com.devaneios.turmadeelite.entities.TierConfig;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -14,8 +11,10 @@ import java.util.stream.Collectors;
 @NoArgsConstructor
 @Getter
 @Setter
+@Builder
 public class SchoolClassViewDTO {
     private Long id;
+    private String externalId;
     private String name;
     private List<StudentMembershipDTO> students;
     private List<TeacherMembershipDTO> teachers;
