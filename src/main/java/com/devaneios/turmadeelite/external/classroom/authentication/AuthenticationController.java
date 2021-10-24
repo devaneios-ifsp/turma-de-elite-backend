@@ -49,7 +49,7 @@ public class AuthenticationController {
         String url = request.getRequestURL() + "?" + request.getQueryString();
         this.googleOauth2Service.classroomCallback(url,state);
         return new RedirectView
-                ("http://localhost:4200");
+                ("http://localhost:4200?authenticationSuccess=true");
     }
 
 }
