@@ -143,3 +143,12 @@ CREATE TABLE tier_config(
     PRIMARY KEY(class_id),
     FOREIGN KEY(class_id) REFERENCES class(id)
 );
+
+CREATE TABLE log_status_user (
+    id BIGINT AUTO_INCREMENT NOT NULL,
+    user_id BIGINT NOT NULL,
+    date_action TIMESTAMP NOT NULL,
+    old_is_active BOOLEAN,
+    PRIMARY KEY(id),
+    FOREIGN KEY(user_id) REFERENCES user_credentials(id)
+);
