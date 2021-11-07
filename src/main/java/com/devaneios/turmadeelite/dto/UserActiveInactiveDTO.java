@@ -9,6 +9,7 @@ import lombok.*;
 @Builder
 public class UserActiveInactiveDTO {
     private int month;
+    private int year;
     private int activeUser;
     private int inactiveUser;
 

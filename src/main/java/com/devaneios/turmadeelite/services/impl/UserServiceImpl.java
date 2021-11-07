@@ -44,6 +44,7 @@ public class UserServiceImpl implements UserService {
                 .firstAccessToken(UUID.randomUUID().toString())
                 .name(name)
                 .isActive(isActive)
+                .accessionDate(new Date())
                 .role(Role.ADMIN)
                 .build();
         UserCredentials userSaved = userRepository.save(userCredentials);
@@ -80,6 +81,8 @@ public class UserServiceImpl implements UserService {
         userCredentials.setName(admin.getName());
         userCredentials.setIsActive(admin.getIsActive());
         this.userRepository.save(userCredentials);
+
+        logStatusUserRepository.insertLogStatusUser(userCredentials.getId(), !userCredentials.getIsActive());
     }
 
     @Override
@@ -106,6 +109,7 @@ public class UserServiceImpl implements UserService {
             user.setActiveUser(logStatusUserRepository.countActiveUsers(month, year));
             user.setInactiveUser(logStatusUserRepository.countInactiveUsers(month, year));
             user.setMonth(month);
+            user.setYear(year);
 
             activeInactiveUsers.add(user);
 
@@ -113,5 +117,27 @@ public class UserServiceImpl implements UserService {
         }
 
         return activeInactiveUsers;
+    }
+
+    public List<Integer> getUsersByAccessionDate() {
+
+        DateTime dateTime = DateTime.now();
+        int month = dateTime.getMonthOfYear();
+        int year = dateTime.getYear() - 1;
+
+        int users = 0;
+
+        List<Integer> usersList = new ArrayList<>();
+
+        for (int i = 0; i < 13; i++) {
+            if (month > 12) {
+                year += 1;
+                month = 1;
+            }
+            users = userRepository.findByAccessionDate(month, year);
+            usersList.add(users);
+            month++;
+        }
+        return usersList;
     }
 }

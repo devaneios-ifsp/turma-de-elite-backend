@@ -3,10 +3,7 @@ package com.devaneios.turmadeelite.services.impl;
 import com.devaneios.turmadeelite.entities.*;
 import com.devaneios.turmadeelite.events.UserCreated;
 import com.devaneios.turmadeelite.exceptions.EmailAlreadyRegistered;
-import com.devaneios.turmadeelite.repositories.ManagerRepository;
-import com.devaneios.turmadeelite.repositories.SchoolRepository;
-import com.devaneios.turmadeelite.repositories.TeacherRepository;
-import com.devaneios.turmadeelite.repositories.UserRepository;
+import com.devaneios.turmadeelite.repositories.*;
 import com.devaneios.turmadeelite.services.SchoolService;
 import com.devaneios.turmadeelite.services.TeacherService;
 import lombok.AllArgsConstructor;
@@ -19,10 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import javax.transaction.Transactional;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 @AllArgsConstructor
 @Service
@@ -30,6 +24,7 @@ public class TeacherServiceImpl implements TeacherService {
 
     private final UserRepository userRepository;
     private final TeacherRepository teacherRepository;
+    private final LogStatusUserRepository logStatusUserRepository;
     private final ApplicationEventPublisher eventPublisher;
     private final SchoolService schoolService;
 
@@ -48,12 +43,15 @@ public class TeacherServiceImpl implements TeacherService {
                 .firstAccessToken(UUID.randomUUID().toString())
                 .name(name)
                 .isActive(isActive)
+                .accessionDate(new Date())
                 .role(Role.TEACHER)
                 .build();
 
         UserCredentials userSaved = userRepository.save(userCredentials);
         this.teacherRepository.insertUserAsTeacher(userSaved.getId(),school.getId());
         eventPublisher.publishEvent(new UserCreated(this,userSaved,language));
+
+        logStatusUserRepository.insertLogStatusUser(userCredentials.getId(), !userCredentials.getIsActive());
     }
 
     @Override

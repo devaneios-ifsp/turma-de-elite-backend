@@ -114,4 +114,12 @@ public class AdminController {
     ResponseEntity<List<UserActiveInactiveDTO>> getActiveInactiveUsers(){
         return ResponseEntity.ok(this.userService.getInactivesActivesUsers());
     }
+
+    @IsAdmin
+    @GetMapping("/kpi")
+    ResponseEntity<List<Integer>> getUsersByAccessionDate(){
+        List<Integer> usersByMonthAndYear = this.userService.getUsersByAccessionDate();
+        return ResponseEntity.ok(usersByMonthAndYear);
+    }
+
 }

@@ -28,4 +28,7 @@ public interface UserRepository extends PagingAndSortingRepository<UserCredentia
 
     @Query("SELECT u FROM UserCredentials u WHERE u.name LIKE :name% AND u.role='ADMIN'")
     List<UserCredentials> findByNameContainingIgnoreCase(String name);
+
+    @Query(value = "SELECT count(u.id) FROM user_credentials AS u WHERE DATE_PART('MONTH', u.accession_date) = :month AND DATE_PART('YEAR', u.accession_date) = :year", nativeQuery = true)
+    int findByAccessionDate(int month, int year);
 }

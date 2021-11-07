@@ -15,4 +15,5 @@ public interface UserService {
     void updateAdminUser(Long userId, UserCredentialsCreateDTO admin);
     List<UserCredentials> getUsersByNameSimilarity(String name);
     List<UserActiveInactiveDTO> getInactivesActivesUsers();
+    List<Integer> getUsersByAccessionDate();
 }
