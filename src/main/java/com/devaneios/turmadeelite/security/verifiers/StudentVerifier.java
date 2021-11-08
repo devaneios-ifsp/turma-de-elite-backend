@@ -6,8 +6,6 @@ import com.devaneios.turmadeelite.entities.UserCredentials;
 import com.devaneios.turmadeelite.exceptions.UnexpectedAuthenticationException;
 import com.devaneios.turmadeelite.repositories.StudentRepository;
 import com.devaneios.turmadeelite.security.AuthenticationInfo;
-import org.springframework.http.HttpStatus;
-import org.springframework.web.server.ResponseStatusException;
 
 import javax.naming.AuthenticationException;
 

@@ -1,8 +1,8 @@
 package com.devaneios.turmadeelite.dto.email.factories;
 
-import com.devaneios.turmadeelite.dto.email.english.PortugueseFirstAccessEmailDTO;
-import com.devaneios.turmadeelite.dto.email.FirstAccessEmailDTO;
 import com.devaneios.turmadeelite.dto.Language;
+import com.devaneios.turmadeelite.dto.email.FirstAccessEmailDTO;
+import com.devaneios.turmadeelite.dto.email.english.PortugueseFirstAccessEmailDTO;
 import com.devaneios.turmadeelite.dto.email.portugues.EnglishFirstAccessEmailDTO;
 
 public class FirstAccessEmailHelper {

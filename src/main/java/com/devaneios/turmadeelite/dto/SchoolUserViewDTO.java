@@ -2,7 +2,6 @@ package com.devaneios.turmadeelite.dto;
 
 import com.devaneios.turmadeelite.entities.Manager;
 import com.devaneios.turmadeelite.entities.Teacher;
-import com.devaneios.turmadeelite.entities.UserCredentials;
 import lombok.*;
 
 @AllArgsConstructor
