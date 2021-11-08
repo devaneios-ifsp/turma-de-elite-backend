@@ -12,7 +12,6 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityManager;
-import javax.transaction.Transactional;
 import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
@@ -67,6 +66,13 @@ public class CoursesService implements ExternalCoursesService {
                 throw e;
             }
         }
+    }
+
+    @Override
+    public List<SchoolClassViewDTO> getCoursesFromTeacher(String authUuid) throws IOException {
+//        Classroom service = this.serviceFactory.getService(authUuid);
+//        ListCoursesResponse coursesResponse = service.courses().teachers().get()
+        return null;
     }
 
     /*
