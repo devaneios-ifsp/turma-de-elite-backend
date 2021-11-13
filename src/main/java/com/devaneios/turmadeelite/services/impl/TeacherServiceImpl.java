@@ -1,6 +1,9 @@
 package com.devaneios.turmadeelite.services.impl;
 
-import com.devaneios.turmadeelite.entities.*;
+import com.devaneios.turmadeelite.entities.Role;
+import com.devaneios.turmadeelite.entities.School;
+import com.devaneios.turmadeelite.entities.Teacher;
+import com.devaneios.turmadeelite.entities.UserCredentials;
 import com.devaneios.turmadeelite.events.UserCreated;
 import com.devaneios.turmadeelite.exceptions.EmailAlreadyRegistered;
 import com.devaneios.turmadeelite.repositories.*;

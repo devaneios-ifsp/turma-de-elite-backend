@@ -1,11 +1,9 @@
 package com.devaneios.turmadeelite.services;
 
-import com.devaneios.turmadeelite.entities.Manager;
 import com.devaneios.turmadeelite.entities.Teacher;
 import com.devaneios.turmadeelite.exceptions.EmailAlreadyRegistered;
 import org.springframework.data.domain.Page;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 

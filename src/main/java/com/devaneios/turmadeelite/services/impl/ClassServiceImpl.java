@@ -9,7 +9,6 @@ import com.devaneios.turmadeelite.services.ClassService;
 import com.devaneios.turmadeelite.services.DeliverAchievements;
 import com.devaneios.turmadeelite.services.SchoolService;
 import lombok.AllArgsConstructor;
-import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;

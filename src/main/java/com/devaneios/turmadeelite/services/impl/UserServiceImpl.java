@@ -99,15 +99,29 @@ public class UserServiceImpl implements UserService {
         List<UserActiveInactiveDTO> activeInactiveUsers = new ArrayList<>();
 
         for (int i = 0; i < 13; i++) {
+            int activeUsers = 0;
+            int inactiveUsers = 0;
+
             if(month > 12) {
                 month = 1;
                 year += 1;
             }
 
+            List<UserCredentials> users = userRepository.usersByDate(month, year);
+
+            if(users != null) {
+                for (UserCredentials user : users) {
+                    if(!(logStatusUserRepository.statusUserDate(user.getId())))
+                        activeUsers += 1;
+                    else
+                        inactiveUsers += 1;
+                }
+            }
+
             UserActiveInactiveDTO user = new UserActiveInactiveDTO();
 
-            user.setActiveUser(logStatusUserRepository.countActiveUsers(month, year));
-            user.setInactiveUser(logStatusUserRepository.countInactiveUsers(month, year));
+            user.setActiveUser(activeUsers);
+            user.setInactiveUser(inactiveUsers);
             user.setMonth(month);
             user.setYear(year);
 

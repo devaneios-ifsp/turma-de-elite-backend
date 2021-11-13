@@ -4,10 +4,10 @@ import com.devaneios.turmadeelite.entities.UserCredentials;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -31,4 +31,7 @@ public interface UserRepository extends PagingAndSortingRepository<UserCredentia
 
     @Query(value = "SELECT count(u.id) FROM user_credentials AS u WHERE DATE_PART('MONTH', u.accession_date) = :month AND DATE_PART('YEAR', u.accession_date) = :year", nativeQuery = true)
     int findByAccessionDate(int month, int year);
+
+    @Query(value = "SELECT * FROM user_credentials u WHERE (DATE_PART('MONTH', u.accession_date) <= :month AND DATE_PART('YEAR', u.accession_date) <= :year) OR (DATE_PART('MONTH', u.accession_date) > :month AND DATE_PART('YEAR', u.accession_date) < :year)", nativeQuery = true)
+    List<UserCredentials> usersByDate(int month, int year);
 }

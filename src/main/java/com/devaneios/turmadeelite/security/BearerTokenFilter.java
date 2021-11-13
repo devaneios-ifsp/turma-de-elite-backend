@@ -7,7 +7,6 @@ import com.devaneios.turmadeelite.repositories.UserRepository;
 import com.devaneios.turmadeelite.security.verifiers.ValidityVerifier;
 import com.devaneios.turmadeelite.security.verifiers.ValidityVerifierFactory;
 import com.devaneios.turmadeelite.services.AuthenticationService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.AbstractAuthenticationProcessingFilter;

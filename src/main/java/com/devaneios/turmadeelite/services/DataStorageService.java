@@ -3,8 +3,6 @@ package com.devaneios.turmadeelite.services;
 import com.devaneios.turmadeelite.entities.Attachment;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.security.NoSuchAlgorithmException;

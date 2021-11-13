@@ -2,9 +2,7 @@ package com.devaneios.turmadeelite.controllers;
 
 import com.devaneios.turmadeelite.dto.ManagerCreateDTO;
 import com.devaneios.turmadeelite.dto.SchoolUserViewDTO;
-import com.devaneios.turmadeelite.dto.SchoolViewDTO;
 import com.devaneios.turmadeelite.entities.Manager;
-import com.devaneios.turmadeelite.entities.School;
 import com.devaneios.turmadeelite.security.guards.IsAdmin;
 import com.devaneios.turmadeelite.security.guards.IsManager;
 import com.devaneios.turmadeelite.services.ManagerService;
@@ -19,7 +17,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @RestController

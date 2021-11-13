@@ -1,22 +1,22 @@
-DROP DATABASE turma_de_elite_test;
-CREATE DATABASE turma_de_elite_test;
-USE turma_de_elite_test;
+DROP SCHEMA IF EXISTS test CASCADE;
+CREATE SCHEMA test;
+SET search_path TO test;
 
 CREATE TABLE user_credentials (
-    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    id BIGSERIAL PRIMARY KEY,
     email VARCHAR(100) NOT NULL UNIQUE,
     auth_uuid VARCHAR(255),
     name VARCHAR(255) NOT NULL,
     first_access_token VARCHAR(255) UNIQUE,
-    is_active BOOLEAN DEFAULT TRUE,
-    role ENUM('ADMIN','MANAGER','STUDENT','TEACHER')
+    is_active BOOL DEFAULT TRUE,
+    role CHAR(12)
 );
 
 CREATE TABLE school (
-    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    id BIGSERIAL PRIMARY KEY,
     name VARCHAR(100) NOT NULL,
     identifier CHAR(20) UNIQUE NOT NULL,
-    is_active BOOLEAN DEFAULT TRUE
+    is_active BOOL DEFAULT TRUE
 );
 
 CREATE TABLE manager (
@@ -34,20 +34,20 @@ CREATE TABLE teacher (
 );
 
 CREATE TABLE attachments(
-    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    id BIGSERIAL PRIMARY KEY,
     filename VARCHAR(100),
     bucket_key VARCHAR(100),
     file_md5 VARCHAR(40)
 );
 
 CREATE TABLE activity(
-    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    id BIGSERIAL PRIMARY KEY,
     name CHAR(50) NOT NULL,
     description VARCHAR(240) NOT NULL,
-    punctuation DOUBLE NOT NULL,
-    is_visible BOOLEAN NOT NULL,
-    is_active BOOLEAN NOT NULL,
-    max_delivery_date DATETIME NOT NULL,
+    punctuation FLOAT NOT NULL,
+    is_visible BOOL NOT NULL,
+    is_active BOOL NOT NULL,
+    max_delivery_date TIMESTAMP NOT NULL,
     teacher_id BIGINT NOT NULL,
     attachment_id BIGINT,
     FOREIGN KEY(teacher_id) REFERENCES teacher(teacher_id),
@@ -56,16 +56,16 @@ CREATE TABLE activity(
 
 CREATE TABLE student(
     student_id BIGINT PRIMARY KEY,
-    registry TEXT(10) NOT NULL,
+    registry CHAR(10) NOT NULL,
     school_id BIGINT,
     FOREIGN KEY(school_id) REFERENCES school(id),
     FOREIGN KEY(student_id) REFERENCES user_credentials(id)
 );
 
 CREATE TABLE activity_delivery(
-    id BIGINT AUTO_INCREMENT PRIMARY KEY,
-    delivery_timestamp DATETIME NOT NULL,
-    grade_received DOUBLE,
+    id BIGSERIAL PRIMARY KEY,
+    delivery_timestamp TIMESTAMP NOT NULL,
+    grade_received FLOAT,
     student_delivery_id BIGINT NOT NULL,
     activity_id BIGINT NOT NULL,
     attachment_id BIGINT NOT NULL,
@@ -74,13 +74,22 @@ CREATE TABLE activity_delivery(
     FOREIGN KEY(attachment_id) REFERENCES attachments(id)
 );
 
+CREATE TABLE class(
+    id BIGSERIAL PRIMARY KEY,
+    name VARCHAR(50),
+    school_id BIGINT,
+    FOREIGN KEY(school_id) REFERENCES school(id),
+    is_active BOOL DEFAULT TRUE,
+    is_done BOOL DEFAULT TRUE
+);
+
 CREATE TABLE achievement(
-    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    id BIGSERIAL PRIMARY KEY,
     name VARCHAR(50) NOT NULL,
     description VARCHAR(240) NOT NULL,
     icon_name VARCHAR(50) NOT NULL,
     is_active BOOLEAN DEFAULT TRUE,
-    before_at DATETIME,
+    before_at TIMESTAMP,
     earlier_of INT,
     best_of INT,
     average_grade_greater_or_equals_than FLOAT,
@@ -92,31 +101,22 @@ CREATE TABLE achievement(
     FOREIGN KEY (class_id) REFERENCES class(id)
 );
 
-CREATE TABLE class(
-    id BIGINT AUTO_INCREMENT PRIMARY KEY,
-    name VARCHAR(50),
-    school_id BIGINT,
-    FOREIGN KEY(school_id) REFERENCES school(id),
-    is_active BOOLEAN DEFAULT TRUE,
-    is_done BOOLEAN DEFAULT TRUE
-);
-
 CREATE TABLE student_class_membership(
-    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    id BIGSERIAL PRIMARY KEY,
     student_id BIGINT,
     class_id BIGINT,
     FOREIGN KEY(student_id) REFERENCES student(student_id),
     FOREIGN KEY(class_id) REFERENCES class(id),
-    is_active BOOLEAN DEFAULT TRUE
+    is_active BOOL DEFAULT TRUE
 );
 
 CREATE TABLE teacher_class_membership(
-    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    id BIGSERIAL PRIMARY KEY,
     teacher_id BIGINT,
     class_id BIGINT,
     FOREIGN KEY(teacher_id) REFERENCES teacher(teacher_id),
     FOREIGN KEY(class_id) REFERENCES class(id),
-    is_active BOOLEAN DEFAULT TRUE
+    is_active BOOL DEFAULT TRUE
 );
 
 CREATE TABLE class_activities(
