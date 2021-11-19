@@ -18,7 +18,7 @@ public class ManagerVerifier implements ValidityVerifier{
     public void verify() {
         Manager manager = this.managerRepository
                 .findManagerByAuthUuidWithSchoolAndCredentials(authenticationInfo.getPrincipal())
-                .orElseThrow(()->new UnexpectedAuthenticationException());
+                .orElseThrow(UnexpectedAuthenticationException::new);
 
         School school = manager.getSchool();
         UserCredentials credentials = manager.getCredentials();

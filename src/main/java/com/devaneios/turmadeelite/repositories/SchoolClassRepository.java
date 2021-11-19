@@ -81,6 +81,6 @@ public interface SchoolClassRepository extends CrudRepository<SchoolClass,Long> 
     List<SchoolClass> findAllSchoolClassesByActivityIdAndTeacherId(Long activityId, Long teacherId);
 
     @Modifying
-    @Query(value = "UPDATE class SET is_done = 1 WHERE id=:id ;",nativeQuery = true)
+    @Query(value = "UPDATE class SET is_done = true WHERE id=:id ;",nativeQuery = true)
     void closeClass(Long id);
 }

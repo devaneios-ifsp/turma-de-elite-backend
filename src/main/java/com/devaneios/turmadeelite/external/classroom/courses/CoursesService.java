@@ -11,7 +11,6 @@ import com.google.api.services.classroom.model.ListCoursesResponse;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import javax.persistence.EntityManager;
 import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
@@ -20,8 +19,6 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 @Service
 public class CoursesService implements ExternalCoursesService {
-
-    private  final EntityManager entityManager;
 
     private ClassroomServiceFactory serviceFactory;
 
@@ -75,13 +72,4 @@ public class CoursesService implements ExternalCoursesService {
         return null;
     }
 
-    /*
-    * CREATE TABLE user_log_access(
-    *   timestamp,
-    *   user_id
-    * );
-    *
-    * SELECT SUM(user_id),timestamp FROM user_log_access WHERE timestamp BETWEEN now() and now() - 90 dias group by timestamp,user_id
-    *
-    * */
 }

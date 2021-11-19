@@ -2,7 +2,6 @@ package com.devaneios.turmadeelite.dto;
 
 import com.devaneios.turmadeelite.entities.Activity;
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.core.JsonToken;
 import lombok.*;
 
 import java.time.LocalDateTime;
