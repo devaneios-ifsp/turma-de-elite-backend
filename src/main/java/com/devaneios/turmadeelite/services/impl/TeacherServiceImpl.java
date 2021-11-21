@@ -1,5 +1,7 @@
 package com.devaneios.turmadeelite.services.impl;
 
+import com.devaneios.turmadeelite.dto.ActivityPostDeliveryDTO;
+import com.devaneios.turmadeelite.dto.StudentPunctuationDTO;
 import com.devaneios.turmadeelite.entities.Role;
 import com.devaneios.turmadeelite.entities.School;
 import com.devaneios.turmadeelite.entities.Teacher;
@@ -60,7 +62,7 @@ public class TeacherServiceImpl implements TeacherService {
     @Override
     public Page<Teacher> getPaginatedTeachers(int size, int pageNumber, String authUuid) {
         Pageable pageable = PageRequest.of(pageNumber, size);
-        School school = this.schoolService.findSchoolByManagerAuthUuid(authUuid);;
+        School school = this.schoolService.findSchoolByManagerAuthUuid(authUuid);
         return this.teacherRepository.findAllBySchoolId(school.getId(),pageable);
     }
 
@@ -116,6 +118,38 @@ public class TeacherServiceImpl implements TeacherService {
         teacher.setSchool(school);
 
         this.teacherRepository.save(teacher);
+
+        logStatusUserRepository.insertLogStatusUser(userCredentials.getId(), !userCredentials.getIsActive());
     }
 
+    @Override
+    public List<ActivityPostDeliveryDTO> getPostDeliveryActivities() {
+        ActivityPostDeliveryDTO a = new ActivityPostDeliveryDTO();
+        List<ActivityPostDeliveryDTO> list = new ArrayList<>();
+
+        a.setDeliveryActivity(1);
+        a.setPostActivity(2);
+        a.setClassName("IFSP");
+        list.add(a);
+
+        return list;
+    }
+
+    @Override
+    public List<StudentPunctuationDTO> getStudentPunctuations() {
+        List<StudentPunctuationDTO> list = new ArrayList<>();
+
+        StudentPunctuationDTO s = new StudentPunctuationDTO();
+
+        s.setStudentName("João");
+        s.setPunctuation(6.5);
+        list.add(s);
+
+        StudentPunctuationDTO t = new StudentPunctuationDTO();
+        t.setStudentName("Maria");
+        t.setPunctuation(9.5);
+        list.add(t);
+
+        return list;
+    }
 }

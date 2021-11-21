@@ -1,5 +1,7 @@
 package com.devaneios.turmadeelite.services;
 
+import com.devaneios.turmadeelite.dto.ActivityPostDeliveryDTO;
+import com.devaneios.turmadeelite.dto.StudentPunctuationDTO;
 import com.devaneios.turmadeelite.entities.Teacher;
 import com.devaneios.turmadeelite.exceptions.EmailAlreadyRegistered;
 import org.springframework.data.domain.Page;
@@ -19,4 +21,8 @@ public interface TeacherService {
     List<Teacher> findTeachersByEmailSubstring(String email, String managerAuthUuid);
 
     Optional<List<Teacher>> getTeachersByNameSimilarity(String name);
+
+    List<ActivityPostDeliveryDTO> getPostDeliveryActivities();
+
+    List<StudentPunctuationDTO> getStudentPunctuations();
 }

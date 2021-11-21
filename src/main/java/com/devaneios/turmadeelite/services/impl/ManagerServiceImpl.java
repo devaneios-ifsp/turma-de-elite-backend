@@ -106,6 +106,8 @@ public class ManagerServiceImpl implements ManagerService {
 
         this.managerRepository.save(manager);
         this.schoolRepository.save(school);
+
+        logStatusUserRepository.insertLogStatusUser(userCredentials.getId(), !userCredentials.getIsActive());
     }
 
     @Override
