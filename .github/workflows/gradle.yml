@@ -14,8 +14,8 @@ jobs:
     runs-on: ubuntu-latest
     env:
       INTEGRATION_DATABASE_URL: ${{ secrets.databaseUrl }}
-      MYSQL_PASSWORD: ${{ secrets.databasePassword }}
-      MYSQL_USER: ${{ secrets.databaseUser }}
+      POSTGRES_PASSWORD: ${{ secrets.databasePassword }}
+      POSTGRES_USER: ${{ secrets.databaseUser }}
       TEST_DATABASE_URL: ${{ secrets.databaseUrl }}
       FIREBASE_ENCRYPT_KEY: ${{ secrets.FIREBASE_ENCRYPT_KEY }}
     steps:
