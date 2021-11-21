@@ -17,6 +17,7 @@ jobs:
       MYSQL_PASSWORD: ${{ secrets.databasePassword }}
       MYSQL_USER: ${{ secrets.databaseUser }}
       TEST_DATABASE_URL: ${{ secrets.databaseUrl }}
+      
     steps:
     - uses: actions/checkout@v2
     - name: Set up JDK 8
@@ -25,9 +26,11 @@ jobs:
         java-version: '8'
         distribution: 'adopt'
         cache: gradle
+    - name: Descriptografar credenciais do Firebase
+      run: ./decrypt.sh
     - name: Grant execute permission for gradlew
       run: chmod +x gradlew
     - name: Install Firebase CLI
       run: curl -sL https://firebase.tools | bash
-    - name: Exeecute Tests
+    - name: Execute Tests
       run: firebase emulators:exec --only auth --project turma-de-elite-app './gradlew test'
