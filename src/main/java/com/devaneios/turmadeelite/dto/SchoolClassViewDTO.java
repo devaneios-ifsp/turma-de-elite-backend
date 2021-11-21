@@ -20,6 +20,7 @@ public class SchoolClassViewDTO {
     private List<TeacherMembershipDTO> teachers;
     private Boolean isActive;
     private Boolean isDone;
+    private Boolean isFromLms;
     private TierConfigDTO tierConfig;
 
     public SchoolClassViewDTO(SchoolClass schoolClass){
