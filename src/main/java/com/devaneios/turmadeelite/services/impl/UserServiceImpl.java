@@ -96,13 +96,15 @@ public class UserServiceImpl implements UserService {
         int month = date.getMonthOfYear();
         int year = date.getYear() - 1;
 
+        int monthsInAYear = 12;
+
         List<UserActiveInactiveDTO> activeInactiveUsers = new ArrayList<>();
 
-        for (int i = 0; i < 13; i++) {
+        for (int i = 0; i <= monthsInAYear; i++) {
             int activeUsers = 0;
             int inactiveUsers = 0;
 
-            if(month > 12) {
+            if(month > monthsInAYear) {
                 month = 1;
                 year += 1;
             }
@@ -111,7 +113,7 @@ public class UserServiceImpl implements UserService {
 
             if(users != null) {
                 for (UserCredentials user : users) {
-                    if(!(logStatusUserRepository.statusUserDate(user.getId())))
+                    if(!(logStatusUserRepository.getLastOldStatusUser(user.getId())))
                         activeUsers += 1;
                     else
                         inactiveUsers += 1;
@@ -140,11 +142,12 @@ public class UserServiceImpl implements UserService {
         int year = dateTime.getYear() - 1;
 
         int users = 0;
+        int monthsInAYear = 12;
 
         List<Integer> usersList = new ArrayList<>();
 
-        for (int i = 0; i < 13; i++) {
-            if (month > 12) {
+        for (int i = 0; i <= monthsInAYear; i++) {
+            if (month > monthsInAYear) {
                 year += 1;
                 month = 1;
             }

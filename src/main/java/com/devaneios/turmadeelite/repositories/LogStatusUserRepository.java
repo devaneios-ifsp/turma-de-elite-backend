@@ -12,7 +12,7 @@ import org.springframework.stereotype.Repository;
 public interface LogStatusUserRepository extends PagingAndSortingRepository<LogStatusUser,Long> {
 
     @Query(value = "SELECT old_is_active FROM log_status_user WHERE user_id = :user_id ORDER BY date_action DESC LIMIT 1", nativeQuery = true)
-    Boolean statusUserDate(long user_id);
+    Boolean getLastOldStatusUser(long user_id);
 
     @Query("SELECT count(u.id) FROM LogStatusUser u WHERE u.old_is_active=FALSE AND DATE_PART('MONTH', u.date_action) = :month AND DATE_PART('YEAR', u.date_action) = :year")
     int countActiveUsers(int month, int year);
