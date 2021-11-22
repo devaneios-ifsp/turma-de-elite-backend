@@ -150,30 +150,4 @@ public class TeacherController {
                 .map(SchoolUserViewDTO::new)
                 .collect(Collectors.toList());
     }
-
-    @Operation(summary = "Visualizar uma lista de atividades postadas e entregues por turma")
-    @ApiResponses(value = {
-            @ApiResponse(
-                    responseCode = "200",
-                    description = "Atividades postadas e entregues encontradas com sucesso"
-            ),
-    })
-    @IsTeacher
-    @GetMapping("/dash")
-    ResponseEntity<List<ActivityPostDeliveryDTO>> getPostDeliveryActivities(){
-        return ResponseEntity.ok(this.teacherService.getPostDeliveryActivities());
-    }
-
-    @Operation(summary = "Visualizar uma lista de alunos ordenada por pontuação")
-    @ApiResponses(value = {
-            @ApiResponse(
-                    responseCode = "200",
-                    description = "Pontuações de cada aluno encontradas com sucesso"
-            ),
-    })
-    @IsTeacher
-    @GetMapping("/punctuations")
-    ResponseEntity<List<StudentPunctuationDTO>> getStudentPunctuations(){
-        return ResponseEntity.ok(this.teacherService.getStudentPunctuations());
-    }
 }

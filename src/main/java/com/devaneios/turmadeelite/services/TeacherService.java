@@ -21,8 +21,4 @@ public interface TeacherService {
     List<Teacher> findTeachersByEmailSubstring(String email, String managerAuthUuid);
 
     Optional<List<Teacher>> getTeachersByNameSimilarity(String name);
-
-    List<ActivityPostDeliveryDTO> getPostDeliveryActivities();
-
-    List<StudentPunctuationDTO> getStudentPunctuations();
 }

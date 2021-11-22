@@ -121,35 +121,4 @@ public class TeacherServiceImpl implements TeacherService {
 
         logStatusUserRepository.insertLogStatusUser(userCredentials.getId(), !userCredentials.getIsActive());
     }
-
-    @Override
-    public List<ActivityPostDeliveryDTO> getPostDeliveryActivities() {
-        ActivityPostDeliveryDTO a = new ActivityPostDeliveryDTO();
-        List<ActivityPostDeliveryDTO> list = new ArrayList<>();
-
-        a.setDeliveryActivity(1);
-        a.setPostActivity(2);
-        a.setClassName("IFSP");
-        list.add(a);
-
-        return list;
-    }
-
-    @Override
-    public List<StudentPunctuationDTO> getStudentPunctuations() {
-        List<StudentPunctuationDTO> list = new ArrayList<>();
-
-        StudentPunctuationDTO s = new StudentPunctuationDTO();
-
-        s.setStudentName("João");
-        s.setPunctuation(6.5);
-        list.add(s);
-
-        StudentPunctuationDTO t = new StudentPunctuationDTO();
-        t.setStudentName("Maria");
-        t.setPunctuation(9.5);
-        list.add(t);
-
-        return list;
-    }
 }
