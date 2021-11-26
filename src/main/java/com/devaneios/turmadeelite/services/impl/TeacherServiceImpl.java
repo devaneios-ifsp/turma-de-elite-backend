@@ -1,5 +1,6 @@
 package com.devaneios.turmadeelite.services.impl;
 
+import com.devaneios.turmadeelite.dto.ActivityByTeacherDTO;
 import com.devaneios.turmadeelite.dto.ActivityPostDeliveryDTO;
 import com.devaneios.turmadeelite.dto.StudentPunctuationDTO;
 import com.devaneios.turmadeelite.entities.Role;
@@ -32,6 +33,7 @@ public class TeacherServiceImpl implements TeacherService {
     private final LogStatusUserRepository logStatusUserRepository;
     private final ApplicationEventPublisher eventPublisher;
     private final SchoolService schoolService;
+    private final ActivityDeliveryRepository activityDeliveryRepository;
 
     @Transactional
     @Override
@@ -137,19 +139,26 @@ public class TeacherServiceImpl implements TeacherService {
 
     @Override
     public List<StudentPunctuationDTO> getStudentPunctuations() {
-        List<StudentPunctuationDTO> list = new ArrayList<>();
-
-        StudentPunctuationDTO s = new StudentPunctuationDTO();
-
-        s.setStudentName("João");
-        s.setPunctuation(6.5);
-        list.add(s);
-
-        StudentPunctuationDTO t = new StudentPunctuationDTO();
-        t.setStudentName("Maria");
-        t.setPunctuation(9.5);
-        list.add(t);
+        List<StudentPunctuationDTO> list = activityDeliveryRepository.getStudentsPunctuations();
 
         return list;
+    }
+
+    @Override
+    public List<ActivityByTeacherDTO> getActivitiesByTeacher(String managerAuthUUid) {
+        List<ActivityByTeacherDTO> list = new ArrayList<>();
+
+        ActivityByTeacherDTO a = new ActivityByTeacherDTO();
+        a.setActivity(20);
+        a.setTeacher("Professor Fulano");
+        list.add(a);
+
+        ActivityByTeacherDTO b = new ActivityByTeacherDTO();
+        b.setActivity(10);
+        b.setTeacher("Professor Ciclano");
+        list.add(b);
+
+        return list;
+
     }
 }

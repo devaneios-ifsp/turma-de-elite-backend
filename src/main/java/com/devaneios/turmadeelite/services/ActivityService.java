@@ -1,9 +1,6 @@
 package com.devaneios.turmadeelite.services;
 
-import com.devaneios.turmadeelite.dto.ActivityCreateDTO;
-import com.devaneios.turmadeelite.dto.AttachmentDTO;
-import com.devaneios.turmadeelite.dto.StudentActivitiesDTO;
-import com.devaneios.turmadeelite.dto.StudentActivityDetailsDTO;
+import com.devaneios.turmadeelite.dto.*;
 import com.devaneios.turmadeelite.entities.Activity;
 import org.springframework.data.domain.Page;
 import org.springframework.web.multipart.MultipartFile;
@@ -25,4 +22,5 @@ public interface ActivityService {
     AttachmentDTO getStudentAttachmentFromActivity(Long id, String studentAuthUuid) throws IOException;
 
     List<Activity> getAllActivitiesOfTeacher(String teacherAuthUUid);
+
 }

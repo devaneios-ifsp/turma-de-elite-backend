@@ -1,5 +1,6 @@
 package com.devaneios.turmadeelite.services;
 
+import com.devaneios.turmadeelite.dto.ActivityByTeacherDTO;
 import com.devaneios.turmadeelite.dto.ActivityPostDeliveryDTO;
 import com.devaneios.turmadeelite.dto.StudentPunctuationDTO;
 import com.devaneios.turmadeelite.entities.Teacher;
@@ -25,4 +26,6 @@ public interface TeacherService {
     List<ActivityPostDeliveryDTO> getPostDeliveryActivities();
 
     List<StudentPunctuationDTO> getStudentPunctuations();
+
+    List<ActivityByTeacherDTO> getActivitiesByTeacher(String managerAuthUUid);
 }

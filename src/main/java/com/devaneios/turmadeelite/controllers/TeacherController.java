@@ -176,4 +176,17 @@ public class TeacherController {
     ResponseEntity<List<StudentPunctuationDTO>> getStudentPunctuations(){
         return ResponseEntity.ok(this.teacherService.getStudentPunctuations());
     }
+
+    @Operation(summary = "Listar a quantidade de atividades postadas por professor")
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Lista das atividades postadas por professor retornada com sucesso"
+            )
+    })
+    @IsManager
+    @GetMapping("activitiesByTeacher")
+    ResponseEntity<List<ActivityByTeacherDTO>> getActivitiesByTeacher(Authentication authentication){
+        return ResponseEntity.ok(this.teacherService.getActivitiesByTeacher((String)authentication.getPrincipal()));
+    }
 }

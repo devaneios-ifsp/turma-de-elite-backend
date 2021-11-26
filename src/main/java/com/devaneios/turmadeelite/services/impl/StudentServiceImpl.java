@@ -1,6 +1,7 @@
 package com.devaneios.turmadeelite.services.impl;
 
 import com.devaneios.turmadeelite.dto.StudentCreateDTO;
+import com.devaneios.turmadeelite.dto.UserActiveInactiveDTO;
 import com.devaneios.turmadeelite.entities.School;
 import com.devaneios.turmadeelite.entities.Student;
 import com.devaneios.turmadeelite.entities.UserCredentials;
@@ -20,6 +21,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -99,5 +101,17 @@ public class StudentServiceImpl implements StudentService {
     public List<Student> findByStudentRegistrySimilarity(String registry, String managerAuthUuid) {
         School school = this.schoolService.findSchoolByManagerAuthUuid(managerAuthUuid);
         return this.studentRepository.findStudentsByRegistrySimilarity("%"+registry+"%",school.getId());
+    }
+
+    @Override
+    public List<UserActiveInactiveDTO> getInactiveActiveStudents(String authentication) {
+        List<UserActiveInactiveDTO> activeInactiveStudents = new ArrayList<>();
+        UserActiveInactiveDTO a = new UserActiveInactiveDTO();
+        a.setActiveUser(1);
+        a.setInactiveUser(3);
+        a.setYear(2021);
+        a.setMonth(11);
+        activeInactiveStudents.add(a);
+        return activeInactiveStudents;
     }
 }

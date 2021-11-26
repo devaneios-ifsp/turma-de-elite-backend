@@ -2,6 +2,7 @@ package com.devaneios.turmadeelite.controllers;
 
 import com.devaneios.turmadeelite.dto.StudentCreateDTO;
 import com.devaneios.turmadeelite.dto.StudentViewDTO;
+import com.devaneios.turmadeelite.dto.UserActiveInactiveDTO;
 import com.devaneios.turmadeelite.entities.Student;
 import com.devaneios.turmadeelite.security.guards.IsManager;
 import com.devaneios.turmadeelite.services.StudentService;
@@ -126,6 +127,19 @@ public class StudentController {
                 .stream()
                 .map(StudentViewDTO::new)
                 .collect(Collectors.toList());
+    }
+
+    @Operation(summary = "Listar os alunos ativos e inativos")
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Lista de alunos ativos e inativos retornada com sucesso"
+            )
+    })
+    @IsManager
+    @GetMapping("activeInactive")
+    ResponseEntity<List<UserActiveInactiveDTO>> getActiveInactiveStudents(Authentication authentication){
+        return ResponseEntity.ok(this.studentService.getInactiveActiveStudents((String)authentication.getPrincipal()));
     }
 
 }
