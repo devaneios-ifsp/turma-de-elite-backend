@@ -5,9 +5,9 @@ name: Java CI with Gradle
 
 on:
   push:
-    branches: [ develop ]
+    branches: [ develop, release ]
   pull_request:
-    branches: [ develop ]
+    branches: [ develop, release ]
 
 jobs:
   tests:
@@ -34,3 +34,13 @@ jobs:
       run: curl -sL https://firebase.tools | bash
     - name: Execute Tests
       run: firebase emulators:exec --only auth --project turma-de-elite-app './gradlew test'
+  deploy:
+    if: github.ref == 'refs/heads/release'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: akhileshns/heroku-deploy@v3.12.12 # This is the action
+        with:
+          heroku_api_key: ${{secrets.HEROKU_API_KEY}}
+          heroku_app_name: "turma-de-elite"
+          heroku_email: ${{secrets.HEROKU_EMAIL}}
