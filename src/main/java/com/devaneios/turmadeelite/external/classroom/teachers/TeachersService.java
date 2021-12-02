@@ -51,7 +51,6 @@ public class TeachersService implements ExternalTeachersService {
                     .map(classroomTeacher ->
                             SchoolUserViewDTO
                                     .builder()
-                                    .id(classroomTeacher.getUserId())
                                     .externalId(classroomTeacher.getUserId())
                                     .name(classroomTeacher.getProfile().getName().getFullName())
                                     .email(classroomTeacher.getProfile().getEmailAddress())
