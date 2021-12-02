@@ -38,6 +38,10 @@ public class Achievement {
 
     private String iconName;
 
+    private String externalSchoolClassId;
+
+    private String externalActivityId;
+
     @ManyToOne
     @JoinColumn(name = "class_id")
     private SchoolClass schoolClass;

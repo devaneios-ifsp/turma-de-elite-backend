@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
-public class DeliverAchievementsImpl implements DeliverAchievements {
+public class InternalDeliverAchievementsImpl implements DeliverAchievements {
 
     private final AchievementRepository achievementRepository;
     private final ActivityRepository activityRepository;
@@ -32,15 +32,13 @@ public class DeliverAchievementsImpl implements DeliverAchievements {
 
             Activity activity = achievement.getActivity();
             SchoolClass schoolClass = achievement.getSchoolClass();
-            System.out.println(schoolClass);
 
             if(activity !=null){
                 List<ActivityDelivery> deliveriesForActivity = this.deliveryRepository.findStudentDeliveriesForActivityWithAttachment(activity.getId());
                 giveActivityAchievementForEligible(achievement,deliveriesForActivity);
             }else{
-                //Optional <Long> id = Optional.ofNullable(schoolClass.getId());
-                System.out.println("entro no else");
-                //this.giveClassAchievementForEligible(achievement,schoolClass.getId());
+//                Optional <Long> id = Optional.ofNullable(schoolClass.getId());
+                this.giveClassAchievementForEligible(achievement,schoolClass.getId());
             }
         }
     }
@@ -52,7 +50,7 @@ public class DeliverAchievementsImpl implements DeliverAchievements {
 
         for(Student classStudent: classStudents){
             int activitiesFound = 0;
-            Double totalReceived = 0D;
+            double totalReceived = 0D;
 
             for(Activity classActivity: classActivities){
                 Long studentId = classStudent.getId();
@@ -70,7 +68,7 @@ public class DeliverAchievementsImpl implements DeliverAchievements {
                 activitiesFound +=1;
             }
 
-            Double averageGrade = activitiesFound != 0 ? totalReceived / activitiesFound : 0;
+            double averageGrade = activitiesFound != 0 ? totalReceived / activitiesFound : 0;
 
             if(averageGrade >= achievement.getAverageGradeGreaterOrEqualsThan()){
                 this.deliverAchievement(classStudent.getId(),achievement);

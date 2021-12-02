@@ -7,5 +7,5 @@ import java.io.IOException;
 import java.util.List;
 
 public interface ExternalCoursesService {
-    public List<SchoolClassViewDTO> getAllCourses(String authUuid) throws IOException, ExternalServiceAuthenticationException;
+    public List<SchoolClassViewDTO> getAllConvertedCourses(String authUuid) throws IOException, ExternalServiceAuthenticationException;
 }

@@ -7,12 +7,12 @@ import com.devaneios.turmadeelite.external.exceptions.ExternalServiceAuthenticat
 import com.google.api.client.googleapis.json.GoogleJsonError;
 import com.google.api.client.googleapis.json.GoogleJsonResponseException;
 import com.google.api.services.classroom.Classroom;
+import com.google.api.services.classroom.model.Course;
 import com.google.api.services.classroom.model.ListCoursesResponse;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityManager;
-import javax.transaction.Transactional;
 import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
@@ -20,34 +20,16 @@ import java.util.stream.Collectors;
 
 @AllArgsConstructor
 @Service
-public class CoursesService implements ExternalCoursesService {
+public class ClassroomCoursesService implements ExternalCoursesService {
 
     private  final EntityManager entityManager;
 
     private ClassroomServiceFactory serviceFactory;
 
-    public List<SchoolClassViewDTO> getAllCourses(String authUuid) throws IOException {
+    public List<SchoolClassViewDTO> getAllConvertedCourses(String authUuid) throws IOException {
         try {
-            Classroom service = this.serviceFactory.getService(authUuid);
-            List<ListCoursesResponse> allClassesResponse = new LinkedList<>();
-            ListCoursesResponse coursesResponse = service
-                    .courses()
-                    .list()
-                    .execute();
-            String nextPageToken = coursesResponse.getNextPageToken();
-
-            if (coursesResponse != null) allClassesResponse.add(coursesResponse);
-
-            while (nextPageToken != null && !nextPageToken.equals("")) {
-                ListCoursesResponse nextPageResponse = service.courses().list().setPageToken(nextPageToken).execute();
-                allClassesResponse.add(nextPageResponse);
-                nextPageToken = nextPageResponse.getNextPageToken();
-            }
-
-            return allClassesResponse
+            return this.getAllCourses(authUuid)
                     .stream()
-                    .map(ListCoursesResponse::getCourses)
-                    .flatMap(List::stream)
                     .map(classroomClass ->
                             SchoolClassViewDTO
                                     .builder()
@@ -67,6 +49,29 @@ public class CoursesService implements ExternalCoursesService {
                 throw e;
             }
         }
+    }
+
+    public List<Course> getAllCourses(String authUuid) throws IOException {
+        List<ListCoursesResponse> allClassesResponse = new LinkedList<>();
+        Classroom service = this.serviceFactory.getService(authUuid);
+        ListCoursesResponse coursesResponse = service
+                .courses()
+                .list()
+                .execute();
+        String nextPageToken = coursesResponse.getNextPageToken();
+
+        if (coursesResponse != null) allClassesResponse.add(coursesResponse);
+
+        while (nextPageToken != null && !nextPageToken.equals("")) {
+            ListCoursesResponse nextPageResponse = service.courses().list().setPageToken(nextPageToken).execute();
+            allClassesResponse.add(nextPageResponse);
+            nextPageToken = nextPageResponse.getNextPageToken();
+        }
+        return allClassesResponse
+                .stream()
+                .map(ListCoursesResponse::getCourses)
+                .flatMap(List::stream)
+                .collect(Collectors.toList());
     }
 
     /*
