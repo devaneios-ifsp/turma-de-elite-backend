@@ -146,10 +146,9 @@ CREATE TABLE tier_config(
 );
 
 CREATE TABLE log_status_user (
-    id BIGINT AUTO_INCREMENT NOT NULL,
+    id BIGSERIAL PRIMARY KEY,
     user_id BIGINT NOT NULL,
     date_action TIMESTAMP NOT NULL,
     old_is_active BOOLEAN,
-    PRIMARY KEY(id),
     FOREIGN KEY(user_id) REFERENCES user_credentials(id)
 );
