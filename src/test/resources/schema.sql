@@ -9,7 +9,8 @@ CREATE TABLE user_credentials (
     name VARCHAR(255) NOT NULL,
     first_access_token VARCHAR(255) UNIQUE,
     is_active BOOL DEFAULT TRUE,
-    role CHAR(12)
+    role CHAR(12),
+    accession_date TIMESTAMP
 );
 
 CREATE TABLE school (

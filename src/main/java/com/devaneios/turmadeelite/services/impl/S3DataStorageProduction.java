@@ -23,8 +23,8 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.UUID;
 
-//@Service
-//@Profile("!test")
+@Service
+@Profile("!test")
 public class S3DataStorageProduction implements DataStorageService {
 
     private final AmazonS3 s3;

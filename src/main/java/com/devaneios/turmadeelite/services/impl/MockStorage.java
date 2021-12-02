@@ -2,6 +2,8 @@ package com.devaneios.turmadeelite.services.impl;
 
 import com.devaneios.turmadeelite.entities.Attachment;
 import com.devaneios.turmadeelite.services.DataStorageService;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.Profile;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.stereotype.Service;
@@ -12,7 +14,7 @@ import java.io.InputStream;
 import java.security.NoSuchAlgorithmException;
 
 @Service
-//@Profile("test")
+@Profile("test")
 public class MockStorage implements DataStorageService {
 
     @Override
