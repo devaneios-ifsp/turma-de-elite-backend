@@ -50,6 +50,7 @@ public class SchoolServiceImpl implements SchoolService {
     }
 
     @Override
+    @Transactional
     public void updateSchoolById(Long schoolId, SchoolCreateDTO schoolCreateDTO) {
         Optional<School> byIdentifier = this.repository.findByIdentifier(schoolCreateDTO.getIdentifier());
         byIdentifier.ifPresent(userCredentials -> {

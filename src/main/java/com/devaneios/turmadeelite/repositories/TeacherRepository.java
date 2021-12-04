@@ -33,4 +33,7 @@ public interface TeacherRepository extends JpaRepository<Teacher,Long> {
 
     @Query("SELECT t FROM Teacher t JOIN t.credentials c WHERE c.name LIKE :name%")
     Optional<List<Teacher>> findByNameContainingIgnoreCase(String name);
+
+    @Query(value = "SELECT * FROM Teacher t WHERE t.school_id = :schoolId", nativeQuery = true)
+    List<Teacher> findBySchool(Long schoolId);
 }

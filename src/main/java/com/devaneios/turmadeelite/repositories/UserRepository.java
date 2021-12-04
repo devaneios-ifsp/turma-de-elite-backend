@@ -34,4 +34,5 @@ public interface UserRepository extends PagingAndSortingRepository<UserCredentia
 
     @Query(value = "SELECT * FROM user_credentials u WHERE (DATE_PART('MONTH', u.accession_date) <= :month AND DATE_PART('YEAR', u.accession_date) <= :year) OR (DATE_PART('MONTH', u.accession_date) > :month AND DATE_PART('YEAR', u.accession_date) < :year)", nativeQuery = true)
     List<UserCredentials> usersByDate(int month, int year);
+
 }

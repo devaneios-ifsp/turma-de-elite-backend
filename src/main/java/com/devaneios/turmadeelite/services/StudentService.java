@@ -1,6 +1,7 @@
 package com.devaneios.turmadeelite.services;
 
 import com.devaneios.turmadeelite.dto.StudentCreateDTO;
+import com.devaneios.turmadeelite.dto.UserActiveInactiveDTO;
 import com.devaneios.turmadeelite.entities.Student;
 import com.devaneios.turmadeelite.exceptions.EmailAlreadyRegistered;
 import org.springframework.data.domain.Page;
@@ -17,4 +18,6 @@ public interface StudentService {
     Student findStudentById(Long id, String managerAuthUuid);
 
     List<Student> findByStudentRegistrySimilarity(String registry, String principal);
+
+    List<UserActiveInactiveDTO> getInactiveActiveStudents(String authentication);
 }

@@ -1,9 +1,6 @@
 package com.devaneios.turmadeelite.services.impl;
 
-import com.devaneios.turmadeelite.dto.ActivityCreateDTO;
-import com.devaneios.turmadeelite.dto.AttachmentDTO;
-import com.devaneios.turmadeelite.dto.StudentActivitiesDTO;
-import com.devaneios.turmadeelite.dto.StudentActivityDetailsDTO;
+import com.devaneios.turmadeelite.dto.*;
 import com.devaneios.turmadeelite.entities.*;
 import com.devaneios.turmadeelite.repositories.*;
 import com.devaneios.turmadeelite.services.ActivityDeliveryService;
@@ -23,6 +20,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 

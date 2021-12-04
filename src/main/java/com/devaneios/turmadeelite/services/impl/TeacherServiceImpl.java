@@ -1,11 +1,9 @@
 package com.devaneios.turmadeelite.services.impl;
 
+import com.devaneios.turmadeelite.dto.ActivityByTeacherDTO;
 import com.devaneios.turmadeelite.dto.ActivityPostDeliveryDTO;
 import com.devaneios.turmadeelite.dto.StudentPunctuationDTO;
-import com.devaneios.turmadeelite.entities.Role;
-import com.devaneios.turmadeelite.entities.School;
-import com.devaneios.turmadeelite.entities.Teacher;
-import com.devaneios.turmadeelite.entities.UserCredentials;
+import com.devaneios.turmadeelite.entities.*;
 import com.devaneios.turmadeelite.events.UserCreated;
 import com.devaneios.turmadeelite.exceptions.EmailAlreadyRegistered;
 import com.devaneios.turmadeelite.repositories.*;
@@ -20,8 +18,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import javax.swing.text.html.Option;
 import org.springframework.transaction.annotation.Transactional;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @AllArgsConstructor
 @Service
@@ -29,9 +29,11 @@ public class TeacherServiceImpl implements TeacherService {
 
     private final UserRepository userRepository;
     private final TeacherRepository teacherRepository;
+    private final ActivityRepository activityRepository;
     private final LogStatusUserRepository logStatusUserRepository;
     private final ApplicationEventPublisher eventPublisher;
     private final SchoolService schoolService;
+    private final ActivityDeliveryRepository activityDeliveryRepository;
 
     @Transactional
     @Override
@@ -121,5 +123,53 @@ public class TeacherServiceImpl implements TeacherService {
         this.teacherRepository.save(teacher);
 
         logStatusUserRepository.insertLogStatusUser(userCredentials.getId(), !userCredentials.getIsActive());
+    }
+
+    @Override
+    public List<ActivityPostDeliveryDTO> getPostDeliveryActivities() {
+        ActivityPostDeliveryDTO a = new ActivityPostDeliveryDTO();
+        List<ActivityPostDeliveryDTO> list = new ArrayList<>();
+
+        list.add(a);
+
+        return list;
+    }
+
+    @Override
+    public List<StudentPunctuationDTO> getStudentPunctuations() {
+        List<StudentPunctuationDTO> list = activityDeliveryRepository.getStudentsPunctuations();
+
+        return list;
+    }
+
+    @Override
+    public List<ActivityByTeacherDTO> getActivitiesByTeacher(String managerAuthUuid) {
+        School school = this.schoolService.findSchoolByManagerAuthUuid(managerAuthUuid);
+        List<Teacher> localTeachers = teacherRepository.findBySchool(school.getId());
+
+        List<ActivityByTeacherDTO> listActivityByTeacher = new ArrayList<>();
+
+        if(localTeachers!= null && localTeachers.stream().count() > 0) {
+            for(int i = 0; i < localTeachers.stream().count(); i++) {
+                ActivityByTeacherDTO activityByTeacher = new ActivityByTeacherDTO();
+
+                String teacherName = localTeachers.get(i).getCredentials().getName();
+
+                Long teacherId = localTeachers.get(i).getId();
+                int countActivityByTeacher = activityRepository.findAllByTeacherId(teacherId).size();
+
+                activityByTeacher.setActivity(countActivityByTeacher);
+                activityByTeacher.setTeacher(teacherName);
+
+                listActivityByTeacher.add(activityByTeacher);
+            }
+        }
+
+        listActivityByTeacher = listActivityByTeacher
+                                    .stream()
+                                    .sorted(Comparator.comparing(ActivityByTeacherDTO::getActivity))
+                                    .collect(Collectors.toList());
+        return listActivityByTeacher;
+
     }
 }
