@@ -131,7 +131,10 @@ public class TeacherServiceImpl implements TeacherService {
     public List<ActivityPostDeliveryDTO> getPostDeliveryActivities(String teacherAuthUuid) {
         List<ActivityPostDeliveryDTO> listActivityPostDelivery = new ArrayList<>();
         Optional<Teacher> teacherOptional = teacherRepository.findByAuthUuid(teacherAuthUuid);
-        Teacher teacher = teacherOptional.get();
+        Teacher teacher = new Teacher();
+
+        if(teacherOptional.isPresent())
+            teacher = teacherOptional.get();
 
         List<Long> classesByTeacher = teacherRepository.getClassByTeacher(teacher.getId());
 
@@ -188,7 +191,10 @@ public class TeacherServiceImpl implements TeacherService {
     public List<StudentPunctuationDTO> getStudentPunctuations(String teacherAuthUuid) {
         List<StudentPunctuationDTO> listStudentPunctuation = new ArrayList<>();
         Optional<Teacher> teacherOptional = teacherRepository.findByAuthUuid(teacherAuthUuid);
-        Teacher teacher = teacherOptional.get();
+        Teacher teacher = new Teacher();
+
+        if(teacherOptional.isPresent())
+            teacher = teacherOptional.get();
 
         List<Long> classesByTeacher = teacherRepository.getClassByTeacher(teacher.getId());
 
