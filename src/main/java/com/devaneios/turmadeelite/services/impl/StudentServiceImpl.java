@@ -7,11 +7,13 @@ import com.devaneios.turmadeelite.entities.Student;
 import com.devaneios.turmadeelite.entities.UserCredentials;
 import com.devaneios.turmadeelite.events.UserCreated;
 import com.devaneios.turmadeelite.exceptions.EmailAlreadyRegistered;
+import com.devaneios.turmadeelite.repositories.LogStatusUserRepository;
 import com.devaneios.turmadeelite.repositories.StudentRepository;
 import com.devaneios.turmadeelite.repositories.UserRepository;
 import com.devaneios.turmadeelite.services.SchoolService;
 import com.devaneios.turmadeelite.services.StudentService;
 import lombok.AllArgsConstructor;
+import org.joda.time.DateTime;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -32,6 +34,7 @@ public class StudentServiceImpl implements StudentService {
     private final UserRepository userRepository;
     private final SchoolService schoolService;
     private final StudentRepository studentRepository;
+    private final LogStatusUserRepository logStatusUserRepository;
     private final ApplicationEventPublisher eventPublisher;
 
     @Transactional
@@ -58,6 +61,7 @@ public class StudentServiceImpl implements StudentService {
     }
 
     @Override
+    @Transactional
     public void updateStudent(StudentCreateDTO studentCreateDTO, Long id, String managerAuthUuid) {
         Optional<UserCredentials> userCredentialsOptional = this.userRepository.findByEmail(studentCreateDTO.getEmail());
         UserCredentials credentials = null;
@@ -87,6 +91,8 @@ public class StudentServiceImpl implements StudentService {
         student.setRegistry(studentCreateDTO.getRegistry());
 
         this.studentRepository.save(student);
+
+        logStatusUserRepository.insertLogStatusUser(credentials.getId(), !credentials.getIsActive());
     }
 
     @Override
@@ -104,14 +110,48 @@ public class StudentServiceImpl implements StudentService {
     }
 
     @Override
-    public List<UserActiveInactiveDTO> getInactiveActiveStudents(String authentication) {
+    public List<UserActiveInactiveDTO> getInactiveActiveStudents(String managerAuthUuid) {
+        School school = this.schoolService.findSchoolByManagerAuthUuid(managerAuthUuid);
+
+        DateTime date = DateTime.now();
+        int month = date.getMonthOfYear();
+        int year = date.getYear() - 1;
+
+        int monthsInAYear = 12;
+
         List<UserActiveInactiveDTO> activeInactiveStudents = new ArrayList<>();
-        UserActiveInactiveDTO a = new UserActiveInactiveDTO();
-        a.setActiveUser(1);
-        a.setInactiveUser(3);
-        a.setYear(2021);
-        a.setMonth(11);
-        activeInactiveStudents.add(a);
+
+        for (int i = 0; i <= monthsInAYear; i++) {
+            int activeUsers = 0;
+            int inactiveUsers = 0;
+
+            if(month > monthsInAYear) {
+                month = 1;
+                year += 1;
+            }
+
+            List<Integer> usersId = studentRepository.findBySchoolDate(month, year, school.getId());
+
+            if(usersId != null && usersId.stream().count() > 0) {
+                for (int id : usersId) {
+                    if(!(logStatusUserRepository.getLastOldStatusUser(id)))
+                        activeUsers += 1;
+                    else
+                        inactiveUsers += 1;
+                }
+            }
+
+            UserActiveInactiveDTO user = new UserActiveInactiveDTO();
+
+            user.setActiveUser(activeUsers);
+            user.setInactiveUser(inactiveUsers);
+            user.setMonth(month);
+            user.setYear(year);
+
+            activeInactiveStudents.add(user);
+
+            month++;
+        }
         return activeInactiveStudents;
     }
 }

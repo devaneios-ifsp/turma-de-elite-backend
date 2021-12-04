@@ -3,10 +3,7 @@ package com.devaneios.turmadeelite.services.impl;
 import com.devaneios.turmadeelite.dto.ActivityByTeacherDTO;
 import com.devaneios.turmadeelite.dto.ActivityPostDeliveryDTO;
 import com.devaneios.turmadeelite.dto.StudentPunctuationDTO;
-import com.devaneios.turmadeelite.entities.Role;
-import com.devaneios.turmadeelite.entities.School;
-import com.devaneios.turmadeelite.entities.Teacher;
-import com.devaneios.turmadeelite.entities.UserCredentials;
+import com.devaneios.turmadeelite.entities.*;
 import com.devaneios.turmadeelite.events.UserCreated;
 import com.devaneios.turmadeelite.exceptions.EmailAlreadyRegistered;
 import com.devaneios.turmadeelite.repositories.*;
@@ -21,8 +18,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
-import javax.transaction.Transactional;
+import javax.swing.text.html.Option;
+import org.springframework.transaction.annotation.Transactional;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @AllArgsConstructor
 @Service
@@ -30,6 +29,7 @@ public class TeacherServiceImpl implements TeacherService {
 
     private final UserRepository userRepository;
     private final TeacherRepository teacherRepository;
+    private final ActivityRepository activityRepository;
     private final LogStatusUserRepository logStatusUserRepository;
     private final ApplicationEventPublisher eventPublisher;
     private final SchoolService schoolService;
@@ -89,6 +89,7 @@ public class TeacherServiceImpl implements TeacherService {
     }
 
     @Override
+    @Transactional
     public void updateTeacherUser(
             String email,
             String name,
@@ -129,9 +130,6 @@ public class TeacherServiceImpl implements TeacherService {
         ActivityPostDeliveryDTO a = new ActivityPostDeliveryDTO();
         List<ActivityPostDeliveryDTO> list = new ArrayList<>();
 
-        a.setDeliveryActivity(1);
-        a.setPostActivity(2);
-        a.setClassName("IFSP");
         list.add(a);
 
         return list;
@@ -145,20 +143,33 @@ public class TeacherServiceImpl implements TeacherService {
     }
 
     @Override
-    public List<ActivityByTeacherDTO> getActivitiesByTeacher(String managerAuthUUid) {
-        List<ActivityByTeacherDTO> list = new ArrayList<>();
+    public List<ActivityByTeacherDTO> getActivitiesByTeacher(String managerAuthUuid) {
+        School school = this.schoolService.findSchoolByManagerAuthUuid(managerAuthUuid);
+        List<Teacher> localTeachers = teacherRepository.findBySchool(school.getId());
 
-        ActivityByTeacherDTO a = new ActivityByTeacherDTO();
-        a.setActivity(20);
-        a.setTeacher("Professor Fulano");
-        list.add(a);
+        List<ActivityByTeacherDTO> listActivityByTeacher = new ArrayList<>();
 
-        ActivityByTeacherDTO b = new ActivityByTeacherDTO();
-        b.setActivity(10);
-        b.setTeacher("Professor Ciclano");
-        list.add(b);
+        if(localTeachers!= null && localTeachers.stream().count() > 0) {
+            for(int i = 0; i < localTeachers.stream().count(); i++) {
+                ActivityByTeacherDTO activityByTeacher = new ActivityByTeacherDTO();
 
-        return list;
+                String teacherName = localTeachers.get(i).getCredentials().getName();
+
+                Long teacherId = localTeachers.get(i).getId();
+                int countActivityByTeacher = activityRepository.findAllByTeacherId(teacherId).size();
+
+                activityByTeacher.setActivity(countActivityByTeacher);
+                activityByTeacher.setTeacher(teacherName);
+
+                listActivityByTeacher.add(activityByTeacher);
+            }
+        }
+
+        listActivityByTeacher = listActivityByTeacher
+                                    .stream()
+                                    .sorted(Comparator.comparing(ActivityByTeacherDTO::getActivity))
+                                    .collect(Collectors.toList());
+        return listActivityByTeacher;
 
     }
 }

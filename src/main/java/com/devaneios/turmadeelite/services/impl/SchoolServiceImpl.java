@@ -15,7 +15,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
-import javax.transaction.Transactional;
+import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -50,6 +50,7 @@ public class SchoolServiceImpl implements SchoolService {
     }
 
     @Override
+    @Transactional
     public void updateSchoolById(Long schoolId, SchoolCreateDTO schoolCreateDTO) {
         Optional<School> byIdentifier = this.repository.findByIdentifier(schoolCreateDTO.getIdentifier());
         byIdentifier.ifPresent(userCredentials -> {

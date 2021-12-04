@@ -7,6 +7,7 @@ import com.devaneios.turmadeelite.entities.Teacher;
 import com.devaneios.turmadeelite.exceptions.EmailAlreadyRegistered;
 import org.springframework.data.domain.Page;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 
@@ -27,5 +28,5 @@ public interface TeacherService {
 
     List<StudentPunctuationDTO> getStudentPunctuations();
 
-    List<ActivityByTeacherDTO> getActivitiesByTeacher(String managerAuthUUid);
+    List<ActivityByTeacherDTO> getActivitiesByTeacher(String managerAuthUUid) throws IOException;
 }

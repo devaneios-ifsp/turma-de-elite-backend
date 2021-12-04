@@ -12,7 +12,7 @@ import java.io.InputStream;
 import java.security.NoSuchAlgorithmException;
 
 @Service
-//@Profile("test")
+@Profile("test")
 public class MockStorage implements DataStorageService {
 
     @Override
