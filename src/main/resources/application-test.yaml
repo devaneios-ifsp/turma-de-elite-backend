@@ -31,4 +31,3 @@ junit:
     testclass:
       order:
         default: org.junit.jupiter.api.ClassOrderer$OrderAnnotation
-
