@@ -1,31 +1,33 @@
 package com.devaneios.turmadeelite.external.classroom.courses;
 
 import com.devaneios.turmadeelite.dto.SchoolClassViewDTO;
-import com.devaneios.turmadeelite.dto.SchoolUserViewDTO;
-import com.devaneios.turmadeelite.entities.Teacher;
+import com.devaneios.turmadeelite.dto.StudentMembershipDTO;
+import com.devaneios.turmadeelite.dto.StudentViewDTO;
 import com.devaneios.turmadeelite.external.classroom.ClassroomServiceFactory;
+import com.devaneios.turmadeelite.external.classroom.students.StudentsService;
 import com.devaneios.turmadeelite.external.courses.ExternalCoursesService;
 import com.devaneios.turmadeelite.external.exceptions.ExternalServiceAuthenticationException;
-import com.devaneios.turmadeelite.repositories.TeacherRepository;
 import com.google.api.client.googleapis.json.GoogleJsonError;
 import com.google.api.client.googleapis.json.GoogleJsonResponseException;
 import com.google.api.services.classroom.Classroom;
+import com.google.api.services.classroom.model.Course;
 import com.google.api.services.classroom.model.ListCoursesResponse;
+import com.google.api.services.classroom.model.Student;
+import com.google.api.services.classroom.model.UserProfile;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @AllArgsConstructor
 @Service
 public class CoursesService implements ExternalCoursesService {
 
-    private TeacherRepository teacherRepository;
     private ClassroomServiceFactory serviceFactory;
+    // private StudentsService classroomStudentsService;
 
     public List<SchoolClassViewDTO> getAllCourses(String authUuid) throws IOException {
         try {
@@ -72,18 +74,16 @@ public class CoursesService implements ExternalCoursesService {
 
     @Override
     public List<SchoolClassViewDTO> getCoursesFromTeacher(String authUuid) throws IOException {
+
         Classroom service = this.serviceFactory.getService(authUuid);
         List<ListCoursesResponse> allTeacherClassesResponse = new LinkedList<>();
-        Optional<Teacher> optionalTeacher = teacherRepository.findByAuthUuid(authUuid);
-        Teacher teacher = null;
-        if (optionalTeacher.isPresent()){
-            teacher = optionalTeacher.get();
-        }
-        assert teacher != null;
+        UserProfile authenticatedUser = service.userProfiles().get("me").execute();
+        String externalId = authenticatedUser.getId();
+
         ListCoursesResponse teacherCoursesResponse = service
                 .courses()
                 .list()
-                .setTeacherId(new SchoolUserViewDTO(teacher).getExternalId())
+                .setTeacherId(externalId)
                 .execute();
         String nextPageToken = teacherCoursesResponse.getNextPageToken();
 
@@ -102,6 +102,7 @@ public class CoursesService implements ExternalCoursesService {
                 .map(classroomTeacherClass ->
                         SchoolClassViewDTO
                                 .builder()
+                                .id(null)
                                 .externalId(classroomTeacherClass.getId())
                                 .name(classroomTeacherClass.getName())
                                 .isActive(classroomTeacherClass.getCourseState().equals("ACTIVE"))
@@ -112,5 +113,23 @@ public class CoursesService implements ExternalCoursesService {
                 .collect(Collectors.toList());
 
     }
+
+//    @Override
+//    public SchoolClassViewDTO getExternalClassById(String externalId, String authUuid) throws IOException {
+//        Classroom service = serviceFactory.getService(authUuid);
+//        Course classroom = service
+//                .courses()
+//                .get(externalId)
+//                .execute();
+//
+//        return SchoolClassViewDTO
+//                .builder()
+//                .id(null)
+//                .externalId(classroom.getId())
+//                .name(classroom.getName())
+//                .students(new LinkedList<StudentMembershipDTO>(classroomStudentsService.getStudentsFromClass(classroom.getId(), authUuid), classroom.getCourseState().equalsIgnoreCase("ACTIVE")))
+//                .isDone(false)
+//                .isFromLms(true)
+//    }
 
 }

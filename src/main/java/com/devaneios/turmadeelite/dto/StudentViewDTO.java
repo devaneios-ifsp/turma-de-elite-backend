@@ -10,10 +10,14 @@ import lombok.*;
 @Builder
 public class StudentViewDTO {
     public Long id;
+    private String externalId;
     public String email;
     public String name;
     public String registry;
     public Boolean isActive;
+
+    @Builder.Default
+    private Boolean isFromLms = false;
 
     public StudentViewDTO(Student student){
         this.id = student.getId();
@@ -21,5 +25,6 @@ public class StudentViewDTO {
         this.name = student.getCredentials().getName();
         this.registry = student.getRegistry();
         this.isActive = student.getCredentials().getIsActive();
+        this.isFromLms = false;
     }
 }

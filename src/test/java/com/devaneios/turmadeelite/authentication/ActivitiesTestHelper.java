@@ -99,6 +99,7 @@ public class ActivitiesTestHelper {
                         .header("Authorization", teacherBearerToken)
         )
                 .andExpect(jsonPath("$.totalElements").value(3))
+                .andExpect(jsonPath("$.totalElements").value(3))
                 .andExpect(status().isOk());
     }
 

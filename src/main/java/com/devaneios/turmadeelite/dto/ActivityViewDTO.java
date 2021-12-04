@@ -15,6 +15,9 @@ import java.util.stream.Collectors;
 @Builder
 public class ActivityViewDTO {
     public Long id;
+
+    private String externalId;
+
     private String name;
 
     private String description;

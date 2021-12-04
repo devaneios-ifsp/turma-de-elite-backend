@@ -11,4 +11,5 @@ import java.util.List;
 public interface ExternalCoursesService {
     List<SchoolClassViewDTO> getAllCourses(String authUuid) throws IOException, ExternalServiceAuthenticationException;
     List<SchoolClassViewDTO> getCoursesFromTeacher(String authUuid) throws IOException;
+    //SchoolClassViewDTO getExternalClassById(String externalId, String authUuid) throws IOException;
 }

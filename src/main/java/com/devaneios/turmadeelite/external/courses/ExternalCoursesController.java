@@ -7,8 +7,10 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.AllArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -42,4 +44,12 @@ public class ExternalCoursesController {
         String authUuid = (String) authentication.getPrincipal();
         return this.externalCoursesService.getCoursesFromTeacher(authUuid);
     }
+
+//    @IsTeacher
+//    @GetMapping("/{externalId}")
+//    public ResponseEntity<?> getExternalClassById(@PathVariable String externalId, Authentication authentication) throws IOException {
+//        String authUuid = (String) authentication.getPrincipal();
+//        return ResponseEntity.ok(this.externalCoursesService.getExternalClassById(externalId, authUuid));
+//    }
+
 }

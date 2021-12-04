@@ -11,7 +11,7 @@ import lombok.*;
 @Builder
 public class SchoolUserViewDTO {
 
-    public String id;
+    public Long id;
     public String externalId;
     public String email;
     public String name;
@@ -22,7 +22,7 @@ public class SchoolUserViewDTO {
     private Boolean isFromLms = false;
 
     public SchoolUserViewDTO(Manager manager){
-        this.id = manager.getId().toString();
+        this.id = manager.getId();
         this.email = manager.getCredentials().getEmail();
         this.name = manager.getCredentials().getName();
         this.school = manager.getSchool() == null ? null : new SchoolViewDTO(manager.getSchool());
@@ -30,7 +30,7 @@ public class SchoolUserViewDTO {
     }
 
     public SchoolUserViewDTO(Teacher teacher){
-        this.id = teacher.getId().toString();
+        this.id = teacher.getId();
         this.email = teacher.getCredentials().getEmail();
         this.name = teacher.getCredentials().getName();
         this.school = teacher.getSchool() == null ? null : new SchoolViewDTO(teacher.getSchool());
