@@ -149,6 +149,6 @@ CREATE TABLE log_status_user (
     id BIGSERIAL PRIMARY KEY,
     user_id BIGINT NOT NULL,
     date_action TIMESTAMP NOT NULL,
-    old_is_active BOOLEAN,
+    old_is_active BOOLEAN DEFAULT TRUE,
     FOREIGN KEY(user_id) REFERENCES user_credentials(id)
 );
