@@ -56,6 +56,7 @@ public class StudentServiceImpl implements StudentService {
     }
 
     @Override
+    @Transactional
     public void updateStudent(StudentCreateDTO studentCreateDTO, Long id, String managerAuthUuid) {
         Optional<UserCredentials> userCredentialsOptional = this.userRepository.findByEmail(studentCreateDTO.getEmail());
         UserCredentials credentials = null;

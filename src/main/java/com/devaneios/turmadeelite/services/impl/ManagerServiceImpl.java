@@ -77,8 +77,8 @@ public class ManagerServiceImpl implements ManagerService {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
     }
 
-    @Transactional
     @Override
+    @Transactional
     public void updateManagerUser(String email, String name, String language, Long schoolId, Boolean isActive,Long managerId) throws EmailAlreadyRegistered {
         Optional<UserCredentials> userCredentialsOptional = this.userRepository.findByEmail(email);
 

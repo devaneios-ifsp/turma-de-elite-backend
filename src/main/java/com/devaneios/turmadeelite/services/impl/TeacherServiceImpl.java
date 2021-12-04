@@ -87,6 +87,7 @@ public class TeacherServiceImpl implements TeacherService {
     }
 
     @Override
+    @Transactional
     public void updateTeacherUser(
             String email,
             String name,
