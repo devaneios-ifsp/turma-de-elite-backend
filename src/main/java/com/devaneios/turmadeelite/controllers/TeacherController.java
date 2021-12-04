@@ -160,8 +160,8 @@ public class TeacherController {
     })
     @IsTeacher
     @GetMapping("/dash")
-    ResponseEntity<List<ActivityPostDeliveryDTO>> getPostDeliveryActivities(){
-        return ResponseEntity.ok(this.teacherService.getPostDeliveryActivities());
+    ResponseEntity<List<ActivityPostDeliveryDTO>> getPostDeliveryActivities(Authentication authentication){
+        return ResponseEntity.ok(this.teacherService.getPostDeliveryActivities((String) authentication.getPrincipal()));
     }
 
     @Operation(summary = "Visualizar uma lista de alunos ordenada por pontuação")
@@ -173,7 +173,7 @@ public class TeacherController {
     })
     @IsTeacher
     @GetMapping("/punctuations")
-    ResponseEntity<List<StudentPunctuationDTO>> getStudentPunctuations(){
-        return ResponseEntity.ok(this.teacherService.getStudentPunctuations());
+    ResponseEntity<List<StudentPunctuationDTO>> getStudentPunctuations(Authentication authentication){
+        return ResponseEntity.ok(this.teacherService.getStudentPunctuations((String) authentication.getPrincipal()));
     }
 }

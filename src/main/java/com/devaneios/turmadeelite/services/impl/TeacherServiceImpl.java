@@ -2,10 +2,7 @@ package com.devaneios.turmadeelite.services.impl;
 
 import com.devaneios.turmadeelite.dto.ActivityPostDeliveryDTO;
 import com.devaneios.turmadeelite.dto.StudentPunctuationDTO;
-import com.devaneios.turmadeelite.entities.Role;
-import com.devaneios.turmadeelite.entities.School;
-import com.devaneios.turmadeelite.entities.Teacher;
-import com.devaneios.turmadeelite.entities.UserCredentials;
+import com.devaneios.turmadeelite.entities.*;
 import com.devaneios.turmadeelite.events.UserCreated;
 import com.devaneios.turmadeelite.exceptions.EmailAlreadyRegistered;
 import com.devaneios.turmadeelite.repositories.*;
@@ -22,6 +19,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import javax.transaction.Transactional;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @AllArgsConstructor
 @Service
@@ -29,7 +27,10 @@ public class TeacherServiceImpl implements TeacherService {
 
     private final UserRepository userRepository;
     private final TeacherRepository teacherRepository;
+    private final StudentRepository studentRepository;
     private final LogStatusUserRepository logStatusUserRepository;
+    private final ActivityDeliveryRepository activityDeliveryRepository;
+    private final SchoolClassRepository schoolClassRepository;
     private final ApplicationEventPublisher eventPublisher;
     private final SchoolService schoolService;
 
@@ -123,33 +124,63 @@ public class TeacherServiceImpl implements TeacherService {
     }
 
     @Override
-    public List<ActivityPostDeliveryDTO> getPostDeliveryActivities() {
-        ActivityPostDeliveryDTO a = new ActivityPostDeliveryDTO();
-        List<ActivityPostDeliveryDTO> list = new ArrayList<>();
+    public List<ActivityPostDeliveryDTO> getPostDeliveryActivities(String teacherAuthUuid) {
+        List<ActivityPostDeliveryDTO> listActivityPostDelivery = new ArrayList<>();
+        Optional<Teacher> teacherOptional = teacherRepository.findByAuthUuid(teacherAuthUuid);
+        Teacher teacher = teacherOptional.get();
 
-        a.setDeliveryActivity(1);
-        a.setPostActivity(2);
-        a.setClassName("IFSP");
-        list.add(a);
+        List<Long> classesByTeacher = teacherRepository.getClassByTeacher(teacher.getId());
 
-        return list;
+        if(classesByTeacher != null && classesByTeacher.size() > 0)
+            for(int classTeacher = 0; classTeacher < classesByTeacher.stream().count(); classTeacher++) {
+                ActivityPostDeliveryDTO a = new ActivityPostDeliveryDTO();
+
+                int countActivity = schoolClassRepository.countActivityByClass(classesByTeacher.get(classTeacher));
+                int studentsByClass = studentRepository.findAllByClassId(classesByTeacher.get(classTeacher)).size();
+                int countDelivery = schoolClassRepository.countDeliveryByClass(classesByTeacher.get(classTeacher));
+                String className = schoolClassRepository.findSchoolClassByClassId(classesByTeacher.get(classTeacher)).getName();
+
+                a.setDeliveryActivity(countActivity * studentsByClass);
+                a.setPostActivity(countDelivery);
+                a.setClassName(className);
+
+                listActivityPostDelivery.add(a);
+            }
+
+        return listActivityPostDelivery;
     }
 
     @Override
-    public List<StudentPunctuationDTO> getStudentPunctuations() {
-        List<StudentPunctuationDTO> list = new ArrayList<>();
+    public List<StudentPunctuationDTO> getStudentPunctuations(String teacherAuthUuid) {
+        List<StudentPunctuationDTO> listStudentPunctuation = new ArrayList<>();
+        Optional<Teacher> teacherOptional = teacherRepository.findByAuthUuid(teacherAuthUuid);
+        Teacher teacher = teacherOptional.get();
 
-        StudentPunctuationDTO s = new StudentPunctuationDTO();
+        List<Long> classesByTeacher = teacherRepository.getClassByTeacher(teacher.getId());
 
-        s.setStudentName("João");
-        s.setPunctuation(6.5);
-        list.add(s);
+        if(classesByTeacher != null && classesByTeacher.size() > 0)
+            for(int classTeacher = 0; classTeacher < classesByTeacher.stream().count(); classTeacher++) {
+                List<Student> students = studentRepository.findAllByClassId(classesByTeacher.get(classTeacher));
 
-        StudentPunctuationDTO t = new StudentPunctuationDTO();
-        t.setStudentName("Maria");
-        t.setPunctuation(9.5);
-        list.add(t);
+                if(students != null && students.stream().count() > 0)
+                    for(int student = 0; student < students.stream().count(); student++) {
+                        StudentPunctuationDTO s = new StudentPunctuationDTO();
+                        String studentName = students.get(student).getCredentials().getName();
+                        Double punctuation = activityDeliveryRepository.getPunctuationByStudent(students.get(student).getId(), teacher.getId());
 
-        return list;
+                        s.setStudentName(studentName);
+                        s.setPunctuation(punctuation);
+
+                        listStudentPunctuation.add(s);
+
+                    }
+            }
+
+        listStudentPunctuation = listStudentPunctuation
+                .stream()
+                .sorted(Comparator.comparing(StudentPunctuationDTO::getPunctuation))
+                .collect(Collectors.toList());
+
+        return listStudentPunctuation;
     }
 }

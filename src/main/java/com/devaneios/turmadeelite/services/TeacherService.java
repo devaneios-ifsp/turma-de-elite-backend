@@ -22,7 +22,7 @@ public interface TeacherService {
 
     Optional<List<Teacher>> getTeachersByNameSimilarity(String name);
 
-    List<ActivityPostDeliveryDTO> getPostDeliveryActivities();
+    List<ActivityPostDeliveryDTO> getPostDeliveryActivities(String teacherAuthUuid);
 
-    List<StudentPunctuationDTO> getStudentPunctuations();
+    List<StudentPunctuationDTO> getStudentPunctuations(String teacherAuthUuid);
 }
