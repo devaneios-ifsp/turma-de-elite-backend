@@ -30,10 +30,12 @@ public class TeacherServiceImpl implements TeacherService {
     private final UserRepository userRepository;
     private final TeacherRepository teacherRepository;
     private final ActivityRepository activityRepository;
+    private final StudentRepository studentRepository;
     private final LogStatusUserRepository logStatusUserRepository;
+    private final ActivityDeliveryRepository activityDeliveryRepository;
+    private final SchoolClassRepository schoolClassRepository;
     private final ApplicationEventPublisher eventPublisher;
     private final SchoolService schoolService;
-    private final ActivityDeliveryRepository activityDeliveryRepository;
 
     @Transactional
     @Override
@@ -126,20 +128,30 @@ public class TeacherServiceImpl implements TeacherService {
     }
 
     @Override
-    public List<ActivityPostDeliveryDTO> getPostDeliveryActivities() {
-        ActivityPostDeliveryDTO a = new ActivityPostDeliveryDTO();
-        List<ActivityPostDeliveryDTO> list = new ArrayList<>();
+    public List<ActivityPostDeliveryDTO> getPostDeliveryActivities(String teacherAuthUuid) {
+        List<ActivityPostDeliveryDTO> listActivityPostDelivery = new ArrayList<>();
+        Optional<Teacher> teacherOptional = teacherRepository.findByAuthUuid(teacherAuthUuid);
+        Teacher teacher = teacherOptional.get();
 
-        list.add(a);
+        List<Long> classesByTeacher = teacherRepository.getClassByTeacher(teacher.getId());
 
-        return list;
-    }
+        if(classesByTeacher != null && classesByTeacher.size() > 0)
+            for(int classTeacher = 0; classTeacher < classesByTeacher.stream().count(); classTeacher++) {
+                ActivityPostDeliveryDTO a = new ActivityPostDeliveryDTO();
 
-    @Override
-    public List<StudentPunctuationDTO> getStudentPunctuations() {
-        List<StudentPunctuationDTO> list = activityDeliveryRepository.getStudentsPunctuations();
+                int countActivity = schoolClassRepository.countActivityByClass(classesByTeacher.get(classTeacher));
+                int studentsByClass = studentRepository.findAllByClassId(classesByTeacher.get(classTeacher)).size();
+                int countDelivery = schoolClassRepository.countDeliveryByClass(classesByTeacher.get(classTeacher));
+                String className = schoolClassRepository.findSchoolClassByClassId(classesByTeacher.get(classTeacher)).getName();
 
-        return list;
+                a.setDeliveryActivity(countActivity * studentsByClass);
+                a.setPostActivity(countDelivery);
+                a.setClassName(className);
+
+                listActivityPostDelivery.add(a);
+            }
+
+        return listActivityPostDelivery;
     }
 
     @Override
@@ -149,8 +161,8 @@ public class TeacherServiceImpl implements TeacherService {
 
         List<ActivityByTeacherDTO> listActivityByTeacher = new ArrayList<>();
 
-        if(localTeachers!= null && localTeachers.stream().count() > 0) {
-            for(int i = 0; i < localTeachers.stream().count(); i++) {
+        if (localTeachers != null && localTeachers.stream().count() > 0) {
+            for (int i = 0; i < localTeachers.stream().count(); i++) {
                 ActivityByTeacherDTO activityByTeacher = new ActivityByTeacherDTO();
 
                 String teacherName = localTeachers.get(i).getCredentials().getName();
@@ -166,10 +178,43 @@ public class TeacherServiceImpl implements TeacherService {
         }
 
         listActivityByTeacher = listActivityByTeacher
-                                    .stream()
-                                    .sorted(Comparator.comparing(ActivityByTeacherDTO::getActivity))
-                                    .collect(Collectors.toList());
+                .stream()
+                .sorted(Comparator.comparing(ActivityByTeacherDTO::getActivity))
+                .collect(Collectors.toList());
         return listActivityByTeacher;
+    }
 
+    @Override
+    public List<StudentPunctuationDTO> getStudentPunctuations(String teacherAuthUuid) {
+        List<StudentPunctuationDTO> listStudentPunctuation = new ArrayList<>();
+        Optional<Teacher> teacherOptional = teacherRepository.findByAuthUuid(teacherAuthUuid);
+        Teacher teacher = teacherOptional.get();
+
+        List<Long> classesByTeacher = teacherRepository.getClassByTeacher(teacher.getId());
+
+        if(classesByTeacher != null && classesByTeacher.size() > 0)
+            for(int classTeacher = 0; classTeacher < classesByTeacher.stream().count(); classTeacher++) {
+                List<Student> students = studentRepository.findAllByClassId(classesByTeacher.get(classTeacher));
+
+                if(students != null && students.stream().count() > 0)
+                    for(int student = 0; student < students.stream().count(); student++) {
+                        StudentPunctuationDTO s = new StudentPunctuationDTO();
+                        String studentName = students.get(student).getCredentials().getName();
+                        Double punctuation = activityDeliveryRepository.getPunctuationByStudent(students.get(student).getId(), teacher.getId());
+
+                        s.setStudentName(studentName);
+                        s.setPunctuation(punctuation);
+
+                        listStudentPunctuation.add(s);
+
+                    }
+            }
+
+        listStudentPunctuation = listStudentPunctuation
+                .stream()
+                .sorted(Comparator.comparing(StudentPunctuationDTO::getPunctuation))
+                .collect(Collectors.toList());
+
+        return listStudentPunctuation;
     }
 }

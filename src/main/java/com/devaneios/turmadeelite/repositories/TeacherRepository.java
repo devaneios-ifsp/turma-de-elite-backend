@@ -36,4 +36,7 @@ public interface TeacherRepository extends JpaRepository<Teacher,Long> {
 
     @Query(value = "SELECT * FROM Teacher t WHERE t.school_id = :schoolId", nativeQuery = true)
     List<Teacher> findBySchool(Long schoolId);
+
+    @Query(value = "SELECT class_id FROM teacher_class_membership u WHERE teacher_id = :teacher_id", nativeQuery = true)
+    List<Long> getClassByTeacher(Long teacher_id);
 }

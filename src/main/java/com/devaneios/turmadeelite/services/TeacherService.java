@@ -24,9 +24,9 @@ public interface TeacherService {
 
     Optional<List<Teacher>> getTeachersByNameSimilarity(String name);
 
-    List<ActivityPostDeliveryDTO> getPostDeliveryActivities();
-
-    List<StudentPunctuationDTO> getStudentPunctuations();
+    List<ActivityPostDeliveryDTO> getPostDeliveryActivities(String teacherAuthUuid);
 
     List<ActivityByTeacherDTO> getActivitiesByTeacher(String managerAuthUUid) throws IOException;
+
+    List<StudentPunctuationDTO> getStudentPunctuations(String teacherAuthUuid);
 }
