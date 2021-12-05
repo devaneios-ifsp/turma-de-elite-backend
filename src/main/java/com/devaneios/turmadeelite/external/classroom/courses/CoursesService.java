@@ -114,22 +114,4 @@ public class CoursesService implements ExternalCoursesService {
 
     }
 
-//    @Override
-//    public SchoolClassViewDTO getExternalClassById(String externalId, String authUuid) throws IOException {
-//        Classroom service = serviceFactory.getService(authUuid);
-//        Course classroom = service
-//                .courses()
-//                .get(externalId)
-//                .execute();
-//
-//        return SchoolClassViewDTO
-//                .builder()
-//                .id(null)
-//                .externalId(classroom.getId())
-//                .name(classroom.getName())
-//                .students(new LinkedList<StudentMembershipDTO>(classroomStudentsService.getStudentsFromClass(classroom.getId(), authUuid), classroom.getCourseState().equalsIgnoreCase("ACTIVE")))
-//                .isDone(false)
-//                .isFromLms(true)
-//    }
-
 }
