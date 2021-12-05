@@ -43,11 +43,4 @@ public class ExternalCoursesController {
         return this.externalCoursesService.getCoursesFromTeacher(authUuid);
     }
 
-//    @IsTeacher
-//    @GetMapping("/{externalId}")
-//    public ResponseEntity<?> getExternalClassById(@PathVariable String externalId, Authentication authentication) throws IOException {
-//        String authUuid = (String) authentication.getPrincipal();
-//        return ResponseEntity.ok(this.externalCoursesService.getExternalClassById(externalId, authUuid));
-//    }
-
 }
