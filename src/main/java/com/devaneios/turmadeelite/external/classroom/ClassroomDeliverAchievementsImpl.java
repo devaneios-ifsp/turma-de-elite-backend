@@ -1,22 +1,24 @@
 package com.devaneios.turmadeelite.external.classroom;
 
 import com.devaneios.turmadeelite.entities.Achievement;
+import com.devaneios.turmadeelite.entities.ExternalClassConfig;
 import com.devaneios.turmadeelite.external.ExternalDeliverAchievements;
 import com.devaneios.turmadeelite.external.classroom.activities.ClassroomActivities;
 import com.devaneios.turmadeelite.external.classroom.courses.ClassroomCoursesService;
 import com.devaneios.turmadeelite.external.classroom.students.ClassroomStudents;
 import com.devaneios.turmadeelite.external.domain.ExternalStudentGrade;
 import com.devaneios.turmadeelite.repositories.AchievementRepository;
+import com.devaneios.turmadeelite.repositories.ExternalClassConfigRepository;
 import com.devaneios.turmadeelite.repositories.StudentRepository;
 import com.devaneios.turmadeelite.repositories.UserRepository;
 import com.google.api.services.classroom.Classroom;
-import com.google.api.services.classroom.model.Course;
 import com.google.api.services.classroom.model.StudentSubmission;
 import com.google.api.services.classroom.model.UserProfile;
 import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -34,8 +36,10 @@ public class ClassroomDeliverAchievementsImpl implements ExternalDeliverAchievem
     private final ClassroomStudents classroomStudents;
     private final UserRepository userRepository;
     private final StudentRepository studentRepository;
+    private final ExternalClassConfigRepository classConfigRepository;
 
     @Override
+    @Transactional
     public void deliverAchievementsToStudentsInCourse(String externalAuthUuid,String courseId) throws IOException {
         Classroom service = classroomServiceFactory.getService(externalAuthUuid);
 
@@ -45,11 +49,18 @@ public class ClassroomDeliverAchievementsImpl implements ExternalDeliverAchievem
             String schoolClassId = achievement.getExternalSchoolClassId();
 
             if(activityId != null){
-
-            }else{
+                this.giveActivityAchievementForEligible(externalAuthUuid,achievement,courseId,activityId);
+            }else if (schoolClassId != null){
                 this.giveClassAchievementForEligible(achievement,externalAuthUuid,schoolClassId);
             }
         }
+
+        ExternalClassConfig externalClassConfig = this.classConfigRepository
+                .findByExternalClassId(courseId)
+                .orElseGet(ExternalClassConfig::new);
+        externalClassConfig.setIsClosed(true);
+        externalClassConfig.setExternalClassId(courseId);
+        this.classConfigRepository.save(externalClassConfig);
     }
 
     private void giveClassAchievementForEligible(Achievement achievement,String authUuid, String schoolClassId) throws IOException {

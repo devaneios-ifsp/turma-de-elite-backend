@@ -37,4 +37,15 @@ public class SchoolUserViewDTO {
         this.isActive = teacher.getCredentials().getIsActive();
         this.isFromLms = false;
     }
+
+    public static SchoolUserViewDTO fromClassroom(com.google.api.services.classroom.model.Teacher classroomTeacher){
+        return SchoolUserViewDTO
+                .builder()
+                .externalId(classroomTeacher.getUserId())
+                .name(classroomTeacher.getProfile().getName().getFullName())
+                .email(classroomTeacher.getProfile().getEmailAddress())
+                .isActive(true)
+                .isFromLms(true)
+                .build();
+    }
 }

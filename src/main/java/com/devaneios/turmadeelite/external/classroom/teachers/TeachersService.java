@@ -10,9 +10,11 @@ import com.google.api.client.googleapis.json.GoogleJsonError;
 import com.google.api.client.googleapis.json.GoogleJsonResponseException;
 import com.google.api.services.classroom.Classroom;
 import com.google.api.services.classroom.model.ListTeachersResponse;
+import com.google.api.services.classroom.model.Teacher;
 import com.google.api.services.classroom.model.UserProfile;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import java.io.IOException;
 import java.util.LinkedList;

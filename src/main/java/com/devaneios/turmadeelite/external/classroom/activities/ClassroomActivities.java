@@ -71,7 +71,7 @@ public class ClassroomActivities {
                     .collect(Collectors.groupingBy(StudentSubmission::getUserId));
             studentSubmissions.forEach((studentId, submissions)->{
                 submissions.forEach(submission -> {
-                    Double gradePercentage = submission.getAssignedGrade() / maxPoints;
+                    Double gradePercentage = (submission.getAssignedGrade() / maxPoints) * 100;
                     studentSubmissionsMap.compute(studentId,(studentKey, studentGrades) -> {
                         if(studentGrades == null){
                             LinkedList<Double> grades = new LinkedList<>();
