@@ -7,7 +7,6 @@ import com.devaneios.turmadeelite.external.classroom.ClassroomServiceFactory;
 import com.devaneios.turmadeelite.external.classroom.courses.CoursesService;
 import com.devaneios.turmadeelite.external.exceptions.ExternalServiceAuthenticationException;
 import com.devaneios.turmadeelite.external.activities.ExternalActivitiesService;
-import com.devaneios.turmadeelite.utils.DateConverter;
 import com.google.api.client.googleapis.json.GoogleJsonError;
 import com.google.api.client.googleapis.json.GoogleJsonResponseException;
 import com.google.api.services.classroom.Classroom;
