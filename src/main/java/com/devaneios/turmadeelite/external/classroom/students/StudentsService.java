@@ -5,7 +5,7 @@ import com.devaneios.turmadeelite.dto.SchoolUserViewDTO;
 import com.devaneios.turmadeelite.dto.StudentMembershipDTO;
 import com.devaneios.turmadeelite.dto.StudentViewDTO;
 import com.devaneios.turmadeelite.external.classroom.ClassroomServiceFactory;
-import com.devaneios.turmadeelite.external.classroom.courses.CoursesService;
+import com.devaneios.turmadeelite.external.courses.ExternalCoursesService;
 import com.devaneios.turmadeelite.external.exceptions.ExternalServiceAuthenticationException;
 import com.devaneios.turmadeelite.external.students.ExternalStudentsService;
 import com.google.api.client.googleapis.json.GoogleJsonError;
@@ -29,7 +29,7 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 public class StudentsService implements ExternalStudentsService {
 
-    private final CoursesService coursesService;
+    private final ExternalCoursesService coursesService;
     private ClassroomServiceFactory serviceFactory;
     @Override
     public List<SchoolUserViewDTO> getAllStudents(String authUuid) throws IOException {

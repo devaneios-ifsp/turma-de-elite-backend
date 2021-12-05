@@ -151,7 +151,7 @@ public class ActivityDeliveryServiceImpl implements ActivityDeliveryService {
                 .findByAuthUuid(teacherAuthUuid)
                 .ifPresent( teacherRequesting -> {
                     Teacher teacherByActivity = this.activityRepository.findTeacherByActivity(activityId);
-                    if(teacherRequesting.getId() != teacherByActivity.getId()){
+                    if(!Objects.equals(teacherRequesting.getId(), teacherByActivity.getId())){
                         throw new ResponseStatusException(HttpStatus.FORBIDDEN);
                     }
                 });
@@ -199,7 +199,7 @@ public class ActivityDeliveryServiceImpl implements ActivityDeliveryService {
 
         Teacher teacherThatGiveTheActivity = this.activityRepository.findTeacherByActivity(delivery.getActivity().getId());
 
-        if(teacherRequesting.getId() != teacherThatGiveTheActivity.getId()){
+        if(!Objects.equals(teacherRequesting.getId(), teacherThatGiveTheActivity.getId())){
             throw new ResponseStatusException(HttpStatus.FORBIDDEN);
         }
 

@@ -3,16 +3,18 @@ package com.devaneios.turmadeelite.external.classroom.teachers;
 import com.devaneios.turmadeelite.dto.SchoolClassViewDTO;
 import com.devaneios.turmadeelite.dto.SchoolUserViewDTO;
 import com.devaneios.turmadeelite.external.classroom.ClassroomServiceFactory;
-import com.devaneios.turmadeelite.external.classroom.courses.CoursesService;
+import com.devaneios.turmadeelite.external.courses.ExternalCoursesService;
 import com.devaneios.turmadeelite.external.exceptions.ExternalServiceAuthenticationException;
 import com.devaneios.turmadeelite.external.teachers.ExternalTeachersService;
 import com.google.api.client.googleapis.json.GoogleJsonError;
 import com.google.api.client.googleapis.json.GoogleJsonResponseException;
 import com.google.api.services.classroom.Classroom;
 import com.google.api.services.classroom.model.ListTeachersResponse;
+import com.google.api.services.classroom.model.Teacher;
 import com.google.api.services.classroom.model.UserProfile;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import java.io.IOException;
 import java.util.LinkedList;
@@ -23,7 +25,7 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 public class TeachersService implements ExternalTeachersService {
 
-    private final CoursesService coursesService;
+    private final ExternalCoursesService coursesService;
     private ClassroomServiceFactory classroomServiceFactory;
 
     @Override

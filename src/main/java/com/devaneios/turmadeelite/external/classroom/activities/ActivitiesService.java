@@ -4,7 +4,7 @@ import com.devaneios.turmadeelite.dto.ActivityViewDTO;
 import com.devaneios.turmadeelite.dto.SchoolClassViewDTO;
 import com.devaneios.turmadeelite.dto.StudentActivitiesDTO;
 import com.devaneios.turmadeelite.external.classroom.ClassroomServiceFactory;
-import com.devaneios.turmadeelite.external.classroom.courses.CoursesService;
+import com.devaneios.turmadeelite.external.classroom.courses.ClassroomCoursesService;
 import com.devaneios.turmadeelite.external.exceptions.ExternalServiceAuthenticationException;
 import com.devaneios.turmadeelite.external.activities.ExternalActivitiesService;
 import com.google.api.client.googleapis.json.GoogleJsonError;
@@ -25,7 +25,7 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 public class ActivitiesService implements ExternalActivitiesService {
 
-    private final CoursesService coursesService;
+    private final ClassroomCoursesService coursesService;
     private ClassroomServiceFactory classroomServiceFactory;
 
     @Override

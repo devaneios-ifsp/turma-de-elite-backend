@@ -70,20 +70,19 @@ public class AchievementServiceImpl implements AchievementService {
         Student student = this.studentRepository
                 .findByAuthUuid(studentAuthUuid)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.FORBIDDEN));
-
-        List<SchoolClass> studentClasses = this.classRepository.findAllNotIsDoneByStudentId(student.getId());
-        studentClasses.addAll(this.classRepository.findAllByStudentIdAndIsDone(student.getId()));
-        List<Achievement> allAchievements = new LinkedList<>();
-        for(SchoolClass schoolClass: studentClasses){
-            List<Achievement> achievementsByClass = this.achievementRepository.findAllByClassId(schoolClass.getId());
-            allAchievements.addAll(achievementsByClass);
-            List<Activity> activities = this.activityRepository.findAllDoableActivitiesByClassId(schoolClass.getId());
-            for(Activity activity: activities){
-                List<Achievement> achievements = this.achievementRepository.fidAllByActivityId(activity.getId());
-                allAchievements.addAll(achievements);
-            }
-        }
-
+//        List<SchoolClass> studentClasses = this.classRepository.findAllNotIsDoneByStudentId(student.getId());
+//        studentClasses.addAll(this.classRepository.findAllByStudentIdAndIsDone(student.getId()));
+//        List<Achievement> allAchievements = new LinkedList<>();
+//        for(SchoolClass schoolClass: studentClasses){
+//            List<Achievement> achievementsByClass = this.achievementRepository.findAllByClassId(schoolClass.getId());
+//            allAchievements.addAll(achievementsByClass);
+//            List<Activity> activities = this.activityRepository.findAllDoableActivitiesByClassId(schoolClass.getId());
+//            for(Activity activity: activities){
+//                List<Achievement> achievements = this.achievementRepository.fidAllByActivityId(activity.getId());
+//                allAchievements.addAll(achievements);
+//            }
+//        }
+        List<Achievement> allAchievements = this.achievementRepository.findAll();
         Set<Achievement> allAcquiredByStudentId = this.achievementRepository.findAllAcquiredByStudentId(student.getId());
 
         return allAchievements

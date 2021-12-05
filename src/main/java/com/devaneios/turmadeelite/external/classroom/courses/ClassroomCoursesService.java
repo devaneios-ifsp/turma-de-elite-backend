@@ -1,16 +1,20 @@
 package com.devaneios.turmadeelite.external.classroom.courses;
 
-import com.devaneios.turmadeelite.dto.SchoolClassViewDTO;
+import com.devaneios.turmadeelite.dto.*;
+import com.devaneios.turmadeelite.entities.ExternalClassConfig;
 import com.devaneios.turmadeelite.external.classroom.ClassroomServiceFactory;
+import com.devaneios.turmadeelite.external.classroom.students.ClassroomStudents;
 import com.devaneios.turmadeelite.external.courses.ExternalCoursesService;
 import com.devaneios.turmadeelite.external.exceptions.ExternalServiceAuthenticationException;
+import com.devaneios.turmadeelite.external.teachers.ExternalTeachersService;
+import com.devaneios.turmadeelite.repositories.ExternalClassConfigRepository;
 import com.google.api.client.googleapis.json.GoogleJsonError;
 import com.google.api.client.googleapis.json.GoogleJsonResponseException;
 import com.google.api.services.classroom.Classroom;
-import com.google.api.services.classroom.model.ListCoursesResponse;
-import com.google.api.services.classroom.model.UserProfile;
+import com.google.api.services.classroom.model.*;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import java.io.IOException;
 import java.util.LinkedList;
@@ -19,9 +23,11 @@ import java.util.stream.Collectors;
 
 @AllArgsConstructor
 @Service
-public class CoursesService implements ExternalCoursesService {
+public class ClassroomCoursesService implements ExternalCoursesService {
 
     private ClassroomServiceFactory serviceFactory;
+    private ClassroomStudents classroomStudents;
+    private ExternalClassConfigRepository classConfigRepository;
 
     public List<SchoolClassViewDTO> getAllCourses(String authUuid) throws IOException {
         try {
@@ -108,4 +114,88 @@ public class CoursesService implements ExternalCoursesService {
 
     }
 
+    @Override
+    public SchoolClassViewDTO findCourseById(String courseId, String authUuid) throws IOException {
+        Classroom service = this.serviceFactory.getService(authUuid);
+        Course courseResponse = service
+                .courses()
+                .get(courseId)
+                .execute();
+
+        List<Student> students = this.classroomStudents
+                .getStudentsFromCourse(authUuid, courseId);
+
+        List<Teacher> teachers = this.getAllTeacherByCourseId(authUuid,courseId);
+
+        return SchoolClassViewDTO
+                .builder()
+                .externalId(courseResponse.getId())
+                .name(courseResponse.getName())
+                .students(students
+                        .stream()
+                        .map(StudentViewDTO::fromClassroom)
+                        .map(studentViewDTO -> StudentMembershipDTO
+                                .builder()
+                                .student(studentViewDTO)
+                                .isActive(true)
+                                .build())
+                        .collect(Collectors.toList()))
+                .teachers(
+                    teachers
+                            .stream()
+                            .map(SchoolUserViewDTO::fromClassroom)
+                            .map(teacher -> TeacherMembershipDTO
+                                    .builder()
+                                    .teacher(teacher)
+                                    .isActive(true)
+                                    .build())
+                            .collect(Collectors.toList())
+                )
+                .isDone(this.classConfigRepository
+                        .findByExternalClassId(courseId)
+                        .map(ExternalClassConfig::getIsClosed)
+                        .orElse(false))
+                .build();
+    }
+
+    public List<Teacher> getAllTeacherByCourseId(String authUuid, String courseId) throws IOException {
+        Classroom service = this.serviceFactory.getService(authUuid);
+        ListTeachersResponse teachersResponse = service
+                .courses()
+                .teachers()
+                .list(courseId)
+                .execute();
+        List<ListTeachersResponse> responseList = new LinkedList<>();
+        responseList.add(teachersResponse);
+        String nextPageToken = teachersResponse.getNextPageToken();
+        while (StringUtils.hasText(nextPageToken)){
+            ListTeachersResponse nextPage = service
+                    .courses()
+                    .teachers()
+                    .list(courseId)
+                    .setPageToken(nextPageToken)
+                    .execute();
+            if(nextPage==null){
+                break;
+            }else{
+                responseList.add(nextPage);
+                nextPageToken = nextPage.getNextPageToken();
+            }
+        }
+        return responseList
+                .stream()
+                .map(ListTeachersResponse::getTeachers)
+                .flatMap(List::stream)
+                .collect(Collectors.toList());
+    }
+
+    /*
+    * CREATE TABLE user_log_access(
+    *   timestamp,
+    *   user_id
+    * );
+    *
+    * SELECT SUM(user_id),timestamp FROM user_log_access WHERE timestamp BETWEEN now() and now() - 90 dias group by timestamp,user_id
+    *
+    * */
 }
