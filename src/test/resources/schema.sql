@@ -97,6 +97,8 @@ CREATE TABLE achievement(
     class_id BIGINT,
     activity_id BIGINT,
     teacher_id BIGINT,
+    external_class_id,
+    external_activity_id,
     FOREIGN KEY(activity_id) REFERENCES activity(id),
     FOREIGN KEY (teacher_id) REFERENCES teacher(teacher_id),
     FOREIGN KEY (class_id) REFERENCES class(id)
