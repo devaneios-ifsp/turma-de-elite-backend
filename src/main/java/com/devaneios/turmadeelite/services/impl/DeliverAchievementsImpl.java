@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
-public class InternalDeliverAchievementsImpl implements DeliverAchievements {
+public class DeliverAchievementsImpl implements DeliverAchievements {
 
     private final AchievementRepository achievementRepository;
     private final ActivityRepository activityRepository;
@@ -37,7 +37,6 @@ public class InternalDeliverAchievementsImpl implements DeliverAchievements {
                 List<ActivityDelivery> deliveriesForActivity = this.deliveryRepository.findStudentDeliveriesForActivityWithAttachment(activity.getId());
                 giveActivityAchievementForEligible(achievement,deliveriesForActivity);
             }else{
-//                Optional <Long> id = Optional.ofNullable(schoolClass.getId());
                 this.giveClassAchievementForEligible(achievement,schoolClass.getId());
             }
         }

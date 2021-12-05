@@ -2,6 +2,7 @@ package com.devaneios.turmadeelite.external.courses;
 
 import com.devaneios.turmadeelite.dto.SchoolClassViewDTO;
 import com.devaneios.turmadeelite.security.guards.IsManager;
+import com.devaneios.turmadeelite.security.guards.IsTeacher;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -32,6 +33,14 @@ public class ExternalCoursesController {
     @GetMapping
     public List<SchoolClassViewDTO> listAllCourses(Authentication authentication) throws IOException {
             String authUuid = (String) authentication.getPrincipal();
-            return this.externalCoursesService.getAllConvertedCourses(authUuid);
+            return this.externalCoursesService.getAllCourses(authUuid);
     }
+
+    @IsTeacher
+    @GetMapping("/authenticated-teacher")
+    public List<SchoolClassViewDTO> listClassesFromTeacher(Authentication authentication) throws IOException {
+        String authUuid = (String) authentication.getPrincipal();
+        return this.externalCoursesService.getCoursesFromTeacher(authUuid);
+    }
+
 }

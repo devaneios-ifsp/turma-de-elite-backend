@@ -9,10 +9,10 @@ import com.google.api.client.googleapis.json.GoogleJsonResponseException;
 import com.google.api.services.classroom.Classroom;
 import com.google.api.services.classroom.model.Course;
 import com.google.api.services.classroom.model.ListCoursesResponse;
+import com.google.api.services.classroom.model.UserProfile;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import javax.persistence.EntityManager;
 import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
@@ -22,14 +22,30 @@ import java.util.stream.Collectors;
 @Service
 public class ClassroomCoursesService implements ExternalCoursesService {
 
-    private  final EntityManager entityManager;
-
     private ClassroomServiceFactory serviceFactory;
 
-    public List<SchoolClassViewDTO> getAllConvertedCourses(String authUuid) throws IOException {
+    public List<SchoolClassViewDTO> getAllCourses(String authUuid) throws IOException {
         try {
-            return this.getAllCourses(authUuid)
+            Classroom service = this.serviceFactory.getService(authUuid);
+            List<ListCoursesResponse> allClassesResponse = new LinkedList<>();
+            ListCoursesResponse coursesResponse = service
+                    .courses()
+                    .list()
+                    .execute();
+            String nextPageToken = coursesResponse.getNextPageToken();
+
+            if (coursesResponse != null) allClassesResponse.add(coursesResponse);
+
+            while (nextPageToken != null && !nextPageToken.equals("")) {
+                ListCoursesResponse nextPageResponse = service.courses().list().setPageToken(nextPageToken).execute();
+                allClassesResponse.add(nextPageResponse);
+                nextPageToken = nextPageResponse.getNextPageToken();
+            }
+
+            return allClassesResponse
                     .stream()
+                    .map(ListCoursesResponse::getCourses)
+                    .flatMap(List::stream)
                     .map(classroomClass ->
                             SchoolClassViewDTO
                                     .builder()
@@ -51,27 +67,46 @@ public class ClassroomCoursesService implements ExternalCoursesService {
         }
     }
 
-    public List<Course> getAllCourses(String authUuid) throws IOException {
-        List<ListCoursesResponse> allClassesResponse = new LinkedList<>();
+    @Override
+    public List<SchoolClassViewDTO> getCoursesFromTeacher(String authUuid) throws IOException {
+
         Classroom service = this.serviceFactory.getService(authUuid);
-        ListCoursesResponse coursesResponse = service
+        List<ListCoursesResponse> allTeacherClassesResponse = new LinkedList<>();
+        UserProfile authenticatedUser = service.userProfiles().get("me").execute();
+        String externalId = authenticatedUser.getId();
+
+        ListCoursesResponse teacherCoursesResponse = service
                 .courses()
                 .list()
+                .setTeacherId(externalId)
                 .execute();
-        String nextPageToken = coursesResponse.getNextPageToken();
+        String nextPageToken = teacherCoursesResponse.getNextPageToken();
 
-        if (coursesResponse != null) allClassesResponse.add(coursesResponse);
+        if (allTeacherClassesResponse != null) allTeacherClassesResponse.add(teacherCoursesResponse);
 
         while (nextPageToken != null && !nextPageToken.equals("")) {
             ListCoursesResponse nextPageResponse = service.courses().list().setPageToken(nextPageToken).execute();
-            allClassesResponse.add(nextPageResponse);
+            allTeacherClassesResponse.add(nextPageResponse);
             nextPageToken = nextPageResponse.getNextPageToken();
         }
-        return allClassesResponse
+
+        return allTeacherClassesResponse
                 .stream()
                 .map(ListCoursesResponse::getCourses)
                 .flatMap(List::stream)
+                .map(classroomTeacherClass ->
+                        SchoolClassViewDTO
+                                .builder()
+                                .id(null)
+                                .externalId(classroomTeacherClass.getId())
+                                .name(classroomTeacherClass.getName())
+                                .isActive(classroomTeacherClass.getCourseState().equals("ACTIVE"))
+                                .isDone(false)
+                                .isFromLms(true)
+                                .build()
+                )
                 .collect(Collectors.toList());
+
     }
 
     /*

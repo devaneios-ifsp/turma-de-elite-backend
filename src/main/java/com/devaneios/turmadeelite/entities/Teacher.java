@@ -19,14 +19,6 @@ public class Teacher {
     @Column(name = "teacher_id")
     private Long id;
 
-//    @Column(unique = true)
-//    @Size(min = 11, max = 11, message = "O CPF deve possuir 11 dígitos")
-//    private String cpf;
-//
-//    @Column(unique = true)
-//    @Size(min = 11, max = 11, message = "O número telefone deve possuir 11 dígitos.")
-//    private String phone;
-
     @OneToOne
     @MapsId
     @JoinColumn(name = "teacher_id")

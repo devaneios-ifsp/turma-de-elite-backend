@@ -10,11 +10,16 @@ import lombok.*;
 @Setter
 @Builder
 public class SchoolUserViewDTO {
+
     public Long id;
+    public String externalId;
     public String email;
     public String name;
     public SchoolViewDTO school;
     public Boolean isActive;
+
+    @Builder.Default
+    private Boolean isFromLms = false;
 
     public SchoolUserViewDTO(Manager manager){
         this.id = manager.getId();
@@ -30,5 +35,6 @@ public class SchoolUserViewDTO {
         this.name = teacher.getCredentials().getName();
         this.school = teacher.getSchool() == null ? null : new SchoolViewDTO(teacher.getSchool());
         this.isActive = teacher.getCredentials().getIsActive();
+        this.isFromLms = false;
     }
 }
