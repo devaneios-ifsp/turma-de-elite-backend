@@ -8,10 +8,10 @@ import com.google.api.client.googleapis.json.GoogleJsonError;
 import com.google.api.client.googleapis.json.GoogleJsonResponseException;
 import com.google.api.services.classroom.Classroom;
 import com.google.api.services.classroom.model.ListCoursesResponse;
+import com.google.api.services.classroom.model.UserProfile;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import javax.persistence.EntityManager;
 import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
@@ -20,8 +20,6 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 @Service
 public class CoursesService implements ExternalCoursesService {
-
-    private  final EntityManager entityManager;
 
     private ClassroomServiceFactory serviceFactory;
 
@@ -68,13 +66,46 @@ public class CoursesService implements ExternalCoursesService {
         }
     }
 
-    /*
-    * CREATE TABLE user_log_access(
-    *   timestamp,
-    *   user_id
-    * );
-    *
-    * SELECT SUM(user_id),timestamp FROM user_log_access WHERE timestamp BETWEEN now() and now() - 90 dias group by timestamp,user_id
-    *
-    * */
+    @Override
+    public List<SchoolClassViewDTO> getCoursesFromTeacher(String authUuid) throws IOException {
+
+        Classroom service = this.serviceFactory.getService(authUuid);
+        List<ListCoursesResponse> allTeacherClassesResponse = new LinkedList<>();
+        UserProfile authenticatedUser = service.userProfiles().get("me").execute();
+        String externalId = authenticatedUser.getId();
+
+        ListCoursesResponse teacherCoursesResponse = service
+                .courses()
+                .list()
+                .setTeacherId(externalId)
+                .execute();
+        String nextPageToken = teacherCoursesResponse.getNextPageToken();
+
+        if (allTeacherClassesResponse != null) allTeacherClassesResponse.add(teacherCoursesResponse);
+
+        while (nextPageToken != null && !nextPageToken.equals("")) {
+            ListCoursesResponse nextPageResponse = service.courses().list().setPageToken(nextPageToken).execute();
+            allTeacherClassesResponse.add(nextPageResponse);
+            nextPageToken = nextPageResponse.getNextPageToken();
+        }
+
+        return allTeacherClassesResponse
+                .stream()
+                .map(ListCoursesResponse::getCourses)
+                .flatMap(List::stream)
+                .map(classroomTeacherClass ->
+                        SchoolClassViewDTO
+                                .builder()
+                                .id(null)
+                                .externalId(classroomTeacherClass.getId())
+                                .name(classroomTeacherClass.getName())
+                                .isActive(classroomTeacherClass.getCourseState().equals("ACTIVE"))
+                                .isDone(false)
+                                .isFromLms(true)
+                                .build()
+                )
+                .collect(Collectors.toList());
+
+    }
+
 }

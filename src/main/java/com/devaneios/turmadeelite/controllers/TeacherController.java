@@ -2,7 +2,6 @@ package com.devaneios.turmadeelite.controllers;
 
 import com.devaneios.turmadeelite.dto.*;
 import com.devaneios.turmadeelite.entities.Teacher;
-import com.devaneios.turmadeelite.security.guards.IsAdmin;
 import com.devaneios.turmadeelite.security.guards.IsManager;
 import com.devaneios.turmadeelite.security.guards.IsTeacher;
 import com.devaneios.turmadeelite.services.TeacherService;

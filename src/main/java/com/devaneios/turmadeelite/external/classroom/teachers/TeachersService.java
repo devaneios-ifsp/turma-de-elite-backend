@@ -10,6 +10,7 @@ import com.google.api.client.googleapis.json.GoogleJsonError;
 import com.google.api.client.googleapis.json.GoogleJsonResponseException;
 import com.google.api.services.classroom.Classroom;
 import com.google.api.services.classroom.model.ListTeachersResponse;
+import com.google.api.services.classroom.model.UserProfile;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -67,5 +68,21 @@ public class TeachersService implements ExternalTeachersService {
                 throw e;
             }
         }
+    }
+
+    @Override
+    public SchoolUserViewDTO getTeacherByExternalId(String externalId, String authUuid) throws IOException {
+        Classroom service = this.classroomServiceFactory.getService(authUuid);
+        UserProfile teacher = service.userProfiles().get(externalId).execute();
+
+        return SchoolUserViewDTO.
+                builder()
+                .externalId(teacher.getId())
+                .email(teacher.getEmailAddress())
+                .name(teacher.getName().getFullName())
+                .school(null)
+                .isActive(true)
+                .isFromLms(true)
+                .build();
     }
 }

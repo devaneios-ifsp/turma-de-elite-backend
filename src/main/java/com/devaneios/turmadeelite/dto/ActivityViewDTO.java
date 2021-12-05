@@ -2,7 +2,6 @@ package com.devaneios.turmadeelite.dto;
 
 import com.devaneios.turmadeelite.entities.Activity;
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.core.JsonToken;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -16,6 +15,9 @@ import java.util.stream.Collectors;
 @Builder
 public class ActivityViewDTO {
     public Long id;
+
+    private String externalId;
+
     private String name;
 
     private String description;

@@ -13,7 +13,7 @@ import java.util.Optional;
 
 @Repository
 public interface UserRepository extends PagingAndSortingRepository<UserCredentials,Long> {
-    public Optional<UserCredentials> findUserByEmailAndFirstAccessToken(String email, String firstAccessToken);
+    Optional<UserCredentials> findUserByEmailAndFirstAccessToken(String email, String firstAccessToken);
 
     Optional<UserCredentials> findByFirstAccessToken(String firstAccessToken);
 

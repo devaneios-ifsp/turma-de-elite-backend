@@ -49,8 +49,4 @@ public class UserCredentials {
     @PrimaryKeyJoinColumn
     private Teacher teacher;
 
-
-//    @OneToOne(mappedBy = "credentials",cascade = CascadeType.ALL)
-//    @PrimaryKeyJoinColumn
-//    private Student student;
 }

@@ -38,9 +38,7 @@ public class DeliverAchievementsImpl implements DeliverAchievements {
                 List<ActivityDelivery> deliveriesForActivity = this.deliveryRepository.findStudentDeliveriesForActivityWithAttachment(activity.getId());
                 giveActivityAchievementForEligible(achievement,deliveriesForActivity);
             }else{
-                //Optional <Long> id = Optional.ofNullable(schoolClass.getId());
-                System.out.println("entro no else");
-                //this.giveClassAchievementForEligible(achievement,schoolClass.getId());
+                this.giveClassAchievementForEligible(achievement,schoolClass.getId());
             }
         }
     }
