@@ -6,6 +6,7 @@ import com.devaneios.turmadeelite.entities.School;
 import com.devaneios.turmadeelite.entities.UserCredentials;
 import com.devaneios.turmadeelite.events.UserCreated;
 import com.devaneios.turmadeelite.exceptions.EmailAlreadyRegistered;
+import com.devaneios.turmadeelite.repositories.LogStatusUserRepository;
 import com.devaneios.turmadeelite.repositories.ManagerRepository;
 import com.devaneios.turmadeelite.repositories.SchoolRepository;
 import com.devaneios.turmadeelite.repositories.UserRepository;
@@ -18,7 +19,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
-import javax.transaction.Transactional;
+import org.springframework.transaction.annotation.Transactional;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -30,6 +32,7 @@ public class ManagerServiceImpl implements ManagerService {
     private final ManagerRepository managerRepository;
     private final SchoolRepository schoolRepository;
     private final UserRepository userRepository;
+    private final LogStatusUserRepository logStatusUserRepository;
     private final ApplicationEventPublisher eventPublisher;
 
     @Transactional
@@ -48,6 +51,7 @@ public class ManagerServiceImpl implements ManagerService {
                 .name(name)
                 .isActive(isActive)
                 .role(Role.MANAGER)
+                .accessionDate(new Date())
                 .build();
 
         UserCredentials userSaved = userRepository.save(userCredentials);
@@ -56,6 +60,8 @@ public class ManagerServiceImpl implements ManagerService {
         this.managerRepository.save(manager);
         this.schoolRepository.save(school);
         eventPublisher.publishEvent(new UserCreated(this,userSaved,language));
+
+        logStatusUserRepository.insertLogStatusUser(userCredentials.getId(), !userCredentials.getIsActive());
     }
 
     @Override
@@ -71,8 +77,8 @@ public class ManagerServiceImpl implements ManagerService {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
     }
 
-    @Transactional
     @Override
+    @Transactional
     public void updateManagerUser(String email, String name, String language, Long schoolId, Boolean isActive,Long managerId) throws EmailAlreadyRegistered {
         Optional<UserCredentials> userCredentialsOptional = this.userRepository.findByEmail(email);
 
@@ -100,6 +106,8 @@ public class ManagerServiceImpl implements ManagerService {
 
         this.managerRepository.save(manager);
         this.schoolRepository.save(school);
+
+        logStatusUserRepository.insertLogStatusUser(userCredentials.getId(), !userCredentials.getIsActive());
     }
 
     @Override

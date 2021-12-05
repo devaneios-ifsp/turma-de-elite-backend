@@ -1,7 +1,9 @@
 package com.devaneios.turmadeelite.controllers;
 
-import com.devaneios.turmadeelite.dto.AdminViewDTO;
+import com.devaneios.turmadeelite.dto.StudentViewDTO;
+import com.devaneios.turmadeelite.dto.UserActiveInactiveDTO;
 import com.devaneios.turmadeelite.dto.UserCredentialsCreateDTO;
+import com.devaneios.turmadeelite.dto.AdminViewDTO;
 import com.devaneios.turmadeelite.entities.UserCredentials;
 import com.devaneios.turmadeelite.security.guards.IsAdmin;
 import com.devaneios.turmadeelite.services.UserService;
@@ -15,6 +17,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -98,4 +101,25 @@ public class AdminController {
         this.userService.updateAdminUser(userId,admin);
         return new ResponseEntity<>(HttpStatus.OK);
     }
+
+    @Operation(summary = "Visualizar uma lista de usuários ativos e inativos")
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Usuários ativos e inativos encontrados com sucesso"
+            ),
+    })
+    @IsAdmin
+    @GetMapping("/dash")
+    ResponseEntity<List<UserActiveInactiveDTO>> getActiveInactiveUsers(){
+        return ResponseEntity.ok(this.userService.getInactivesActivesUsers());
+    }
+
+    @IsAdmin
+    @GetMapping("/kpi")
+    ResponseEntity<List<Integer>> getUsersByAccessionDate(){
+        List<Integer> usersByMonthAndYear = this.userService.getUsersByAccessionDate();
+        return ResponseEntity.ok(usersByMonthAndYear);
+    }
+
 }

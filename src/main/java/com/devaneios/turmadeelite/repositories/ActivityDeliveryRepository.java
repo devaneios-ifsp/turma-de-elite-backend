@@ -1,5 +1,6 @@
 package com.devaneios.turmadeelite.repositories;
 
+import com.devaneios.turmadeelite.dto.StudentPunctuationDTO;
 import com.devaneios.turmadeelite.entities.ActivityDelivery;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -28,8 +29,9 @@ public interface ActivityDeliveryRepository extends CrudRepository<ActivityDeliv
     @Query(value = "UPDATE activity_delivery SET grade_received=:gradePercentage WHERE id=:deliveryId ;",nativeQuery = true)
     void giveGradeToDeliveryId(Long deliveryId, Float gradePercentage);
 
-//    List<ActivityDelivery> findAll();
-//
     @Query("FROM ActivityDelivery a JOIN a.activity ac JOIN ac.classes c JOIN a.student st WHERE c.id=:classId AND st.id=:studentId")
     List<ActivityDelivery> findByStudentAndClass(Long studentId, Long classId);
+
+    @Query(value = "SELECT SUM(ad.grade_received) FROM activity_delivery ad JOIN activity a ON ad.activity_id = a.id WHERE ad.student_delivery_id = :studentId AND a.teacher_id = :teacherId", nativeQuery = true)
+    Double getPunctuationByStudent(Long studentId, Long teacherId);
 }

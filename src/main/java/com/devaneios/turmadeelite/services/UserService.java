@@ -1,5 +1,6 @@
 package com.devaneios.turmadeelite.services;
 
+import com.devaneios.turmadeelite.dto.UserActiveInactiveDTO;
 import com.devaneios.turmadeelite.dto.UserCredentialsCreateDTO;
 import com.devaneios.turmadeelite.entities.UserCredentials;
 import com.devaneios.turmadeelite.exceptions.EmailAlreadyRegistered;
@@ -13,4 +14,6 @@ public interface UserService {
     UserCredentials findAdminById(Long userId);
     void updateAdminUser(Long userId, UserCredentialsCreateDTO admin);
     List<UserCredentials> getUsersByNameSimilarity(String name);
+    List<UserActiveInactiveDTO> getInactivesActivesUsers();
+    List<Integer> getUsersByAccessionDate();
 }

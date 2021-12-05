@@ -28,8 +28,8 @@ public class ClassServiceImpl implements ClassService {
     private final TeacherRepository teacherRepository;
     private final DeliverAchievements deliverAchievements;
 
-    @Transactional
     @Override
+    @Transactional
     public void createClass(ClassCreateDTO classCreateDTO, String managerAuthUuid) {
         School school = schoolService.findSchoolByManagerAuthUuid(managerAuthUuid);
         SchoolClass schoolClass = SchoolClass
@@ -111,8 +111,8 @@ public class ClassServiceImpl implements ClassService {
         return this.classRepository.findAllSchoolClassesByTeacher(teacher.getId(),pageRequest);
     }
 
-    @Transactional
     @Override
+    @Transactional
     public void addTeacherToClass(String managerAuthUuid, Long classId, Long teacherId) {
         School school = schoolService.findSchoolByManagerAuthUuid(managerAuthUuid);
         if(school == null) throw new ResponseStatusException(HttpStatus.NOT_FOUND);
