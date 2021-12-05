@@ -83,4 +83,13 @@ public interface SchoolClassRepository extends CrudRepository<SchoolClass,Long> 
     @Modifying
     @Query(value = "UPDATE class SET is_done = true WHERE id=:id ;",nativeQuery = true)
     void closeClass(Long id);
+
+    @Query(value = "SELECT COUNT(*) FROM class_activities WHERE class_id = :class_id", nativeQuery = true)
+    int countActivityByClass(Long class_id);
+
+    @Query(value = "SELECT COUNT(*) FROM class_activities ca JOIN activity_delivery ad ON ca.activity_id = ad.activity_id WHERE class_id = :class_id", nativeQuery = true)
+    int countDeliveryByClass(Long class_id);
+
+    @Query("SELECT s FROM SchoolClass s WHERE s.id=:classId")
+    SchoolClass findSchoolClassByClassId(Long classId);
 }

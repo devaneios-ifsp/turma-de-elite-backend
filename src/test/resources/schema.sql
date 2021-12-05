@@ -9,7 +9,8 @@ CREATE TABLE user_credentials (
     name VARCHAR(255) NOT NULL,
     first_access_token VARCHAR(255) UNIQUE,
     is_active BOOL DEFAULT TRUE,
-    role CHAR(12)
+    role CHAR(12),
+    accession_date TIMESTAMP
 );
 
 CREATE TABLE school (
@@ -142,4 +143,12 @@ CREATE TABLE tier_config(
     bronze_percent FLOAT NOT NULL,
     PRIMARY KEY(class_id),
     FOREIGN KEY(class_id) REFERENCES class(id)
+);
+
+CREATE TABLE log_status_user (
+    id BIGSERIAL PRIMARY KEY,
+    user_id BIGINT NOT NULL,
+    date_action TIMESTAMP NOT NULL,
+    old_is_active BOOLEAN DEFAULT TRUE,
+    FOREIGN KEY(user_id) REFERENCES user_credentials(id)
 );

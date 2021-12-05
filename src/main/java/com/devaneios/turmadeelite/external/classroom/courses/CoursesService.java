@@ -1,18 +1,13 @@
 package com.devaneios.turmadeelite.external.classroom.courses;
 
 import com.devaneios.turmadeelite.dto.SchoolClassViewDTO;
-import com.devaneios.turmadeelite.dto.StudentMembershipDTO;
-import com.devaneios.turmadeelite.dto.StudentViewDTO;
 import com.devaneios.turmadeelite.external.classroom.ClassroomServiceFactory;
-import com.devaneios.turmadeelite.external.classroom.students.StudentsService;
 import com.devaneios.turmadeelite.external.courses.ExternalCoursesService;
 import com.devaneios.turmadeelite.external.exceptions.ExternalServiceAuthenticationException;
 import com.google.api.client.googleapis.json.GoogleJsonError;
 import com.google.api.client.googleapis.json.GoogleJsonResponseException;
 import com.google.api.services.classroom.Classroom;
-import com.google.api.services.classroom.model.Course;
 import com.google.api.services.classroom.model.ListCoursesResponse;
-import com.google.api.services.classroom.model.Student;
 import com.google.api.services.classroom.model.UserProfile;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -27,7 +22,6 @@ import java.util.stream.Collectors;
 public class CoursesService implements ExternalCoursesService {
 
     private ClassroomServiceFactory serviceFactory;
-    // private StudentsService classroomStudentsService;
 
     public List<SchoolClassViewDTO> getAllCourses(String authUuid) throws IOException {
         try {
