@@ -137,7 +137,7 @@ public class StudentController {
             )
     })
     @IsManager
-    @GetMapping("activeInactive")
+    @GetMapping("active-inactive")
     ResponseEntity<List<UserActiveInactiveDTO>> getActiveInactiveStudents(Authentication authentication){
         return ResponseEntity.ok(this.studentService.getInactiveActiveStudents((String)authentication.getPrincipal()));
     }

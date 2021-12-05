@@ -68,13 +68,6 @@ public class CoursesService implements ExternalCoursesService {
         }
     }
 
-    @Override
-    public List<SchoolClassViewDTO> getCoursesFromTeacher(String authUuid) throws IOException {
-//        Classroom service = this.serviceFactory.getService(authUuid);
-//        ListCoursesResponse coursesResponse = service.courses().teachers().get()
-        return null;
-    }
-
     /*
     * CREATE TABLE user_log_access(
     *   timestamp,

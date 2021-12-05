@@ -186,7 +186,7 @@ public class TeacherController {
             )
     })
     @IsManager
-    @GetMapping("activitiesByTeacher")
+    @GetMapping("activities-by-teacher")
     ResponseEntity<List<ActivityByTeacherDTO>> getActivitiesByTeacher(Authentication authentication) throws IOException {
         return ResponseEntity.ok(this.teacherService.getActivitiesByTeacher((String)authentication.getPrincipal()));
     }
