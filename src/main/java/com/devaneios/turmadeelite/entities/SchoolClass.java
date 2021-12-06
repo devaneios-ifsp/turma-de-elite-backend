@@ -40,6 +40,10 @@ public class SchoolClass {
     )
     List<Activity> classActivities;
 
+    @OneToOne(mappedBy = "schoolClass",cascade = CascadeType.ALL)
+    @PrimaryKeyJoinColumn
+    private TierConfig tierConfig;
+
     private Boolean isActive;
 
     private Boolean isDone;

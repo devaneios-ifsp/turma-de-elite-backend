@@ -68,13 +68,13 @@ public interface SchoolClassRepository extends CrudRepository<SchoolClass,Long> 
     @Query("SELECT s FROM SchoolClass s JOIN s.classActivities c WHERE c.id=:activityId")
     List<SchoolClass> findAllSchoolClassesByActivityId(Long activityId);
 
-    @Query("SELECT s FROM SchoolClass s JOIN s.studentsMemberships sm JOIN sm.student st WHERE st.id=:id AND s.isDone=false")
+    @Query("SELECT s FROM SchoolClass s JOIN s.studentsMemberships sm JOIN sm.student st WHERE st.id=:id AND s.isDone=FALSE")
     List<SchoolClass> findAllNotIsDoneByStudentId(Long id);
 
-    @Query("SELECT s FROM SchoolClass s JOIN s.studentsMemberships sm JOIN sm.student st WHERE st.id=:id AND s.isDone=true")
+    @Query("SELECT s FROM SchoolClass s JOIN s.studentsMemberships sm JOIN sm.student st WHERE st.id=:id AND s.isDone=TRUE")
     List<SchoolClass> findAllByStudentIdAndIsDone(Long id);
 
-    @Query("SELECT s FROM SchoolClass s JOIN s.studentsMemberships sm JOIN sm.student st WHERE st.id=:id AND s.isDone=true")
+    @Query("SELECT s FROM SchoolClass s JOIN s.studentsMemberships sm JOIN sm.student st WHERE st.id=:id AND s.isDone=TRUE")
     Page<SchoolClass> findAllByStudentIdAndIsDonePaginated(Long id,Pageable pageable);
 
     @Query("SELECT s FROM SchoolClass s JOIN s.classActivities c JOIN s.teachersMemberships tm JOIN tm.teacher t WHERE c.id=:activityId AND t.id=:teacherId")
@@ -83,4 +83,13 @@ public interface SchoolClassRepository extends CrudRepository<SchoolClass,Long> 
     @Modifying
     @Query(value = "UPDATE class SET is_done = true WHERE id=:id ;",nativeQuery = true)
     void closeClass(Long id);
+
+    @Query(value = "SELECT COUNT(*) FROM class_activities WHERE class_id = :class_id", nativeQuery = true)
+    int countActivityByClass(Long class_id);
+
+    @Query(value = "SELECT COUNT(*) FROM class_activities ca JOIN activity_delivery ad ON ca.activity_id = ad.activity_id WHERE class_id = :class_id", nativeQuery = true)
+    int countDeliveryByClass(Long class_id);
+
+    @Query("SELECT s FROM SchoolClass s WHERE s.id=:classId")
+    SchoolClass findSchoolClassByClassId(Long classId);
 }

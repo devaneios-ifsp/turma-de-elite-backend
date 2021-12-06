@@ -3,7 +3,9 @@ package com.devaneios.turmadeelite.controllers;
 import com.devaneios.turmadeelite.dto.*;
 import com.devaneios.turmadeelite.entities.SchoolClass;
 import com.devaneios.turmadeelite.security.guards.IsManager;
+import com.devaneios.turmadeelite.security.guards.IsTeacher;
 import com.devaneios.turmadeelite.services.ClassService;
+import com.devaneios.turmadeelite.services.TierConfigService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -23,6 +25,7 @@ import java.util.stream.Collectors;
 public class ClassController {
 
     private final ClassService classService;
+    private final TierConfigService tierConfigService;
 
     @Operation(summary = "Cadastrar uma turma enviando professores e alunos")
     @ApiResponses(value = {
@@ -204,5 +207,39 @@ public class ClassController {
             Authentication authentication){
         this.classService.updateTeacherStatus(classId,teacherId,status,(String) authentication.getPrincipal());
         return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @Operation(summary = "Salvar as configurações de tier para uma turma")
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Status do professor atualizado com sucesso"
+            )
+    })
+    @IsTeacher
+    @PostMapping("/{classId}/tier-config")
+    ResponseEntity<Void> createClassTierConfiguration(
+            @Valid @RequestBody TierConfigDTO tierConfigDTO,
+            @PathVariable Long classId
+    ){
+        this.tierConfigService.saveTierConfig(tierConfigDTO,classId);
+        return new ResponseEntity<>(HttpStatus.CREATED);
+    }
+
+    @Operation(summary = "Atualizar as configurações de tier para uma turma")
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Status do professor atualizado com sucesso"
+            )
+    })
+    @IsTeacher
+    @PutMapping("/{classId}/tier-config")
+    ResponseEntity<Void> updateClassTier(
+            @Valid @RequestBody TierConfigDTO tierConfigDTO,
+            @PathVariable Long classId
+    ){
+        this.tierConfigService.updateTierConfig(tierConfigDTO,classId);
+        return new ResponseEntity<>(HttpStatus.CREATED);
     }
 }

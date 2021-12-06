@@ -7,8 +7,6 @@ import com.devaneios.turmadeelite.exceptions.UnexpectedAuthenticationException;
 import com.devaneios.turmadeelite.repositories.ManagerRepository;
 import com.devaneios.turmadeelite.security.AuthenticationInfo;
 import lombok.AllArgsConstructor;
-import org.springframework.http.HttpStatus;
-import org.springframework.web.server.ResponseStatusException;
 
 @AllArgsConstructor
 public class ManagerVerifier implements ValidityVerifier{
@@ -20,7 +18,7 @@ public class ManagerVerifier implements ValidityVerifier{
     public void verify() {
         Manager manager = this.managerRepository
                 .findManagerByAuthUuidWithSchoolAndCredentials(authenticationInfo.getPrincipal())
-                .orElseThrow(()->new UnexpectedAuthenticationException());
+                .orElseThrow(UnexpectedAuthenticationException::new);
 
         School school = manager.getSchool();
         UserCredentials credentials = manager.getCredentials();

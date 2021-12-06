@@ -3,10 +3,7 @@ package com.devaneios.turmadeelite.dto;
 import com.devaneios.turmadeelite.entities.Activity;
 import com.devaneios.turmadeelite.entities.ActivityStatus;
 import com.fasterxml.jackson.annotation.JsonFormat;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.time.LocalDateTime;
 
@@ -14,8 +11,10 @@ import java.time.LocalDateTime;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 public class StudentActivitiesDTO {
     public Long id;
+    public String externalId;
     public String name;
     public Double maxPunctuation;
 

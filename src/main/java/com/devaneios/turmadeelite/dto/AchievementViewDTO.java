@@ -36,6 +36,10 @@ public class AchievementViewDTO {
 
     private Long activityId;
 
+    private String externalActivityId;
+
+    private String externalClassId;
+
     public AchievementViewDTO(Achievement achievement) {
         this.id = achievement.getId();
         this.name = achievement.getName();
@@ -45,6 +49,8 @@ public class AchievementViewDTO {
         this.earlierOf = achievement.getEarlierOf();
         this.bestOf = achievement.getBestOf();
         this.averageGradeGreaterOrEqualsThan = achievement.getAverageGradeGreaterOrEqualsThan();
+        this.externalClassId = achievement.getExternalSchoolClassId();
+        this.externalActivityId = achievement.getExternalActivityId();
         this.isActive = achievement.getIsActive();
         SchoolClass schoolClass = achievement.getSchoolClass();
         Activity activity = achievement.getActivity();

@@ -5,8 +5,6 @@ import com.devaneios.turmadeelite.exceptions.UnexpectedAuthenticationException;
 import com.devaneios.turmadeelite.repositories.UserRepository;
 import com.devaneios.turmadeelite.security.AuthenticationInfo;
 import lombok.AllArgsConstructor;
-import org.springframework.http.HttpStatus;
-import org.springframework.web.server.ResponseStatusException;
 
 @AllArgsConstructor
 public class AdminVerifier implements ValidityVerifier{

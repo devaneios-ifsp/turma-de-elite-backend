@@ -31,21 +31,34 @@ jar {
 }
 
 dependencies {
+	implementation ('com.google.api-client:google-api-client:1.23.0'){
+		exclude module: 'servlet-api'
+		exclude module: 'guava-jdk5'
+	}
+	implementation ('com.google.oauth-client:google-oauth-client-jetty:1.23.0'){
+		exclude module: 'servlet-api'
+	}
+	implementation ('com.google.apis:google-api-services-classroom:v1-rev135-1.23.0'){
+		exclude module: 'servlet-api'
+	}
+
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 	implementation 'org.springframework.boot:spring-boot-starter-security'
 	implementation 'org.springframework.boot:spring-boot-starter-validation'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	implementation 'org.springframework.boot:spring-boot-starter-mail'
 	implementation 'com.google.firebase:firebase-admin:7.3.0'
-	implementation "io.springfox:springfox-boot-starter:3.0.0"
+	implementation ("io.springfox:springfox-boot-starter:3.0.0")
 	implementation group: 'com.googlecode.json-simple', name: 'json-simple', version: '1.1.1'
 	implementation platform('com.amazonaws:aws-java-sdk-bom:1.11.1000')
 	implementation 'com.amazonaws:aws-java-sdk-s3'
+    implementation 'org.jetbrains:annotations:20.1.0'
+	implementation 'org.jetbrains:annotations:20.1.0'
 	compileOnly 'org.projectlombok:lombok'
 	runtimeOnly 'mysql:mysql-connector-java'
 	runtimeOnly 'org.postgresql:postgresql'
 	annotationProcessor 'org.projectlombok:lombok'
-	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	implementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'org.springframework.security:spring-security-test'
 	implementation group: 'com.h2database', name: 'h2', version: '1.0.60'
 

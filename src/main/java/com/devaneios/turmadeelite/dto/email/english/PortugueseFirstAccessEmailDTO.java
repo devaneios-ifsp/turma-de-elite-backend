@@ -1,7 +1,6 @@
 package com.devaneios.turmadeelite.dto.email.english;
 
 import com.devaneios.turmadeelite.dto.email.FirstAccessEmailDTO;
-import lombok.Builder;
 
 public class PortugueseFirstAccessEmailDTO extends FirstAccessEmailDTO {
     private static final String subject = "[Turma de Elite] Primeiro Acesso";

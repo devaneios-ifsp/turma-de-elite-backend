@@ -1,11 +1,6 @@
 package com.devaneios.turmadeelite.dto;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import org.springframework.web.multipart.MultipartFile;
+import lombok.*;
 
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
@@ -19,6 +14,7 @@ import java.util.List;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 public class ActivityCreateDTO {
     @NotBlank
     private String name;
@@ -37,6 +33,9 @@ public class ActivityCreateDTO {
 
 
     public LocalDateTime getFormattedDeliveryDate(){
+        if(this.getMaxDeliveryDate() == null){
+            return null;
+        }
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         return LocalDateTime.parse(this.getMaxDeliveryDate(), formatter);
     }

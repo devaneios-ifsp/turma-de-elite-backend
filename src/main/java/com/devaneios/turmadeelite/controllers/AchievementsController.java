@@ -19,8 +19,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import javax.validation.Valid;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/achievements")
@@ -38,7 +38,7 @@ public class AchievementsController {
             )
     })
     @PostMapping
-    ResponseEntity<?> createAchievement(@RequestBody AchievementCreateDTO achievementCreateDTO, Authentication authentication){
+    ResponseEntity<?> createAchievement(@Valid @RequestBody AchievementCreateDTO achievementCreateDTO, Authentication authentication){
         this.achievementService.createAchievement(achievementCreateDTO,(String) authentication.getPrincipal());
         return new ResponseEntity(HttpStatus.CREATED);
     }

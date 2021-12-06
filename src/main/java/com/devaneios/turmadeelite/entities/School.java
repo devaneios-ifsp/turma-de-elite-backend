@@ -1,6 +1,5 @@
 package com.devaneios.turmadeelite.entities;
 
-import com.devaneios.turmadeelite.dto.SchoolCreateDTO;
 import lombok.*;
 
 import javax.persistence.*;

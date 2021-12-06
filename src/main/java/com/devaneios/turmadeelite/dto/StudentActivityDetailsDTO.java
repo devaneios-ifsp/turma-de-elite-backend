@@ -38,7 +38,7 @@ public class StudentActivityDetailsDTO {
         this.expireDate = activity.getMaxDeliveryDate();
         this.description = activity.getDescription();
         this.deliveryFilename = deliveryFilename;
-        this.scoreReceived = scoreReceived;
+        this.scoreReceived = getScoreReceived();
         Attachment attachment = activity.getAttachment();
         if(attachment!=null){
             this.filename = attachment.getFilename();

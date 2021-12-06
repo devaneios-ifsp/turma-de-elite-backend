@@ -17,6 +17,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 public class AchievementCreateDTO {
+
     public String name;
     public String description;
     public String iconName;
@@ -34,7 +35,11 @@ public class AchievementCreateDTO {
 
     private Long classId;
 
+    private String externalClassId;
+
     private Long activityId;
+
+    private String externalActivityId;
 
     public Achievement toEntity(Teacher teacher){
         Achievement.AchievementBuilder builder = Achievement
@@ -47,14 +52,18 @@ public class AchievementCreateDTO {
                 .bestOf(this.bestOf)
                 .averageGradeGreaterOrEqualsThan(this.averageGradeGreaterOrEqualsThan)
                 .isActive(this.isActive)
+                .externalSchoolClassId(this.externalClassId)
+                .externalActivityId(this.externalActivityId)
                 .teacher(teacher);
 
         if(this.classId != null){
             builder.schoolClass(SchoolClass.builder().id(this.classId).build());
         }
+
         if(this.activityId != null){
             builder.activity(Activity.builder().id(this.activityId).build());
         }
+
         return builder.build();
     }
 }

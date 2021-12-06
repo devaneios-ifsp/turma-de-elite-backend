@@ -2,16 +2,18 @@ package com.devaneios.turmadeelite.repositories;
 
 import com.devaneios.turmadeelite.entities.Manager;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.repository.PagingAndSortingRepository;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
 
-public interface ManagerRepository extends CrudRepository<Manager,Long> {
+@Repository
+public interface ManagerRepository extends PagingAndSortingRepository<Manager,Long> {
     @Query("SELECT m FROM Manager m INNER JOIN m.credentials c WHERE role='MANAGER'")
-    Page<Manager> findAllManagers(PageRequest pageRequest);
+    Page<Manager> findAllManagers(Pageable pageRequest);
 
     @Query("SELECT m FROM Manager m JOIN m.credentials c JOIN m.school s WHERE m.id=:id")
     Optional<Manager> findManagerByIdWithSchoolAndCredentials(Long id);

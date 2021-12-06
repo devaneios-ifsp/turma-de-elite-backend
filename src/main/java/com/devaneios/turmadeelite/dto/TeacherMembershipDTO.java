@@ -1,15 +1,13 @@
 package com.devaneios.turmadeelite.dto;
 
 import com.devaneios.turmadeelite.entities.TeacherClassMembership;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Setter
+@Builder
 public class TeacherMembershipDTO {
     private SchoolUserViewDTO teacher;
     private Boolean isActive;

@@ -7,25 +7,20 @@ import com.devaneios.turmadeelite.repositories.*;
 import com.devaneios.turmadeelite.services.ActivityDeliveryService;
 import com.devaneios.turmadeelite.services.DataStorageService;
 import lombok.AllArgsConstructor;
-import org.apache.tomcat.jni.Local;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.security.NoSuchAlgorithmException;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -59,6 +54,7 @@ public class ActivityDeliveryServiceImpl implements ActivityDeliveryService {
         }
 
         Attachment attachment = this.storageService.from(deliveryDocument, "activities/student-deliveries/" + activityId + "/");
+        System.out.println("activities/student-deliveries/" + activityId + "/");
         Attachment savedAttachment = this.attachmentRepository.save(attachment);
 
         ZonedDateTime zonedNow = ZonedDateTime.now();
@@ -74,7 +70,7 @@ public class ActivityDeliveryServiceImpl implements ActivityDeliveryService {
                 .build();
 
         this.deliveryRepository.save(activityDelivery);
-        this.storageService.uploadFile(attachment.getBucketKey(),(FileInputStream) deliveryDocument.getInputStream());
+        //this.storageService.uploadFile(attachment.getBucketKey(),deliveryDocument.getInputStream());
     }
 
     @Override
@@ -155,7 +151,7 @@ public class ActivityDeliveryServiceImpl implements ActivityDeliveryService {
                 .findByAuthUuid(teacherAuthUuid)
                 .ifPresent( teacherRequesting -> {
                     Teacher teacherByActivity = this.activityRepository.findTeacherByActivity(activityId);
-                    if(teacherRequesting.getId() != teacherByActivity.getId()){
+                    if(!Objects.equals(teacherRequesting.getId(), teacherByActivity.getId())){
                         throw new ResponseStatusException(HttpStatus.FORBIDDEN);
                     }
                 });
@@ -203,7 +199,7 @@ public class ActivityDeliveryServiceImpl implements ActivityDeliveryService {
 
         Teacher teacherThatGiveTheActivity = this.activityRepository.findTeacherByActivity(delivery.getActivity().getId());
 
-        if(teacherRequesting.getId() != teacherThatGiveTheActivity.getId()){
+        if(!Objects.equals(teacherRequesting.getId(), teacherThatGiveTheActivity.getId())){
             throw new ResponseStatusException(HttpStatus.FORBIDDEN);
         }
 

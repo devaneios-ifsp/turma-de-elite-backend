@@ -1,6 +1,5 @@
 package com.devaneios.turmadeelite.controllers;
 
-import com.devaneios.turmadeelite.dto.ActivityCreateDTO;
 import com.devaneios.turmadeelite.dto.ActivityDeliveriesDTO;
 import com.devaneios.turmadeelite.dto.AttachmentDTO;
 import com.devaneios.turmadeelite.security.guards.IsStudent;
@@ -43,10 +42,11 @@ public class ActivityDeliveryController {
     })
     @IsStudent
     @PostMapping("/activity/{activityId}")
-    ResponseEntity<?> getPaginatedAdminUser(
+    ResponseEntity<?> deliveryActivity(
             @RequestPart("document") MultipartFile deliveryDocument,
             @PathVariable Long activityId,
             Authentication authentication) throws IOException, NoSuchAlgorithmException {
+        System.out.println(deliveryDocument.getName());
         this.deliveryService.deliveryActivity(deliveryDocument,activityId,(String) authentication.getPrincipal());
         return new ResponseEntity<>(HttpStatus.CREATED);
     }

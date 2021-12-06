@@ -1,14 +1,11 @@
 package com.devaneios.turmadeelite.services.impl;
 
-import com.devaneios.turmadeelite.dto.StudentRankingDTO;
 import com.devaneios.turmadeelite.entities.*;
-
 import com.devaneios.turmadeelite.repositories.AchievementRepository;
 import com.devaneios.turmadeelite.repositories.ActivityDeliveryRepository;
 import com.devaneios.turmadeelite.repositories.ActivityRepository;
 import com.devaneios.turmadeelite.repositories.StudentRepository;
 import com.devaneios.turmadeelite.services.DeliverAchievements;
-import com.google.common.collect.Comparators;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -52,7 +49,7 @@ public class DeliverAchievementsImpl implements DeliverAchievements {
 
         for(Student classStudent: classStudents){
             int activitiesFound = 0;
-            Double totalReceived = 0D;
+            double totalReceived = 0D;
 
             for(Activity classActivity: classActivities){
                 Long studentId = classStudent.getId();
@@ -70,7 +67,7 @@ public class DeliverAchievementsImpl implements DeliverAchievements {
                 activitiesFound +=1;
             }
 
-            Double averageGrade = activitiesFound != 0 ? totalReceived / activitiesFound : 0;
+            double averageGrade = activitiesFound != 0 ? totalReceived / activitiesFound : 0;
 
             if(averageGrade >= achievement.getAverageGradeGreaterOrEqualsThan()){
                 this.deliverAchievement(classStudent.getId(),achievement);

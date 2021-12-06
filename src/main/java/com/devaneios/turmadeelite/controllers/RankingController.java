@@ -2,7 +2,6 @@ package com.devaneios.turmadeelite.controllers;
 
 import com.devaneios.turmadeelite.dto.SchoolClassNameDTO;
 import com.devaneios.turmadeelite.dto.StudentRankingDTO;
-import com.devaneios.turmadeelite.security.guards.IsManager;
 import com.devaneios.turmadeelite.security.guards.IsStudent;
 import com.devaneios.turmadeelite.services.RankingService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -14,7 +13,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/ranking")

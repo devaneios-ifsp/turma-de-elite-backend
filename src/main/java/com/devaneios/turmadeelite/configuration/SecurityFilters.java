@@ -24,4 +24,10 @@ public class SecurityFilters implements Filter {
         httpServletResponse.setHeader("Access-Control-Expose-Headers","filename");
         chain.doFilter(request,response);
     }
+
+    @Override
+    public void destroy() {}
+
+    @Override
+    public void init(FilterConfig arg0) throws ServletException {}
 }

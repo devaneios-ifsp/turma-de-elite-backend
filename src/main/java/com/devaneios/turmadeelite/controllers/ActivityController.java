@@ -2,6 +2,7 @@ package com.devaneios.turmadeelite.controllers;
 
 import com.devaneios.turmadeelite.dto.*;
 import com.devaneios.turmadeelite.entities.Activity;
+import com.devaneios.turmadeelite.security.guards.IsManager;
 import com.devaneios.turmadeelite.security.guards.IsStudent;
 import com.devaneios.turmadeelite.security.guards.IsTeacher;
 import com.devaneios.turmadeelite.services.ActivityService;
@@ -11,7 +12,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.AllArgsConstructor;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
-import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -19,6 +19,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.validation.Valid;
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
 import java.util.List;
@@ -41,6 +42,7 @@ public class ActivityController {
     @IsTeacher
     @PostMapping
     ResponseEntity<?> createActivity(
+            @Valid
             @ModelAttribute ActivityCreateDTO activityCreateDTO,
             @RequestPart(required = false,name = "document") MultipartFile document,
             Authentication authentication
@@ -185,6 +187,5 @@ public class ActivityController {
     ) throws IOException {
         return this.activityService.getActivityDetailsById((String) authentication.getPrincipal(), activityId,classId);
     }
-
 
 }

@@ -3,6 +3,7 @@ package com.devaneios.turmadeelite.entities;
 import lombok.*;
 
 import javax.persistence.*;
+import java.util.Date;
 
 @Entity
 @Table(name = "user_credentials")
@@ -37,6 +38,9 @@ public class UserCredentials {
     @Enumerated(EnumType.STRING)
     private Role role;
 
+    @Column(name = "accession_date")
+    private Date accessionDate;
+
     @OneToOne(mappedBy = "credentials",cascade = CascadeType.ALL)
     @PrimaryKeyJoinColumn
     private Manager manager;
@@ -45,7 +49,4 @@ public class UserCredentials {
     @PrimaryKeyJoinColumn
     private Teacher teacher;
 
-//    @OneToOne(mappedBy = "credentials",cascade = CascadeType.ALL)
-//    @PrimaryKeyJoinColumn
-//    private Student student;
 }

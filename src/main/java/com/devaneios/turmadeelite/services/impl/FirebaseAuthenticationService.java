@@ -13,7 +13,9 @@ import com.google.firebase.auth.FirebaseToken;
 import com.google.firebase.auth.UserRecord;
 import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.*;
+import org.springframework.http.MediaType;
+import org.springframework.http.RequestEntity;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -53,11 +55,12 @@ public class FirebaseAuthenticationService implements AuthenticationService {
         CustomTokenIdRequestDTO request = new CustomTokenIdRequestDTO();
         request.setEmail(email);
         request.setPassword(password);
+        String requestBody =mapper.writeValueAsString(request);
         RequestEntity<String> requestEntity = RequestEntity
                                                 .post(new URL(url)
                                                 .toURI())
                                                 .contentType(MediaType.APPLICATION_JSON)
-                                                .body(mapper.writeValueAsString(request));
+                                                .body(requestBody);
 
         ResponseEntity<FirebaseCustomTokenIdDTO> response = restTemplate.exchange(requestEntity,FirebaseCustomTokenIdDTO.class);
         return response.getBody().getIdToken();

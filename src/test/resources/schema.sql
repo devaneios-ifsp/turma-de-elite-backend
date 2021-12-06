@@ -1,22 +1,23 @@
-DROP DATABASE turma_de_elite_test;
-CREATE DATABASE turma_de_elite_test;
-USE turma_de_elite_test;
+DROP SCHEMA IF EXISTS test CASCADE;
+CREATE SCHEMA test;
+SET search_path TO test;
 
 CREATE TABLE user_credentials (
-    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    id BIGSERIAL PRIMARY KEY,
     email VARCHAR(100) NOT NULL UNIQUE,
     auth_uuid VARCHAR(255),
     name VARCHAR(255) NOT NULL,
     first_access_token VARCHAR(255) UNIQUE,
-    is_active BOOLEAN DEFAULT TRUE,
-    role ENUM('ADMIN','MANAGER','STUDENT','TEACHER')
+    is_active BOOL DEFAULT TRUE,
+    role CHAR(12),
+    accession_date TIMESTAMP
 );
 
 CREATE TABLE school (
-    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    id BIGSERIAL PRIMARY KEY,
     name VARCHAR(100) NOT NULL,
     identifier CHAR(20) UNIQUE NOT NULL,
-    is_active BOOLEAN DEFAULT TRUE
+    is_active BOOL DEFAULT TRUE
 );
 
 CREATE TABLE manager (
@@ -34,21 +35,20 @@ CREATE TABLE teacher (
 );
 
 CREATE TABLE attachments(
-    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    id BIGSERIAL PRIMARY KEY,
     filename VARCHAR(100),
     bucket_key VARCHAR(100),
     file_md5 VARCHAR(40)
 );
 
 CREATE TABLE activity(
-    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    id BIGSERIAL PRIMARY KEY,
     name CHAR(50) NOT NULL,
     description VARCHAR(240) NOT NULL,
-    punctuation DOUBLE NOT NULL,
-    is_visible BOOLEAN NOT NULL,
-    is_active BOOLEAN NOT NULL,
-    is_deliverable BOOLEAN NOT NULL,
-    max_delivery_date DATETIME NOT NULL,
+    punctuation FLOAT NOT NULL,
+    is_visible BOOL NOT NULL,
+    is_active BOOL NOT NULL,
+    max_delivery_date TIMESTAMP NOT NULL,
     teacher_id BIGINT NOT NULL,
     attachment_id BIGINT,
     FOREIGN KEY(teacher_id) REFERENCES teacher(teacher_id),
@@ -57,16 +57,16 @@ CREATE TABLE activity(
 
 CREATE TABLE student(
     student_id BIGINT PRIMARY KEY,
-    registry TEXT(10) NOT NULL,
+    registry CHAR(10) NOT NULL,
     school_id BIGINT,
     FOREIGN KEY(school_id) REFERENCES school(id),
     FOREIGN KEY(student_id) REFERENCES user_credentials(id)
 );
 
 CREATE TABLE activity_delivery(
-    id BIGINT AUTO_INCREMENT PRIMARY KEY,
-    delivery_timestamp DATETIME NOT NULL,
-    grade_received DOUBLE,
+    id BIGSERIAL PRIMARY KEY,
+    delivery_timestamp TIMESTAMP NOT NULL,
+    grade_received FLOAT,
     student_delivery_id BIGINT NOT NULL,
     activity_id BIGINT NOT NULL,
     attachment_id BIGINT NOT NULL,
@@ -75,44 +75,51 @@ CREATE TABLE activity_delivery(
     FOREIGN KEY(attachment_id) REFERENCES attachments(id)
 );
 
+CREATE TABLE class(
+    id BIGSERIAL PRIMARY KEY,
+    name VARCHAR(50),
+    school_id BIGINT,
+    FOREIGN KEY(school_id) REFERENCES school(id),
+    is_active BOOL DEFAULT TRUE,
+    is_done BOOL DEFAULT TRUE
+);
+
 CREATE TABLE achievement(
-    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    id BIGSERIAL PRIMARY KEY,
     name VARCHAR(50) NOT NULL,
     description VARCHAR(240) NOT NULL,
-    before_at DATETIME,
+    icon_name VARCHAR(50) NOT NULL,
+    is_active BOOLEAN DEFAULT TRUE,
+    before_at TIMESTAMP,
     earlier_of INT,
     best_of INT,
     average_grade_greater_or_equals_than FLOAT,
     class_id BIGINT,
     activity_id BIGINT,
-    FOREIGN KEY(activity_id) REFERENCES activity(id)
-);
-
-CREATE TABLE class(
-    id BIGINT AUTO_INCREMENT PRIMARY KEY,
-    name VARCHAR(50),
-    school_id BIGINT,
-    FOREIGN KEY(school_id) REFERENCES school(id),
-    is_active BOOLEAN DEFAULT TRUE,
-    is_done BOOLEAN DEFAULT TRUE
+    teacher_id BIGINT,
+    external_school_class_id BIGINT,
+    external_activity_id BIGINT,
+    FOREIGN KEY(activity_id) REFERENCES activity(id),
+    FOREIGN KEY (teacher_id) REFERENCES teacher(teacher_id),
+    FOREIGN KEY (class_id) REFERENCES class(id)
 );
 
 CREATE TABLE student_class_membership(
-    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    id BIGSERIAL PRIMARY KEY,
     student_id BIGINT,
     class_id BIGINT,
     FOREIGN KEY(student_id) REFERENCES student(student_id),
     FOREIGN KEY(class_id) REFERENCES class(id),
-    is_active BOOLEAN DEFAULT TRUE
+    is_active BOOL DEFAULT TRUE
 );
 
 CREATE TABLE teacher_class_membership(
-    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    id BIGSERIAL PRIMARY KEY,
     teacher_id BIGINT,
     class_id BIGINT,
     FOREIGN KEY(teacher_id) REFERENCES teacher(teacher_id),
     FOREIGN KEY(class_id) REFERENCES class(id),
-    is_active BOOLEAN DEFAULT TRUE
+    is_active BOOL DEFAULT TRUE
 );
 
 CREATE TABLE class_activities(
@@ -129,4 +136,31 @@ CREATE TABLE student_achievements(
     FOREIGN KEY(student_id) REFERENCES student(student_id),
     FOREIGN KEY(achievement_id) REFERENCES achievement(id),
     PRIMARY KEY(student_id,achievement_id)
+);
+
+CREATE TABLE tier_config(
+    class_id BIGINT NOT NULL,
+    gold_percent FLOAT NOT NULL,
+    silver_percent FLOAT NOT NULL,
+    bronze_percent FLOAT NOT NULL,
+    PRIMARY KEY(class_id),
+    FOREIGN KEY(class_id) REFERENCES class(id)
+);
+
+CREATE TABLE log_status_user (
+    id BIGSERIAL PRIMARY KEY,
+    user_id BIGINT NOT NULL,
+    date_action TIMESTAMP NOT NULL,
+    old_is_active BOOLEAN DEFAULT TRUE,
+    FOREIGN KEY(user_id) REFERENCES user_credentials(id)
+);
+
+CREATE TABLE external_class_config (
+  id BIGINT GENERATED BY DEFAULT AS IDENTITY NOT NULL,
+  external_class_id VARCHAR(255),
+  is_closed BOOLEAN,
+  gold_percent FLOAT,
+  silver_percent FLOAT,
+  bronze_percent FLOAT,
+  CONSTRAINT pk_external_class_config PRIMARY KEY (id)
 );

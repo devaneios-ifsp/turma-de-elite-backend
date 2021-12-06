@@ -1,10 +1,7 @@
 package com.devaneios.turmadeelite.services.impl;
 
 import com.devaneios.turmadeelite.dto.StudentRankingDTO;
-import com.devaneios.turmadeelite.entities.Activity;
-import com.devaneios.turmadeelite.entities.ActivityDelivery;
-import com.devaneios.turmadeelite.entities.SchoolClass;
-import com.devaneios.turmadeelite.entities.Student;
+import com.devaneios.turmadeelite.entities.*;
 import com.devaneios.turmadeelite.repositories.ActivityDeliveryRepository;
 import com.devaneios.turmadeelite.repositories.ActivityRepository;
 import com.devaneios.turmadeelite.repositories.SchoolClassRepository;
@@ -16,7 +13,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
-import sun.reflect.generics.repository.ClassRepository;
 
 import java.util.*;
 
@@ -47,6 +43,8 @@ public class RankingServiceImpl implements RankingService {
         SchoolClass schoolClass = this.classRepository
                 .findById(classId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+
+        TierConfig tierConfig = schoolClass.getTierConfig();
 
         List<Student> classStudents = this.studentRepository
                 .findAllByClassId(schoolClass.getId());
@@ -85,6 +83,15 @@ public class RankingServiceImpl implements RankingService {
         List<StudentRankingDTO> response = new ArrayList<>(4);
         while(rankingIterator.hasNext()){
             StudentRankingDTO next = rankingIterator.next();
+            if(tierConfig!=null){
+                if(position <= (ranking.size() * (tierConfig.getGoldPercent()/100))){
+                    next.setTier(Tier.GOLD);
+                } else if(position <= (ranking.size() * (tierConfig.getSilverPercent() / 100))){
+                    next.setTier(Tier.SILVER);
+                } else {
+                    next.setTier(Tier.BRONZE);
+                }
+            }
             if(position<4){
                 next.setPosition(position);
                 response.add(next);
