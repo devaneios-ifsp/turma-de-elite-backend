@@ -3,7 +3,7 @@ import com.devaneios.turmadeelite.security.guards.IsManager;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
-import lombok.AllArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -13,10 +13,21 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 @RestController
-@AllArgsConstructor
+
 public class AuthenticationController {
     private final GoogleOauth2Service googleOauth2Service;
+    private final String applicationFrontendAddress;
+
     private final String COOKIE_NAME = "authUuid";
+
+    public AuthenticationController(
+            GoogleOauth2Service googleOauth2Service,
+            @Value("${frontend-address}") String applicationFrontendAddress
+    ) {
+        this.googleOauth2Service = googleOauth2Service;
+        this.applicationFrontendAddress = applicationFrontendAddress;
+    }
+
     @Operation(summary = "Recupera o URL de authenticação do Google Oauth2")
     @ApiResponses(value = {
             @ApiResponse(
@@ -42,7 +53,7 @@ public class AuthenticationController {
     public RedirectView classroomCallback(HttpServletRequest request, @RequestParam String state) throws IOException{
         String url = request.getRequestURL() + "?" + request.getQueryString();
         this.googleOauth2Service.classroomCallback(url,state);
-        return new RedirectView("http://localhost:4200?authenticationSuccess=true");
+        return new RedirectView(applicationFrontendAddress+"?authenticationSuccess=true");
     }
 
 }

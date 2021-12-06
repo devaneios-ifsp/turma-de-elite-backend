@@ -3,3 +3,5 @@ spring:
     active: local
   jpa:
     open-in-view: false
+application-address: https://turma-de-elite.herokuapp.com
+frontend-address: https://turma-de-elite-app.firebaseapp.com
