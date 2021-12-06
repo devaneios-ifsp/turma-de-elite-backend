@@ -11,24 +11,26 @@ import com.google.api.client.json.JsonFactory;
 import com.google.api.client.json.gson.GsonFactory;
 import com.google.api.client.util.store.MemoryDataStoreFactory;
 import com.google.api.services.classroom.ClassroomScopes;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.util.ResourceUtils;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.*;
 
 @Service
 public class GoogleOauth2Service {
 
-    private static final String CREDENTIALS_FILE_PATH = "/classroom-credentials.json";
+    private static final String CREDENTIALS_FILE_PATH = "classroom-credentials.json";
     public static final JsonFactory JSON_FACTORY = GsonFactory.getDefaultInstance();
     public static final NetHttpTransport HTTP_TRANSPORT = new NetHttpTransport();
 
+    private final String applicationAddress;
+
     GoogleAuthorizationCodeFlow authFlow;
 
-    public GoogleOauth2Service() throws IOException {
-        InputStream in = GoogleOauth2Service.class.getResourceAsStream(CREDENTIALS_FILE_PATH);
+    public GoogleOauth2Service(@Value("${application-address}")String applicationAddress) throws IOException {
+        File file = ResourceUtils.getFile("classroom-credentials.json");
+        InputStream in = new FileInputStream(file);
         if (in == null) {
             throw new FileNotFoundException("Resource not found: " + CREDENTIALS_FILE_PATH);
         }
@@ -43,18 +45,20 @@ public class GoogleOauth2Service {
                 .setDataStoreFactory(MemoryDataStoreFactory.getDefaultInstance())
                 .setAccessType("offline")
                 .build();
+
+        this.applicationAddress = applicationAddress;
     }
 
     public String classroomAuth(String authUuid) throws IOException {
         GoogleAuthorizationCodeRequestUrl googleAuthorizationCodeRequestUrl = authFlow.newAuthorizationUrl();
-        googleAuthorizationCodeRequestUrl.setRedirectUri("http://localhost:8080/Callback");
+        googleAuthorizationCodeRequestUrl.setRedirectUri(applicationAddress + "/Callback");
         return googleAuthorizationCodeRequestUrl.setState(authUuid).toURL().toString();
     }
 
     public void classroomCallback(String url, String authUUid) throws IOException {
         AuthorizationCodeResponseUrl authorizationCodeResponseUrl = new AuthorizationCodeResponseUrl(url);
         String code = authorizationCodeResponseUrl.getCode();
-        GoogleTokenResponse execute = this.authFlow.newTokenRequest(code).setRedirectUri("http://localhost:8080/Callback").execute();
+        GoogleTokenResponse execute = this.authFlow.newTokenRequest(code).setRedirectUri(applicationAddress + "/Callback").execute();
         this.authFlow.createAndStoreCredential(execute, authUUid);
     }
 

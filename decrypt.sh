@@ -5,4 +5,4 @@
 gpg --quiet --batch --yes --decrypt --passphrase="$FIREBASE_ENCRYPT_KEY" \
 --output firebase/firebase-sdk-key.json firebase/firebase-sdk-key.json.gpg
 gpg --quiet --batch --yes --decrypt --passphrase="$FIREBASE_ENCRYPT_KEY" \
---output src/main/resources/classroom-credentials.json src/main/resources/classroom-credentials.json.gpg
+--output classroom-credentials.json classroom-credentials.json.gpg
