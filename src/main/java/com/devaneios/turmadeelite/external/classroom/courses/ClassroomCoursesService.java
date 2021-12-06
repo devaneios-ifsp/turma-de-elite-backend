@@ -2,6 +2,7 @@ package com.devaneios.turmadeelite.external.classroom.courses;
 
 import com.devaneios.turmadeelite.dto.*;
 import com.devaneios.turmadeelite.entities.ExternalClassConfig;
+import com.devaneios.turmadeelite.entities.TierConfig;
 import com.devaneios.turmadeelite.external.classroom.ClassroomServiceFactory;
 import com.devaneios.turmadeelite.external.classroom.students.ClassroomStudents;
 import com.devaneios.turmadeelite.external.courses.ExternalCoursesService;
@@ -19,6 +20,7 @@ import org.springframework.util.StringUtils;
 import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @AllArgsConstructor
@@ -126,7 +128,8 @@ public class ClassroomCoursesService implements ExternalCoursesService {
                 .getStudentsFromCourse(authUuid, courseId);
 
         List<Teacher> teachers = this.getAllTeacherByCourseId(authUuid,courseId);
-
+        Optional<ExternalClassConfig> optionalTierConfig = this.classConfigRepository
+                .findByExternalClassId(courseId);
         return SchoolClassViewDTO
                 .builder()
                 .externalId(courseResponse.getId())
@@ -151,11 +154,32 @@ public class ClassroomCoursesService implements ExternalCoursesService {
                                     .build())
                             .collect(Collectors.toList())
                 )
-                .isDone(this.classConfigRepository
-                        .findByExternalClassId(courseId)
+                .tierConfig(optionalTierConfig
+                        .map(tierConfig -> new TierConfigDTO(
+                                tierConfig.getGoldPercent(),
+                                tierConfig.getSilverPercent(),
+                                tierConfig.getBronzePercent())
+                            )
+                        .orElseGet(TierConfigDTO::new))
+                .isDone(optionalTierConfig
                         .map(ExternalClassConfig::getIsClosed)
                         .orElse(false))
                 .build();
+    }
+
+    @Override
+    public void saveTierConfig(TierConfigDTO tierConfigDTO, String classId) {
+        ExternalClassConfig externalClassConfig = this.classConfigRepository
+                .findByExternalClassId(classId)
+                .orElseGet(ExternalClassConfig::new);
+
+        externalClassConfig.setExternalClassId(classId);
+        externalClassConfig.setIsClosed(externalClassConfig.getIsClosed()!=null?externalClassConfig.getIsClosed():false);
+        externalClassConfig.setGoldPercent(tierConfigDTO.getGoldPercent());
+        externalClassConfig.setSilverPercent(tierConfigDTO.getSilverPercent());
+        externalClassConfig.setBronzePercent(tierConfigDTO.getBronzePercent());
+
+        this.classConfigRepository.save(externalClassConfig);
     }
 
     public List<Teacher> getAllTeacherByCourseId(String authUuid, String courseId) throws IOException {

@@ -7,10 +7,7 @@ import com.devaneios.turmadeelite.external.classroom.activities.ClassroomActivit
 import com.devaneios.turmadeelite.external.classroom.courses.ClassroomCoursesService;
 import com.devaneios.turmadeelite.external.classroom.students.ClassroomStudents;
 import com.devaneios.turmadeelite.external.domain.ExternalStudentGrade;
-import com.devaneios.turmadeelite.repositories.AchievementRepository;
-import com.devaneios.turmadeelite.repositories.ExternalClassConfigRepository;
-import com.devaneios.turmadeelite.repositories.StudentRepository;
-import com.devaneios.turmadeelite.repositories.UserRepository;
+import com.devaneios.turmadeelite.repositories.*;
 import com.google.api.services.classroom.Classroom;
 import com.google.api.services.classroom.model.StudentSubmission;
 import com.google.api.services.classroom.model.UserProfile;
@@ -23,6 +20,7 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 @Service
@@ -37,6 +35,7 @@ public class ClassroomDeliverAchievementsImpl implements ExternalDeliverAchievem
     private final UserRepository userRepository;
     private final StudentRepository studentRepository;
     private final ExternalClassConfigRepository classConfigRepository;
+    private final ExternalStudentGradeRepository studentGradeRepository;
 
     @Override
     @Transactional
@@ -44,6 +43,9 @@ public class ClassroomDeliverAchievementsImpl implements ExternalDeliverAchievem
         Classroom service = classroomServiceFactory.getService(externalAuthUuid);
 
         List<Achievement> allAchievements = this.achievementRepository.findAll();
+        List<ExternalStudentGrade> studentsGrades = this.classroomActivities.getStudentsGrades(externalAuthUuid, courseId);
+        studentsGrades.forEach(this.persistGrades(externalAuthUuid, courseId));
+
         for(Achievement achievement: allAchievements){
             String activityId = achievement.getExternalActivityId();
             String schoolClassId = achievement.getExternalSchoolClassId();
@@ -51,7 +53,7 @@ public class ClassroomDeliverAchievementsImpl implements ExternalDeliverAchievem
             if(activityId != null){
                 this.giveActivityAchievementForEligible(externalAuthUuid,achievement,courseId,activityId);
             }else if (schoolClassId != null){
-                this.giveClassAchievementForEligible(achievement,externalAuthUuid,schoolClassId);
+                this.giveClassAchievementForEligible(achievement,externalAuthUuid,studentsGrades);
             }
         }
 
@@ -63,8 +65,7 @@ public class ClassroomDeliverAchievementsImpl implements ExternalDeliverAchievem
         this.classConfigRepository.save(externalClassConfig);
     }
 
-    private void giveClassAchievementForEligible(Achievement achievement,String authUuid, String schoolClassId) throws IOException {
-        List<ExternalStudentGrade> studentsGrades = this.classroomActivities.getStudentsGrades(authUuid, schoolClassId);
+    private void giveClassAchievementForEligible(Achievement achievement,String authUuid, List<ExternalStudentGrade> studentsGrades) throws IOException {
         studentsGrades.forEach(studentGrade -> {
             if(studentGrade.grade >= achievement.getAverageGradeGreaterOrEqualsThan()){
                 this.deliverAchievement(authUuid,studentGrade.externalUserId,achievement);
@@ -173,5 +174,30 @@ public class ClassroomDeliverAchievementsImpl implements ExternalDeliverAchievem
         this.userRepository.findByEmail(externalUser.getEmailAddress()).ifPresent(user -> {
             this.studentRepository.giveAchievement(user.getId(),achievement.getId());
         });
+    }
+
+    @SneakyThrows
+    private Consumer<ExternalStudentGrade> persistGrades(String authUuid,String courseId){
+        return (studentGrade) -> {
+            try {
+                Classroom service = classroomServiceFactory.getService(authUuid);
+                UserProfile externalUser = service
+                        .userProfiles()
+                        .get(studentGrade.externalUserId)
+                        .execute();
+
+                this.userRepository.findByEmail(externalUser.getEmailAddress()).ifPresent(user -> {
+                    this.studentGradeRepository.save(
+                            com.devaneios.turmadeelite.entities.ExternalStudentGrade
+                            .builder()
+                            .externalClassId(courseId)
+                            .grade(studentGrade.grade)
+                            .student(user)
+                            .build());
+                });
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        };
     }
 }

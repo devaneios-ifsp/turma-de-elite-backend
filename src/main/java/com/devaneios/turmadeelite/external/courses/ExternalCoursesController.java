@@ -1,6 +1,7 @@
 package com.devaneios.turmadeelite.external.courses;
 
 import com.devaneios.turmadeelite.dto.SchoolClassViewDTO;
+import com.devaneios.turmadeelite.dto.TierConfigDTO;
 import com.devaneios.turmadeelite.entities.Teacher;
 import com.devaneios.turmadeelite.external.ExternalDeliverAchievements;
 import com.devaneios.turmadeelite.security.guards.IsManager;
@@ -12,11 +13,9 @@ import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.io.IOException;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
@@ -63,6 +62,23 @@ public class ExternalCoursesController {
     public List<SchoolClassViewDTO> listClassesFromTeacher(Authentication authentication) throws IOException {
         String authUuid = (String) authentication.getPrincipal();
         return this.externalCoursesService.getCoursesFromTeacher(authUuid);
+    }
+
+    @Operation(summary = "Salvar as configurações de tier para uma turma")
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Status do professor atualizado com sucesso"
+            )
+    })
+    @IsTeacher
+    @PostMapping("/{classId}/tier-config")
+    ResponseEntity<Void> createClassTierConfiguration(
+            @Valid @RequestBody TierConfigDTO tierConfigDTO,
+            @PathVariable String classId
+    ){
+        this.externalCoursesService.saveTierConfig(tierConfigDTO,classId);
+        return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
 }
