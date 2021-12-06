@@ -1,1 +1,1 @@
-web: decript.sh && java -Dspring.profiles.active=$PROFILE -Dserver.port=$PORT $JAVA_OPTS -jar build/libs/turmadeelite-0.0.1-SNAPSHOT.jar
+web: bash decript.sh && java -Dspring.profiles.active=$PROFILE -Dserver.port=$PORT $JAVA_OPTS -jar build/libs/turmadeelite-0.0.1-SNAPSHOT.jar
