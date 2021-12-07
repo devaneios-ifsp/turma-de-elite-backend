@@ -48,4 +48,13 @@ public class SchoolUserViewDTO {
                 .isFromLms(true)
                 .build();
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof SchoolUserViewDTO)) return false;
+        SchoolUserViewDTO that = (SchoolUserViewDTO) o;
+        return getExternalId().equals(that.getExternalId());
+    }
+
 }
