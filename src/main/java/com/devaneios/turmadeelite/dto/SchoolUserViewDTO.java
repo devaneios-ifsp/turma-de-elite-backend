@@ -9,10 +9,14 @@ import lombok.*;
 @Getter
 @Setter
 @Builder
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class SchoolUserViewDTO {
 
     public Long id;
+
+    @EqualsAndHashCode.Include
     public String externalId;
+
     public String email;
     public String name;
     public SchoolViewDTO school;
@@ -49,12 +53,4 @@ public class SchoolUserViewDTO {
                 .build();
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof SchoolUserViewDTO)) return false;
-        SchoolUserViewDTO that = (SchoolUserViewDTO) o;
-        return getExternalId().equals(that.getExternalId());
-    }
-
-}
+ }
