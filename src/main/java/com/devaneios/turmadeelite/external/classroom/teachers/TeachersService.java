@@ -62,7 +62,6 @@ public class TeachersService implements ExternalTeachersService {
             }
 
             return teachers;
-
         } catch (GoogleJsonResponseException e) {
             GoogleJsonError details = e.getDetails();
             if (details.getCode() == 401) {
