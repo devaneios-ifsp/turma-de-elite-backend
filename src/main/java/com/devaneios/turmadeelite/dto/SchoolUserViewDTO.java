@@ -52,5 +52,4 @@ public class SchoolUserViewDTO {
                 .isFromLms(true)
                 .build();
     }
-
  }
