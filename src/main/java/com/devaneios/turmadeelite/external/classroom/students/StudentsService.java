@@ -58,7 +58,7 @@ public class StudentsService implements ExternalStudentsService {
                     nextPageToken = nextPageResponse.getNextPageToken();
             }
 
-            return allStudentsResponse
+            List<SchoolUserViewDTO> students = allStudentsResponse
                     .stream()
                     .map(ListStudentsResponse::getStudents)
                     .flatMap(List::stream)
@@ -73,6 +73,17 @@ public class StudentsService implements ExternalStudentsService {
                                     .build()
                     )
                     .collect(Collectors.toList());
+
+            for (int i = 0; i < students.size(); i++){
+                for(int j = 0; j < students.size(); j++) {
+                    if(i != j && students.get(i).equals(students.get(j))){
+                        students.remove(j);
+                    }
+                }
+            }
+
+            return students;
+
         } catch (GoogleJsonResponseException e) {
             GoogleJsonError details = e.getDetails();
             if (details.getCode() == 401) {

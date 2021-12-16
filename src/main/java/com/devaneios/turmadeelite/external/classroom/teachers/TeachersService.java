@@ -55,7 +55,7 @@ public class TeachersService implements ExternalTeachersService {
 
             for (int i = 0; i < teachers.size(); i++){
                 for(int j = 0; j < teachers.size(); j++) {
-                    if(!(i == j) && teachers.get(i).equals(teachers.get(j))){
+                    if(i != j && teachers.get(i).equals(teachers.get(j))){
                         teachers.remove(j);
                     }
                 }
