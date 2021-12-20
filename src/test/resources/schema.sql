@@ -164,3 +164,11 @@ CREATE TABLE external_class_config (
   bronze_percent FLOAT,
   CONSTRAINT pk_external_class_config PRIMARY KEY (id)
 );
+
+create table external_student_grade (
+	id BIGINT NOT NULL,
+	grade DOUBLE PRECISION,
+	external_class_id VARCHAR(255),
+	student_id BIGINT,
+	FOREIGN KEY(student_id) REFERENCES student(student_id)
+);
