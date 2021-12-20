@@ -10,11 +10,9 @@ import com.google.api.client.googleapis.json.GoogleJsonError;
 import com.google.api.client.googleapis.json.GoogleJsonResponseException;
 import com.google.api.services.classroom.Classroom;
 import com.google.api.services.classroom.model.ListTeachersResponse;
-import com.google.api.services.classroom.model.Teacher;
 import com.google.api.services.classroom.model.UserProfile;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
 
 import java.io.IOException;
 import java.util.LinkedList;
@@ -47,21 +45,23 @@ public class TeachersService implements ExternalTeachersService {
                 }
             }
 
-            return allTeachersResponse
+            List<SchoolUserViewDTO> teachers = allTeachersResponse
                     .stream()
                     .map(ListTeachersResponse::getTeachers)
                     .flatMap(List::stream)
-                    .map(classroomTeacher ->
-                            SchoolUserViewDTO
-                                    .builder()
-                                    .externalId(classroomTeacher.getUserId())
-                                    .name(classroomTeacher.getProfile().getName().getFullName())
-                                    .email(classroomTeacher.getProfile().getEmailAddress())
-                                    .isActive(true)
-                                    .isFromLms(true)
-                                    .build()
+                    .map(SchoolUserViewDTO::fromClassroom
                     )
                     .collect(Collectors.toList());
+
+            for (int i = 0; i < teachers.size(); i++){
+                for(int j = 0; j < teachers.size(); j++) {
+                    if(i != j && teachers.get(i).equals(teachers.get(j))){
+                        teachers.remove(j);
+                    }
+                }
+            }
+
+            return teachers;
         } catch (GoogleJsonResponseException e) {
             GoogleJsonError details = e.getDetails();
             if (details.getCode() == 401) {
@@ -87,4 +87,5 @@ public class TeachersService implements ExternalTeachersService {
                 .isFromLms(true)
                 .build();
     }
+
 }

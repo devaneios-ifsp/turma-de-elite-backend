@@ -9,10 +9,14 @@ import lombok.*;
 @Getter
 @Setter
 @Builder
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class SchoolUserViewDTO {
 
     public Long id;
+
+    @EqualsAndHashCode.Include
     public String externalId;
+
     public String email;
     public String name;
     public SchoolViewDTO school;
@@ -48,4 +52,4 @@ public class SchoolUserViewDTO {
                 .isFromLms(true)
                 .build();
     }
-}
+ }
