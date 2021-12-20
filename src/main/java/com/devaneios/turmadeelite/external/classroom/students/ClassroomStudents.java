@@ -12,7 +12,10 @@ import org.springframework.util.StringUtils;
 import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Service
 @AllArgsConstructor
@@ -50,10 +53,16 @@ public class ClassroomStudents {
             }
         }
 
-        return responseList
-                .stream()
-                .map(ListStudentsResponse::getStudents)
-                .flatMap(List::stream)
-                .collect(Collectors.toList());
+        try {
+            return responseList
+                    .stream()
+                    .map(ListStudentsResponse::getStudents)
+                    .flatMap(List::stream)
+                    .collect(Collectors.toList());
+        } catch (NullPointerException e){
+            return new LinkedList<>();
+        }
+
+
     }
 }

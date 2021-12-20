@@ -50,11 +50,15 @@ public class ClassroomActivities {
             }
         }
 
-        return responseList
-                .stream()
-                .map(ListCourseWorkResponse::getCourseWork)
-                .flatMap(List::stream)
-                .collect(Collectors.toList());
+        try{
+            return responseList
+                    .stream()
+                    .map(ListCourseWorkResponse::getCourseWork)
+                    .flatMap(List::stream)
+                    .collect(Collectors.toList());
+        } catch (NullPointerException e){
+            return new LinkedList<>();
+        }
     }
 
     public List<ExternalStudentGrade> getStudentsGrades(String authUuid, String courseId) throws IOException {
@@ -69,22 +73,24 @@ public class ClassroomActivities {
             Map<String, List<StudentSubmission>> studentSubmissions = this.getSubmissions(authUuid, courseId, courseWork.getId())
                     .stream()
                     .collect(Collectors.groupingBy(StudentSubmission::getUserId));
-            studentSubmissions.forEach((studentId, submissions)->{
-                submissions.forEach(submission -> {
-                    Double gradePercentage = (submission.getAssignedGrade() / maxPoints) * 100;
-                    studentSubmissionsMap.compute(studentId,(studentKey, studentGrades) -> {
-                        if(studentGrades == null){
-                            LinkedList<Double> grades = new LinkedList<>();
-                            grades.add(gradePercentage);
-                            return grades;
-                        }else{
-                            studentGrades.add(gradePercentage);
-                            return studentGrades;
-                        }
+            if(studentSubmissions != null) {
+                studentSubmissions.forEach((studentId, submissions)->{
+                    submissions.forEach(submission -> {
+                        Double gradePercentage = (submission.getAssignedGrade() / maxPoints) * 100;
+                        studentSubmissionsMap.compute(studentId,(studentKey, studentGrades) -> {
+                            if(studentGrades == null){
+                                LinkedList<Double> grades = new LinkedList<>();
+                                grades.add(gradePercentage);
+                                return grades;
+                            }else{
+                                studentGrades.add(gradePercentage);
+                                return studentGrades;
+                            }
+                        });
                     });
-                });
 
-            });
+                });
+            }
         }
         ArrayList<ExternalStudentGrade> studentGrades = new ArrayList<>(studentSubmissionsMap.size());
         studentSubmissionsMap.forEach((studentId,grades)->{

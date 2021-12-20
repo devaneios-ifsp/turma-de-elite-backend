@@ -34,8 +34,14 @@ public class ExternalActivitiesController {
     }
 
     @IsTeacher
-    @GetMapping("/{externalId}")
+    @GetMapping("/teacher/{externalId}")
     public ActivityViewDTO getTeacherExternalActivityById(@PathVariable String externalId, Authentication authentication) throws IOException {
+        return this.externalActivitiesService.getExternalActivityById(externalId, (String) authentication.getPrincipal());
+    }
+
+    @IsStudent
+    @GetMapping("/student/{externalId}")
+    public ActivityViewDTO getStudentExternalActivityById(@PathVariable String externalId, Authentication authentication) throws IOException {
         return this.externalActivitiesService.getExternalActivityById(externalId, (String) authentication.getPrincipal());
     }
 
