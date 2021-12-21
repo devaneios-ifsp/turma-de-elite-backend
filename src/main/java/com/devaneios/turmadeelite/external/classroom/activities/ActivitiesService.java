@@ -4,6 +4,7 @@ import com.devaneios.turmadeelite.dto.ActivityViewDTO;
 import com.devaneios.turmadeelite.dto.SchoolClassViewDTO;
 import com.devaneios.turmadeelite.dto.StudentActivitiesDTO;
 import com.devaneios.turmadeelite.external.classroom.ClassroomServiceFactory;
+import com.devaneios.turmadeelite.external.classroom.authentication.GoogleOauth2Service;
 import com.devaneios.turmadeelite.external.classroom.courses.ClassroomCoursesService;
 import com.devaneios.turmadeelite.external.exceptions.ExternalServiceAuthenticationException;
 import com.devaneios.turmadeelite.external.activities.ExternalActivitiesService;
@@ -12,6 +13,7 @@ import com.google.api.client.googleapis.json.GoogleJsonResponseException;
 import com.google.api.services.classroom.Classroom;
 import com.google.api.services.classroom.model.CourseWork;
 import com.google.api.services.classroom.model.ListCourseWorkResponse;
+import com.google.api.services.classroom.model.StudentSubmission;
 import com.google.api.services.classroom.model.UserProfile;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -134,7 +136,7 @@ public class ActivitiesService implements ExternalActivitiesService {
                                             .expireDate(null)
                                             .classId(null)
                                             .maxPunctuation(classroomActivity.getMaxPoints())
-                                            .isDelivered(false)
+                                            .isDelivered(hasStudentSubmissions(authUuid, classroomActivity.getCourseId(), classroomActivity.getId()))
                                             .isRevised(false)
                                             .teacherName(returnTeacherName(service, classroomActivity.getCreatorUserId()))
                                             .build();
@@ -162,7 +164,6 @@ public class ActivitiesService implements ExternalActivitiesService {
                 .stream()
                 .filter(activity -> Objects.equals(activity.getExternalId(), externalId))
                 .collect(Collectors.toList());
-        System.out.println(teacherActivity.get(0).getDescription());
         if (!teacherActivity.isEmpty()){
             return teacherActivity.get(0);
         }
@@ -175,5 +176,9 @@ public class ActivitiesService implements ExternalActivitiesService {
                 .get(creatorId)
                 .execute();
         return activityAuthor.getName().getFullName();
+    }
+
+    private boolean hasStudentSubmissions(String authUuid, String courseId, String activityId) throws IOException {
+        return !(new ClassroomActivities(new ClassroomServiceFactory(new GoogleOauth2Service())).getSubmissions(authUuid, courseId, activityId).isEmpty());
     }
 }
