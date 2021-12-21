@@ -61,7 +61,7 @@ public class ActivitiesService implements ExternalActivitiesService {
                 }
             }
 
-            return teacherActivities
+            List<ActivityViewDTO> teacherActivitiesList = teacherActivities
                     .stream()
                     .map(classroomActivity ->
                             ActivityViewDTO
@@ -75,9 +75,19 @@ public class ActivitiesService implements ExternalActivitiesService {
                                     .isVisible(false)
                                     .isActive(true)
                                     .filename("Visível no Classroom")
-                                    .build()
-                    )
+                                    .build())
                     .collect(Collectors.toList());
+
+            for (int i = 0; i < teacherActivitiesList.size(); i++){
+                for(int j = 0; j < teacherActivitiesList.size(); j++) {
+                    if(i != j && teacherActivitiesList.get(i).equals(teacherActivitiesList.get(j))){
+                        teacherActivitiesList.remove(j);
+                    }
+                }
+            }
+
+            return teacherActivitiesList;
+
         } catch (GoogleJsonResponseException e) {
             GoogleJsonError details = e.getDetails();
             if (details.getCode() == 401) {

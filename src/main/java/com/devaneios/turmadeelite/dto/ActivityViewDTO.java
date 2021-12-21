@@ -13,9 +13,11 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class ActivityViewDTO {
     public Long id;
 
+    @EqualsAndHashCode.Include
     private String externalId;
 
     private String name;

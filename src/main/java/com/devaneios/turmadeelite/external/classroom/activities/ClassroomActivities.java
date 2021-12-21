@@ -151,11 +151,16 @@ public class ClassroomActivities {
 
             }
         }
-        return responseList
-                .stream()
-                .map(ListStudentSubmissionsResponse::getStudentSubmissions)
-                .flatMap(List::stream)
-                .collect(Collectors.toList());
+        try{
+            return responseList
+                    .stream()
+                    .map(ListStudentSubmissionsResponse::getStudentSubmissions)
+                    .flatMap(List::stream)
+                    .collect(Collectors.toList());
+        } catch (NullPointerException e){
+            return new LinkedList<>();
+        }
+
     }
 
 }
