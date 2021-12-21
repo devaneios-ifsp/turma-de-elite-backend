@@ -4,7 +4,6 @@ package com.devaneios.turmadeelite.external.ranking;
 import com.devaneios.turmadeelite.dto.SchoolClassViewDTO;
 import com.devaneios.turmadeelite.dto.StudentRankingDTO;
 import com.devaneios.turmadeelite.security.guards.IsStudent;
-import com.devaneios.turmadeelite.services.RankingService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;

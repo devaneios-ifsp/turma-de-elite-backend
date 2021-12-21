@@ -2,7 +2,6 @@ package com.devaneios.turmadeelite.external.classroom.students;
 
 import com.devaneios.turmadeelite.dto.SchoolClassViewDTO;
 import com.devaneios.turmadeelite.dto.SchoolUserViewDTO;
-import com.devaneios.turmadeelite.dto.StudentMembershipDTO;
 import com.devaneios.turmadeelite.dto.StudentViewDTO;
 import com.devaneios.turmadeelite.external.classroom.ClassroomServiceFactory;
 import com.devaneios.turmadeelite.external.courses.ExternalCoursesService;
@@ -12,7 +11,6 @@ import com.google.api.client.googleapis.json.GoogleJsonError;
 import com.google.api.client.googleapis.json.GoogleJsonResponseException;
 import com.google.api.services.classroom.Classroom;
 import com.google.api.services.classroom.model.Course;
-import com.google.api.services.classroom.model.ListCoursesResponse;
 import com.google.api.services.classroom.model.ListStudentsResponse;
 import com.google.api.services.classroom.model.UserProfile;
 import lombok.AllArgsConstructor;

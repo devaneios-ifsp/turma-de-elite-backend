@@ -2,12 +2,10 @@ package com.devaneios.turmadeelite.external.classroom.courses;
 
 import com.devaneios.turmadeelite.dto.*;
 import com.devaneios.turmadeelite.entities.ExternalClassConfig;
-import com.devaneios.turmadeelite.entities.TierConfig;
 import com.devaneios.turmadeelite.external.classroom.ClassroomServiceFactory;
 import com.devaneios.turmadeelite.external.classroom.students.ClassroomStudents;
 import com.devaneios.turmadeelite.external.courses.ExternalCoursesService;
 import com.devaneios.turmadeelite.external.exceptions.ExternalServiceAuthenticationException;
-import com.devaneios.turmadeelite.external.teachers.ExternalTeachersService;
 import com.devaneios.turmadeelite.repositories.ExternalClassConfigRepository;
 import com.google.api.client.googleapis.json.GoogleJsonError;
 import com.google.api.client.googleapis.json.GoogleJsonResponseException;

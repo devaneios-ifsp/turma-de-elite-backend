@@ -13,13 +13,11 @@ import com.google.api.client.googleapis.json.GoogleJsonResponseException;
 import com.google.api.services.classroom.Classroom;
 import com.google.api.services.classroom.model.CourseWork;
 import com.google.api.services.classroom.model.ListCourseWorkResponse;
-import com.google.api.services.classroom.model.StudentSubmission;
 import com.google.api.services.classroom.model.UserProfile;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
-import java.time.ZoneId;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -61,7 +59,7 @@ public class ActivitiesService implements ExternalActivitiesService {
                 }
             }
 
-            return teacherActivities
+            List<ActivityViewDTO> teacherActivitiesList = teacherActivities
                     .stream()
                     .map(classroomActivity ->
                             ActivityViewDTO
@@ -75,9 +73,19 @@ public class ActivitiesService implements ExternalActivitiesService {
                                     .isVisible(false)
                                     .isActive(true)
                                     .filename("Visível no Classroom")
-                                    .build()
-                    )
+                                    .build())
                     .collect(Collectors.toList());
+
+            for (int i = 0; i < teacherActivitiesList.size(); i++){
+                for(int j = 0; j < teacherActivitiesList.size(); j++) {
+                    if(i != j && teacherActivitiesList.get(i).equals(teacherActivitiesList.get(j))){
+                        teacherActivitiesList.remove(j);
+                    }
+                }
+            }
+
+            return teacherActivitiesList;
+
         } catch (GoogleJsonResponseException e) {
             GoogleJsonError details = e.getDetails();
             if (details.getCode() == 401) {

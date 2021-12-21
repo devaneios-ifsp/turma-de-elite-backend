@@ -32,7 +32,6 @@ public class ActivityDeliveryServiceImpl implements ActivityDeliveryService {
     private final ActivityRepository activityRepository;
     private final StudentRepository studentRepository;
     private final ActivityDeliveryRepository deliveryRepository;
-    private final SchoolClassRepository classRepository;
     private final TeacherRepository teacherRepository;
 
     @Transactional

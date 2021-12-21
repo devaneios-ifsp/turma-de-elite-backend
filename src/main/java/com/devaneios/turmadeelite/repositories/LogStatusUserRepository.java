@@ -1,8 +1,6 @@
 package com.devaneios.turmadeelite.repositories;
 
 import com.devaneios.turmadeelite.entities.LogStatusUser;
-import org.joda.time.DateTime;
-import org.joda.time.LocalDateTime;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.PagingAndSortingRepository;

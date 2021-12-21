@@ -2,7 +2,6 @@ package com.devaneios.turmadeelite.external.activities;
 
 import com.devaneios.turmadeelite.dto.ActivityViewDTO;
 import com.devaneios.turmadeelite.dto.StudentActivitiesDTO;
-import com.devaneios.turmadeelite.entities.Activity;
 import com.devaneios.turmadeelite.security.guards.IsStudent;
 import com.devaneios.turmadeelite.security.guards.IsTeacher;
 import lombok.AllArgsConstructor;

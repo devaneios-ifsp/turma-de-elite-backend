@@ -2,7 +2,6 @@ package com.devaneios.turmadeelite.external.classroom.students;
 
 import com.devaneios.turmadeelite.external.classroom.ClassroomServiceFactory;
 import com.google.api.services.classroom.Classroom;
-import com.google.api.services.classroom.model.Course;
 import com.google.api.services.classroom.model.ListStudentsResponse;
 import com.google.api.services.classroom.model.Student;
 import lombok.AllArgsConstructor;
@@ -12,10 +11,7 @@ import org.springframework.util.StringUtils;
 import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @Service
 @AllArgsConstructor

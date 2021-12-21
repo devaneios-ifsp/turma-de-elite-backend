@@ -2,7 +2,6 @@ package com.devaneios.turmadeelite.services.impl;
 
 import com.devaneios.turmadeelite.dto.UserActiveInactiveDTO;
 import com.devaneios.turmadeelite.dto.UserCredentialsCreateDTO;
-import com.devaneios.turmadeelite.entities.Achievement;
 import com.devaneios.turmadeelite.entities.Role;
 import com.devaneios.turmadeelite.entities.UserCredentials;
 import com.devaneios.turmadeelite.events.UserCreated;
@@ -12,7 +11,6 @@ import com.devaneios.turmadeelite.repositories.UserRepository;
 import com.devaneios.turmadeelite.services.UserService;
 import lombok.AllArgsConstructor;
 import org.joda.time.DateTime;
-import org.joda.time.LocalDateTime;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;

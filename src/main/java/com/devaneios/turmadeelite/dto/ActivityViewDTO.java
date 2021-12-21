@@ -13,28 +13,25 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class ActivityViewDTO {
-    public Long id;
 
+    public Long id;
     private String externalId;
 
+    @EqualsAndHashCode.Include
     private String name;
 
     private String description;
-
     private Double punctuation;
-
     private Boolean isVisible;
-
     private Boolean isActive;
-
     private Boolean isDeliverable;
 
     @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss")
     private LocalDateTime maxDeliveryDate;
 
     private String filename;
-
     private List<SchoolClassNameDTO> classes;
 
     public ActivityViewDTO(Activity activity){

@@ -1,6 +1,5 @@
 package com.devaneios.turmadeelite.repositories;
 
-import com.devaneios.turmadeelite.dto.StudentPunctuationDTO;
 import com.devaneios.turmadeelite.entities.ActivityDelivery;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
