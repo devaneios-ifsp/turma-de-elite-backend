@@ -1,7 +1,6 @@
 package com.devaneios.turmadeelite.repositories;
 
 import com.devaneios.turmadeelite.entities.Teacher;
-import com.devaneios.turmadeelite.entities.TeacherClassMembership;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;

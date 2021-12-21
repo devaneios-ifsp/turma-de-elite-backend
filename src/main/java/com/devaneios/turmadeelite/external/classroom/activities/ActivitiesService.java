@@ -13,13 +13,11 @@ import com.google.api.client.googleapis.json.GoogleJsonResponseException;
 import com.google.api.services.classroom.Classroom;
 import com.google.api.services.classroom.model.CourseWork;
 import com.google.api.services.classroom.model.ListCourseWorkResponse;
-import com.google.api.services.classroom.model.StudentSubmission;
 import com.google.api.services.classroom.model.UserProfile;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
-import java.time.ZoneId;
 import java.util.*;
 import java.util.stream.Collectors;
 

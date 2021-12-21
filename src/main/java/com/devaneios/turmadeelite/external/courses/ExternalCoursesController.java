@@ -2,7 +2,6 @@ package com.devaneios.turmadeelite.external.courses;
 
 import com.devaneios.turmadeelite.dto.SchoolClassViewDTO;
 import com.devaneios.turmadeelite.dto.TierConfigDTO;
-import com.devaneios.turmadeelite.entities.Teacher;
 import com.devaneios.turmadeelite.external.ExternalDeliverAchievements;
 import com.devaneios.turmadeelite.security.guards.IsManager;
 import com.devaneios.turmadeelite.security.guards.IsTeacher;
@@ -17,10 +16,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.io.IOException;
-import java.util.HashSet;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 
 @RestController
 @RequestMapping("/api/external/courses")
